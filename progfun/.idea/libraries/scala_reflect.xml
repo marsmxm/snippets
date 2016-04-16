@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="scala-reflect">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/03-objsets/lib_managed/jars/org.scala-lang/scala-reflect/scala-reflect-2.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/03-objsets/lib_managed/jars/org.scala-lang/scala-reflect/scala-reflect-2.10.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SBT: io.reactivex:rxswing:0.21.0:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/io.reactivex/rxswing/jars/rxswing-0.21.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
