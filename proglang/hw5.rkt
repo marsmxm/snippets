@@ -33,7 +33,7 @@
   (if (aunit? alst)
       '()
       (cons (apair-e1 alst) (mupllist->racketlist (apair-e2 alst)))))
-      
+
 ;; lookup a variable in an environment
 ;; Do NOT change this function
 (define (envlookup env str)
@@ -80,11 +80,11 @@
                       [fun-name (fun-nameopt fun-val)]
                       [arg-name (fun-formal fun-val)]
                       [env-new (if fun-name
-                               (cons (cons fun-name fun-val)
-                                     (cons (cons arg-name arg-val)
-                                           env))
-                               (cons (cons arg-name arg-val)
-                                           env))])
+                                   (cons (cons fun-name fun-val)
+                                         (cons (cons arg-name arg-val)
+                                               (closure-env closure-val)))
+                                   (cons (cons arg-name arg-val)
+                                         (closure-env closure-val)))])
                  (eval-under-env (fun-body fun-val) env-new))
                (error (format "~v isn't callable" closure-val))))]
         [(apair? e)
@@ -112,7 +112,7 @@
 ;; Do NOT change
 (define (eval-exp e)
   (eval-under-env e null))
-        
+
 ;; Problem 3
 
 (define (ifaunit e1 e2 e3) (ifgreater (isaunit e1) (int 0) e2 e3))
