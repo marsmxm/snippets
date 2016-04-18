@@ -91,3 +91,121 @@
                           q
                           (- count 1)))))
   (fib-iter 1 0 0 1 n))
+
+
+;; Exercise 2.28
+(define (fringe l)
+  (cond [(null? l) null]
+        [(pair? l) (append (fringe (car l))
+                           (fringe (cdr l)))]
+        [else (list l)]))
+
+;; Exercise 2.29
+(define (make-mobile left right)
+  (list left right))
+
+(define (left-branch mobile)
+  (car mobile))
+
+(define (right-branch mobile)
+  (car (cdr mobile)))
+
+(define (make-branch length structure)
+  (list length structure))
+
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+  (car (cdr branch)))
+
+(define (total-weight mobile)
+  (letrec ([left (left-branch mobile)]
+           [right (right-branch mobile)]
+           [left-structure (branch-structure left)]
+           [right-structure (branch-structure right)]
+           [structure-weight (lambda (s)
+                               (if (not (pair? s))
+                                   s
+                                   (total-weight s)))])
+    (+ (structure-weight left-structure)
+       (structure-weight right-structure))))
+
+(define (mobile-balanced? mobile)
+  (letrec ([left (left-branch mobile)]
+           [right (right-branch mobile)]
+           [left-structure (branch-structure left)]
+           [right-structure (branch-structure right)]
+           [structure-weight (lambda (s)
+                               (if (not (pair? s))
+                                   s
+                                   (total-weight s)))]
+           [structure-balanced? (lambda (s)
+                                  (if (not (pair? s))
+                                      #t
+                                      (mobile-balanced? s)))])
+    (and (eq? (* (branch-length left) (structure-weight left-structure))
+              (* (branch-length right) (structure-weight right-structure)))
+         (structure-balanced? left-structure))
+    (structure-balanced? right-structure)))
+
+;(define (make-mobile left right)
+;  (cons left right))
+;(define (right-branch mobile)
+;  (cdr mobile))
+;
+;(define (make-branch length structure)
+;  (cons length structure))
+;(define (branch-structure branch)
+;  (cdr branch))
+
+;; Exercise 2.30
+(define (map proc items)
+  (if (null? items)
+      null
+      (cons (proc (car items))
+            (map proc (cdr items)))))
+
+(define (square-tree tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (square-tree sub-tree)
+             (* sub-tree sub-tree)))
+       tree))
+
+(define (square-tree-low tree)
+  (cond [(null? tree) null]
+        [(pair? tree) (cons (square-tree-low (car tree))
+                            (square-tree-low (cdr tree)))]
+        [else (* tree tree)]))
+
+;; Exercise 2.32
+(define (subsets s)
+  (if (null? s)
+      (list null)
+      (let ((rest (subsets (cdr s))))
+        (append rest (map (lambda (elem) (cons (car s) elem)) rest)))))
+
+;; Exercise 2.33
+;; fold-right
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op initial (cdr sequence)))))
+
+(define (map-accu p sequence)
+  (accumulate (lambda (x y) (cons (p x) y)) null sequence))
+
+(define (append-accu seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (length-accu sequence)
+  (accumulate (lambda (x y) (add1 y)) 0 sequence))
+
+;; Exercise 2.34
+(define (horner-eval x coefficient-sequence)
+  (accumulate (lambda (this-coeff higher-terms)
+                (* (+ this-coeff higher-terms) x))
+              0
+              coefficient-sequence))
