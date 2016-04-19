@@ -168,10 +168,10 @@
 
 (define (square-tree tree)
   (map-mine (lambda (sub-tree)
-         (if (pair? sub-tree)
-             (square-tree sub-tree)
-             (* sub-tree sub-tree)))
-       tree))
+              (if (pair? sub-tree)
+                  (square-tree sub-tree)
+                  (* sub-tree sub-tree)))
+            tree))
 
 (define (square-tree-low tree)
   (cond [(null? tree) null]
@@ -219,10 +219,10 @@
 
 (define (count-leaves t)
   (accumulate + 0 (map-mine (lambda (sub-t)
-                         (if (pair? sub-t)
-                             (count-leaves sub-t)
-                             1))
-                       t)))
+                              (if (pair? sub-t)
+                                  (count-leaves sub-t)
+                                  1))
+                            t)))
 
 ;; Exercise 2.36
 (define (accumulate-n op init seqs)
@@ -232,4 +232,7 @@
             (accumulate-n op init (map-mine cdr seqs)))))
 
 ;; Exercise 2.37
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
 
+(define (matrix-*-vector m v) (map dot-product (map (lambda (mv) v) m) m))
