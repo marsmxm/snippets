@@ -160,14 +160,14 @@
 ;  (cdr branch))
 
 ;; Exercise 2.30
-(define (map proc items)
+(define (map-mine proc items)
   (if (null? items)
       null
       (cons (proc (car items))
-            (map proc (cdr items)))))
+            (map-mine proc (cdr items)))))
 
 (define (square-tree tree)
-  (map (lambda (sub-tree)
+  (map-mine (lambda (sub-tree)
          (if (pair? sub-tree)
              (square-tree sub-tree)
              (* sub-tree sub-tree)))
@@ -184,7 +184,7 @@
   (if (null? s)
       (list null)
       (let ((rest (subsets (cdr s))))
-        (append rest (map (lambda (elem) (cons (car s) elem)) rest)))))
+        (append rest (map-mine (lambda (elem) (cons (car s) elem)) rest)))))
 
 ;; Exercise 2.33
 ;; fold-right
@@ -206,6 +206,30 @@
 ;; Exercise 2.34
 (define (horner-eval x coefficient-sequence)
   (accumulate (lambda (this-coeff higher-terms)
-                (* (+ this-coeff higher-terms) x))
+                (+ this-coeff (* x higher-terms)))
               0
               coefficient-sequence))
+
+;; Exercise 2.35
+(define (count-leaves-old x)
+  (cond ((null? x) 0)
+        ((not (pair? x)) 1)
+        (else (+ (count-leaves-old (car x))
+                 (count-leaves-old (cdr x))))))
+
+(define (count-leaves t)
+  (accumulate + 0 (map-mine (lambda (sub-t)
+                         (if (pair? sub-t)
+                             (count-leaves sub-t)
+                             1))
+                       t)))
+
+;; Exercise 2.36
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      null
+      (cons (accumulate op init (map-mine car seqs))
+            (accumulate-n op init (map-mine cdr seqs)))))
+
+;; Exercise 2.37
+
