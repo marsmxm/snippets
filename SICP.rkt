@@ -236,3 +236,32 @@
   (accumulate + 0 (map * v w)))
 
 (define (matrix-*-vector m v) (map (lambda (mv) (dot-product mv v)) m))
+
+(define (transpose mat) (accumulate-n cons null mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (row)
+           (map (lambda (col) (dot-product row col)) cols))
+         m)))
+
+;; Exercise 2.38
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))
+
+(define fold-right accumulate)
+
+(define (reverse0 xs)
+  (if (null? xs)
+      null
+      (append (reverse0 (cdr xs)) (list (car xs)))))
+
+(define (reverse1 sequence)
+  (fold-right (lambda (x y) (append y (list x))) null sequence))
+(define (reverse2 sequence)
+  (fold-left (lambda (x y) (cons y x)) null sequence))
