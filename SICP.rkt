@@ -245,7 +245,7 @@
            (map (lambda (col) (dot-product row col)) cols))
          m)))
 
-;; Exercise 2.38
+;; Exercise 2.39
 (define (fold-left op initial sequence)
   (define (iter result rest)
     (if (null? rest)
@@ -265,3 +265,50 @@
   (fold-right (lambda (x y) (append y (list x))) null sequence))
 (define (reverse2 sequence)
   (fold-left (lambda (x y) (cons y x)) null sequence))
+
+;; Exercise 2.40
+(define (enumerate-interval low high)
+  (if (> low high)
+      null
+      (cons low (enumerate-interval (+ low 1) high))))
+
+(define (flatmap proc seq)
+  (accumulate append null (map proc seq)))
+
+(define (unique-pairs n)
+  (flatmap
+   (lambda (i)
+     (map
+      (lambda (j) (list i j))
+      (enumerate-interval 1 (sub1 i))))
+   (enumerate-interval 1 n)))
+
+(require math/number-theory)
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+(define (make-pair-sum pair)
+  (list (car pair) (cadr pair) (+ (car pair) (cadr pair))))
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter prime-sum?
+               (flatmap
+                (lambda (i)
+                  (map (lambda (j) (list i j))
+                       (enumerate-interval 1 (- i 1))))
+                (enumerate-interval 1 n)))))
+(define (prime-sum-pairs1 n)
+  (map make-pair-sum
+       (filter prime-sum?
+               (unique-pairs n))))
+
+;; Exercise 2.41
+(define (fix-sum-triples n s)
+  (filter (lambda (t) (= s (+ (car t) (cadr t) (caddr t))))
+          (flatmap
+           (lambda (i)
+             (flatmap
+              (lambda (j)
+                (map (lambda (k) (list i j k))
+                     (enumerate-interval 1 (sub1 j))))
+              (enumerate-interval 1 (sub1 i))))
+           (enumerate-interval 1 n))))
