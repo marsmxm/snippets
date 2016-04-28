@@ -319,9 +319,6 @@
 (define (adjoin-position new-row k rest-of-queens)
   (cons (cons k new-row) rest-of-queens))
 
-(define (kth-position k positions)
-  (if (= k 1) (car positions) (kth-position (sub1 k) (cdr positions))))
-
 (define (safe? k positions)
   (letrec ([new-row (cdr (car positions))]
            [iter (lambda (n positions)
