@@ -347,6 +347,7 @@
 
 
 ;; 2.2.4 Example: A Picture Language
+
 ;(define (right-split painter n)
 ;  (if (= n 0)
 ;      painter
@@ -405,3 +406,58 @@
   (let ([combine4 (square-of-four flip-horiz identity
                                   rotate180 flip-vert)])
     (combine4 (corner-split painter n))))
+
+;; vector
+(define (make-vect x y)
+  (cons x y))
+(define (xcor-vect v)
+  (car v))
+(define (ycor-vect v)
+  (cdr v))
+(define (dot-vect operator)
+  (lambda (v1 v2)
+    (make-vect (operator (xcor-vect v1) (xcor-vect v2))
+               (operator (ycor-vect v1) (ycor-vect v2)))))
+(define add-vect (dot-vect +))
+(define sub-vect (dot-vect -))
+(define (scale-vect v s)
+  (make-vect (* s (xcor-vect v))
+             (* s (ycor-vect v))))
+
+;; frame
+(define (make-frame origin edge1 edge2)
+  (list origin edge1 edge2))
+(define (origin-frame frame)
+  (car frame))
+(define (edge1-frame frame)
+  (cadr frame))
+(define (edge2-frame frame)
+  (caddr frame))
+
+(define (frame-coord-map frame)
+  (lambda (v)
+    (add-vect
+     (origin-frame frame)
+     (add-vect (scale-vect (xcor-vect v)
+                           (edge1-frame frame))
+               (scale-vect (ycor-vect v)
+                           (edge2-frame frame))))))
+
+;; segment
+(define (make-segment start-v end-v)
+  (cons start-v end-v))
+(define (start-segment seg)
+  (car seg))
+(define (end-segment seg)
+  (cdr seg))
+
+(define (segments->painter segment-list)
+  (lambda (frame)
+    (for-each
+     (lambda (segment)
+       (draw-line
+        ((frame-coord-map frame)
+         (start-segment segment))
+        ((frame-coord-map frame)
+         (end-segment segment))))
+     segment-list)))
