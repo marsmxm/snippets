@@ -63,8 +63,7 @@
 ;; 上面的前半部分被调方就是 Y combinator
 (lambda (f)
   ((lambda (u) (u u))
-   (lambda (x)
-     (f (lambda (v) ((x x) v))))))
+   (lambda (x) (f (lambda (v) ((x x) v))))))
 
 ;; Test
 (((lambda (f)
