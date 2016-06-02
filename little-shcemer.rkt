@@ -1,5 +1,38 @@
 #lang racket
 
+;;;;;;;;;;;; Continuation ;;;;;;;;;;;;;;;;
+(define atom?
+  (lambda (x) (and (not (pair? x)) (not (null? x)))))
+
+(define evens*-co
+  (lambda (xs col)
+    (cond [(null? xs) (col '() 1 0)]
+          [(atom? (car xs))
+           (if (even? (car xs))
+               (evens*-co
+                (cdr xs)
+                (lambda (xss p s)
+                  (col
+                   (cons (car xs) xss)
+                   (* (car xs) p)
+                   s)))
+               (evens*-co
+                (cdr xs)
+                (lambda (xss p s)
+                  (col xss p (+ (car xs) s)))))]
+          [else (evens*-co
+                 (car xs)
+                 (lambda (al ap as)
+                   (evens*-co
+                    (cdr xs)
+                    (lambda (dl dp ds)
+                      (col
+                       (cons al dl)
+                       (* ap dp)
+                       (+ as ds))))))])))
+
+;;;;;;;;;;;; Y-combinator ;;;;;;;;;;;;;;;;
+
 ;; 有define的时候递归是这样的
 (define length
   (lambda (xs)
