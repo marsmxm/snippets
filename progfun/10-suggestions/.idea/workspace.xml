@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="daa175a5-b7b8-4372-82c8-0fca5d3cd11d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/scala/suggestions/SwingApiTest.scala" afterPath="$PROJECT_DIR$/src/test/scala/suggestions/SwingApiTest.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../y-combinator.rkt" afterPath="$PROJECT_DIR$/../../y-combinator.rkt" />
-    </list>
+    <list default="true" id="daa175a5-b7b8-4372-82c8-0fca5d3cd11d" name="Default" comment="" />
     <ignored path="10-suggestions.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/target/" />

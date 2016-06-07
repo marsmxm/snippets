@@ -425,7 +425,7 @@
              (* s (ycor-vect v))))
 
 ;; frame
-(define (make-frame origin edge1 edge2)
+(define (make-frame origin edgxe1 edge2)
   (list origin edge1 edge2))
 (define (origin-frame frame)
   (car frame))
