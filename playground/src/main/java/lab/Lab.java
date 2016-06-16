@@ -2,7 +2,10 @@ package lab;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,9 +18,10 @@ public class Lab {
     }
 
     public static void main(String[] args) throws URISyntaxException {
-        List<Staff> ss = new ArrayList<>();
-        List<Person> ps = new ArrayList<>();
-        f(ss);
+        LocalDate today = LocalDate.now();
+
+        System.out.println(String.format("%d%tm", today.getYear(), today.getMonth()));
+        System.out.println(Instant.ofEpochMilli(1464624000000L));
     }
 }
 
