@@ -1,13 +1,15 @@
 package suggestions
 package gui
 
+import java.lang.Throwable
+
 import scala.language.postfixOps
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{ Try, Success, Failure }
+import scala.util.{Failure, Success, Try}
 import rx.subscriptions.CompositeSubscription
 import rx.lang.scala.Observable
 import observablex._
@@ -37,7 +39,7 @@ trait WikipediaApi {
      *
      * E.g. `"erik", "erik meijer", "martin` should become `"erik", "erik_meijer", "martin"`
      */
-    def sanitized: Observable[String] = ???
+    def sanitized: Observable[String] = obs.map(s => s.replaceAll(" ", "_"))
 
   }
 
@@ -48,7 +50,7 @@ trait WikipediaApi {
      *
      * E.g. `1, 2, 3, !Exception!` should become `Success(1), Success(2), Success(3), Failure(Exception), !TerminateStream!`
      */
-    def recovered: Observable[Try[T]] = ???
+    def recovered: Observable[Try[T]] = obs.map(v => Success(v)).onErrorReturn(t => Failure(t))
 
     /** Emits the events from the `obs` observable, until `totalSec` seconds have elapsed.
      *
