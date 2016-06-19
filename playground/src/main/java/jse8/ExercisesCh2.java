@@ -1,44 +1,23 @@
 package jse8;
 
+import com.google.common.collect.Lists;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * @author sam
  * @date 6/2/16
  */
 public class ExercisesCh2 {
-    static class RandomString {
-        private static final char[] symbols;
-
-        static {
-            StringBuilder tmp = new StringBuilder();
-            for (char ch = '0'; ch <= '9'; ++ch)
-                tmp.append(ch);
-            for (char ch = 'a'; ch <= 'z'; ++ch)
-                tmp.append(ch);
-            symbols = tmp.toString().toCharArray();
-        }
-
-        private final Random random = new Random();
-
-        private final char[] buf;
-
-        public RandomString(int length) {
-            if (length < 1)
-                throw new IllegalArgumentException("length < 1: " + length);
-            buf = new char[length];
-        }
-
-        public String nextString() {
-            for (int idx = 0; idx < buf.length; ++idx)
-                buf[idx] = symbols[random.nextInt(symbols.length)];
-            return new String(buf);
-        }
-    }
 
     public static int e1Normal(String[] words) {
         int count = 0;
@@ -74,7 +53,63 @@ public class ExercisesCh2 {
         return total.get();
     }
 
-    public static void main(String[] args) {
+    private static List<String> e2() {
+        List<String> words = Lists.newArrayList("ab", "cde", "fgh", "ig", "kl");
+        return words.stream()
+                .filter(word -> {
+                    System.out.println("in filter");
+                    return word.length() >= 3;
+                })
+                .limit(2)
+                .collect(Collectors.toList());
+    }
 
+    private static void e3() {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        URL url = classloader.getResource("war_and_peace.txt");
+        assert url != null : "文件不存在";
+        File file = new File(url.getFile());
+        List<String> words = new ArrayList<>();
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                words.addAll(Arrays.asList(line.split("\\s")));
+            }
+            System.out.println(words.size());
+            long start = System.currentTimeMillis();
+            System.out.println(words.stream().filter(word -> word.length() > 5).count());
+            System.out.println("time cost: " + (System.currentTimeMillis() - start));
+
+            long paralStart = System.currentTimeMillis();
+            System.out.println(words.parallelStream().filter(word -> word.length() > 5).count());
+            System.out.println("parallel time cost: " + (System.currentTimeMillis() - paralStart));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void e4() {
+        int[] values = {1, 4, 9, 16};
+        Stream.of(values).forEach(System.out::println);
+        Arrays.stream(values).forEach(System.out::println);
+    }
+
+    private static Stream<Double> e5() {
+        return Stream.iterate(1.0, e -> {
+            long a = 25214903917L;
+            long c = 11;
+            double m = Math.pow(2, 32);
+            return (a * e + c) % m;
+        });
+    }
+
+    private static Stream<Character> e6(String s) {
+        return Stream.iterate(0, p -> p + 1).limit(s.length()).map(s::charAt);
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(e6("Mu Xian Ming").collect(Collectors.toList()));
     }
 }
