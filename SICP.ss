@@ -631,12 +631,13 @@
 
 (define (intersection-set-ordered set1 set2)
   (if (or (null? set1) (null? set2))
-      null
+      '()
       (let ((x1 (car set1)) (x2 (car set2)))
-	(cond [(= x1 x2) (cons x1 (intersection-set (cdr set1)
-						    (cdr set2)))]
-	      [(< x1 x2) (intersection-set (cdr set1) set2)]
-	      [(> x1 x2) (intersection-set set1 (cdr set2))]))))
+	(cond [(= x1 x2) (cons x1 (intersection-set-ordered
+				   (cdr set1)
+				   (cdr set2)))]
+	      [(< x1 x2) (intersection-set-ordered (cdr set1) set2)]
+	      [(> x1 x2) (intersection-set-ordered set1 (cdr set2))]))))
 
 (define (adjoin-set-ordered x set)
   (cond [(null? set) (cons x null)]
@@ -738,3 +739,22 @@
 			 right-tree)
 	      remaining-elts))))
 
+(define (union-set-tree set1 set2)
+  (let ([list1 (tree->list-1 set1)]
+	[list2 (tree->list-1 set2)])
+    (list->tree (union-set-ordered list1 list2))))
+
+(define (intersection-set-tree set1 set2)
+  (let ([list1 (tree->list-1 set1)]
+	[list2 (tree->list-1 set2)])
+    (list->tree (intersection-set-ordered list1 list2))))
+
+
+;; Exercise 2.66
+(define (lookup given-key set-of-records)
+  (cond [(null? set-of-records) #f]
+	[(equal? (key (entry set-of-records)) given-key)
+	 (entry set-of-records)]
+	[(< given-key (entry set-of-records))
+	 (lookup given-key (left-branch set-of-records))]
+	[else (lookup given-key (right-branch set-of-records))]))
