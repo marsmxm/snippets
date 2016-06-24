@@ -46,10 +46,10 @@
   (fast-expt-iter b n 1))
 
 ;; Ex 1.17
-;(define (* a b)
-;  (if (= b 0)
-;      0
-;      (+ a (* a (- b 1)))))
+					;(define (* a b)
+					;  (if (= b 0)
+					;      0
+					;      (+ a (* a (- b 1)))))
 (define (fast-mult a b)
   (define (double x) (* x 2))
   (define (halve x) (/ x 2))
@@ -149,15 +149,15 @@
          (structure-balanced? left-structure))
     (structure-balanced? right-structure)))
 
-;(define (make-mobile left right)
-;  (cons left right))
-;(define (right-branch mobile)
-;  (cdr mobile))
-;
-;(define (make-branch length structure)
-;  (cons length structure))
-;(define (branch-structure branch)
-;  (cdr branch))
+					;(define (make-mobile left right)
+					;  (cons left right))
+					;(define (right-branch mobile)
+					;  (cdr mobile))
+					;
+					;(define (make-branch length structure)
+					;  (cons length structure))
+					;(define (branch-structure branch)
+					;  (cdr branch))
 
 ;; Exercise 2.30
 (define (map-mine proc items)
@@ -392,16 +392,16 @@
 (define (end-segment seg)
   (cdr seg))
 
-;(define (segments->painter segment-list)
-;  (lambda (frame)
-;    (for-each
-;     (lambda (segment)
-;       (draw-line
-;        ((frame-coord-map frame)
-;         (start-segment segment))
-;        ((frame-coord-map frame)
-;         (end-segment segment))))
-;     segment-list)))
+					;(define (segments->painter segment-list)
+					;  (lambda (frame)
+					;    (for-each
+					;     (lambda (segment)
+					;       (draw-line
+					;        ((frame-coord-map frame)
+					;         (start-segment segment))
+					;        ((frame-coord-map frame)
+					;         (end-segment segment))))
+					;     segment-list)))
 
 (define (transform-painter painter origin corner1 corner2)
   (lambda (frame)
@@ -673,8 +673,68 @@
 	 (make-tree (entry set) (left-branch set)
 		    (adjoin-set x (right-branch set))))))
 
+(define (tree->list-1 tree)
+  (if (null? tree)
+      '()
+      (append (tree->list-1 (left-branch tree))
+	      (cons (entry tree)
+		    (tree->list-1
+		     (right-branch tree))))))
 
+(define (tree->list-2 tree)
+  (define (copy-to-list tree result-list)
+    (if (null? tree)
+	result-list
+	(copy-to-list (left-branch tree)
+		      (cons (entry tree)
+			    (copy-to-list
+			     (right-branch tree)
+			     result-list)))))
+  (copy-to-list tree '()))
 
+(define (list->tree elements)
+  (car (partial-tree elements (length elements))))
 
+;; (define (partial-tree elts n)
+;;   (if (= n 0)
+;;       (cons '() elts)
+;;       (let ((left-size (quotient (- n 1) 2)))
+;; 	(let ((left-result
+;; 	       (partial-tree elts left-size)))
+;; 	  (let ((left-tree (car left-result))
+;; 		(non-left-elts (cdr left-result))
+;; 		(right-size (- n (+ left-size 1))))
+;; 	    (let ((this-entry (car non-left-elts))
+;; 		  (right-result
+;; 		   (partial-tree
+;; 		    (cdr non-left-elts)
+;; 		    right-size)))
+;; 	      (let ((right-tree (car right-result))
+;; 		    (remaining-elts
+;; 		     (cdr right-result)))
+;; 		(cons (make-tree this-entry
+;; 				 left-tree
+;; 				 right-tree)
+;; 		      remaining-elts))))))))
 
+;; divide elts list to three parts: elts for left-tree, entry and
+;; elts for right-tree.
+;; Then recursively apply 'partial-tree to left and right trees.
+(define (partial-tree elts n)
+  (if (= n 0)
+      (cons '() elts)
+      (let* ([left-size (quotient (- n 1) 2)]
+	     [left-result (partial-tree elts left-size)]
+	     [left-tree (car left-result)]
+	     [non-left-elts (cdr left-result)]
+	     [this-entry (car non-left-elts)]
+	     [right-size (- n (+ left-size 1))]
+	     [right-result (partial-tree (cdr non-left-elts)
+					 right-size)]
+	     [right-tree (car right-result)]
+	     [remaining-elts (cdr right-result)])
+	(cons (make-tree this-entry
+			 left-tree
+			 right-tree)
+	      remaining-elts))))
 
