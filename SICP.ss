@@ -392,16 +392,16 @@
 (define (end-segment seg)
   (cdr seg))
 
-					;(define (segments->painter segment-list)
-					;  (lambda (frame)
-					;    (for-each
-					;     (lambda (segment)
-					;       (draw-line
-					;        ((frame-coord-map frame)
-					;         (start-segment segment))
-					;        ((frame-coord-map frame)
-					;         (end-segment segment))))
-					;     segment-list)))
+;(define (segments->painter segment-list)
+;  (lambda (frame)
+;    (for-each
+;     (lambda (segment)
+;       (draw-line
+;        ((frame-coord-map frame)
+;         (start-segment segment))
+;        ((frame-coord-map frame)
+;         (end-segment segment))))
+;     segment-list)))
 
 (define (transform-painter painter origin corner1 corner2)
   (lambda (frame)
@@ -738,3 +738,8 @@
 			 right-tree)
 	      remaining-elts))))
 
+(define (union-set-tree set1 set2)
+  ...)
+
+(define (intersection-set-tree set1 set2)
+  ...)
