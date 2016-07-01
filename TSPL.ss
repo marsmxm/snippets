@@ -23,12 +23,15 @@
 	  [(empty? mt?) (= cursor 0)]
 	  [(push!) (if (= cursor size)
 		       "vector full!"
-		       (begin (vector-set! ls cursor (car args))
-			      (set! cursor (add1 cursor))))]
+		       (begin
+			 (vector-set! ls cursor (car args))
+			 (set! cursor (add1 cursor))))]
 	  [(set!) (vector-set! ls (car args) (cadr args))]
 	  [(top) (vector-ref ls (sub1 cursor))]
 	  [(ref) (vector-ref ls (car args))]
 	  [(pop!) (if (= cursor 0)
 		      "vector empty!"
-		      (begin))]
+		      (begin
+			(set! cursor (sub1 cursor))
+			(vector-set! ls cursor #f)))]
 	  [else "oops"])))))
