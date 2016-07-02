@@ -13,6 +13,7 @@
 	  [(pop!) (set! ls (cdr ls))]
 	  [else "oops"])))))
 
+
 ;; Exercise 2.9.4
 (define make-stack-vector
   (lambda (size)
@@ -26,12 +27,90 @@
 		       (begin
 			 (vector-set! ls cursor (car args))
 			 (set! cursor (add1 cursor))))]
-	  [(set!) (vector-set! ls (car args) (cadr args))]
+	  [(set!) (vector-set! ls (- cursor 1 (car args)) (cadr args))]
 	  [(top) (vector-ref ls (sub1 cursor))]
-	  [(ref) (vector-ref ls (car args))]
+	  [(ref) (vector-ref ls (- cursor 1 (car args)))]
 	  [(pop!) (if (= cursor 0)
 		      "vector empty!"
 		      (begin
 			(set! cursor (sub1 cursor))
 			(vector-set! ls cursor #f)))]
 	  [else "oops"])))))
+
+
+;; Exercise 2.9.5
+(define make-queue
+  (lambda ()
+    (let ([end (cons 'ignored '())])
+      (cons end end)))) 
+
+(define putq!
+  (lambda (q v)
+    (let ([end (cons 'ignored '())])
+      (set-car! (cdr q) v)
+      (set-cdr! (cdr q) end)
+      (set-cdr! q end)))) 
+
+(define getq
+  (lambda (q)
+    (if (emptyq? q)
+	(assertion-violation
+	 'getq "empty queue" q)
+	(car (car q)))))
+
+(define delq!
+  (lambda (q)
+    (if (emptyq? q)
+	(assertion-violation 'delq! "empty queue" q)
+	(set-car! q (cdr (car q))))))
+
+(define emptyq?
+  (lambda (q)
+    (eq? 'ignored (car (car q)))))
+
+
+;; Exercise 2.9.6
+(define make-queue-alt
+  (lambda ()
+    (let ([end '()])
+      (cons end end))))
+
+(define emptyq?-alt
+  (lambda (q)
+    (null? (car q))))
+
+(define putq!-alt
+  (lambda (q v)
+    (let ([end (cons v '())])
+      (if (emptyq?-alt q)
+	  (begin (set-car! q end)
+		 (set-cdr! q end))
+	  (begin (set-cdr! (cdr q) end)
+		 (set-cdr! q end))))))
+
+(define getq-alt
+  (lambda (q)
+    (if (emptyq? q)
+	(assertion-violation
+	 'getq "empty queue" q)
+	(car (car q)))))
+
+(define delq!-alt
+  (lambda (q)
+    (if (emptyq? q)
+	(assertion-violation 'delq! "empty queue" q)
+	(if (= 1 (length (car q)))
+	    (let ([end '()])
+	      (set-car! q end)
+	      (set-cdr! q end))
+	    (set-car! q (cdr (car q)))))))
+
+
+;; Exercise 2.9.8
+(define my-list?
+  (lambda (ls)
+    (cond
+     [(null? ls) #t]
+     [(null? (cdr ls)) #t]
+     [(not (pair? (cdr ls))) #f]
+     [else (my-list? (cdr ls))])))
