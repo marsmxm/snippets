@@ -107,10 +107,26 @@
 
 
 ;; Exercise 2.9.8
+(define list-cyclic?
+  (lambda (ls)
+    (letrec ([race
+	      (lambda (hare tortoise initial?)
+		(cond
+		 [(or (null? hare)
+		      (null? tortoise)
+		      (null? (cdr tortoise))
+		      (null? (cdr hare))
+		      (null? (cdr (cdr hare)))) #f]
+		 [initial? (race (cdr (cdr hare)) (cdr tortoise) #f)]
+		 [(eq? hare tortoise) #t]
+		 [else (race (cdr (cdr hare)) (cdr tortoise) #f)]))])
+      (race ls ls #t))))
+
 (define my-list?
   (lambda (ls)
     (cond
      [(null? ls) #t]
+     [(list-cyclic? ls) #f]
      [(null? (cdr ls)) #t]
      [(not (pair? (cdr ls))) #f]
      [else (my-list? (cdr ls))])))
