@@ -392,16 +392,16 @@
 (define (end-segment seg)
   (cdr seg))
 
-;(define (segments->painter segment-list)
-;  (lambda (frame)
-;    (for-each
-;     (lambda (segment)
-;       (draw-line
-;        ((frame-coord-map frame)
-;         (start-segment segment))
-;        ((frame-coord-map frame)
-;         (end-segment segment))))
-;     segment-list)))
+					;(define (segments->painter segment-list)
+					;  (lambda (frame)
+					;    (for-each
+					;     (lambda (segment)
+					;       (draw-line
+					;        ((frame-coord-map frame)
+					;         (start-segment segment))
+					;        ((frame-coord-map frame)
+					;         (end-segment segment))))
+					;     segment-list)))
 
 (define (transform-painter painter origin corner1 corner2)
   (lambda (frame)
@@ -460,17 +460,17 @@
 
 (define rotate180 1)
 
-;(define (right-split painter n)
-;  (if (= n 0)
-;      painter
-;      (let ([smaller (right-split painter (- n 1))])
-;        (beside painter (below smaller smaller)))))
-;
-;(define (up-split painter n)
-;  (if (= n 0)
-;      painter
-;      (let ([smaller (up-split painter (- n 1))])
-;        (below painter (beside smaller smaller)))))
+					;(define (right-split painter n)
+					;  (if (= n 0)
+					;      painter
+					;      (let ([smaller (right-split painter (- n 1))])
+					;        (beside painter (below smaller smaller)))))
+					;
+					;(define (up-split painter n)
+					;  (if (= n 0)
+					;      painter
+					;      (let ([smaller (up-split painter (- n 1))])
+					;        (below painter (beside smaller smaller)))))
 
 (define (split place-self place-smaller)
   (lambda (painter n)
@@ -500,19 +500,19 @@
           [bottom (beside (bl painter) (br painter))])
       (below bottom top))))
 
-;(define (flipped-pairs painter)
-;  (let ((painter2 (beside painter (flip-vert painter))))
-;    (below painter2 painter2)))
+					;(define (flipped-pairs painter)
+					;  (let ((painter2 (beside painter (flip-vert painter))))
+					;    (below painter2 painter2)))
 
 (define (flipped-pairs painter)
   (let ([combine4 (square-of-four identity flip-vert
                                   identity flip-vert)])
     (combine4 painter)))
 
-;(define (square-limit painter n)
-;  (let ([quarter (corner-split painter n)])
-;    (let ([half (beside (flip-horiz quarter) quarter)])
-;      (below (flip-vert half) half))))
+					;(define (square-limit painter n)
+					;  (let ([quarter (corner-split painter n)])
+					;    (let ([half (beside (flip-horiz quarter) quarter)])
+					;      (below (flip-vert half) half))))
 
 (define (square-limit painter n)
   (let ([combine4 (square-of-four flip-horiz identity
@@ -563,9 +563,10 @@
                  (cons (car accu) (cons cur (cdr accu)))))
            '(0)
            operands)])
-    (cond [(null? (cdr tup)) (car tup)]
-          [(= 0 (car tup)) (cons '+ (cdr tup))]
-          [else (cons '+ tup)])))
+    (cond
+     [(null? (cdr tup)) (car tup)]
+     [(= 0 (car tup)) (cons '+ (cdr tup))]
+     [else (cons '+ tup)])))
 
 (define (sum? x) (and (pair? x) (eq? (car x) '+)))
 
@@ -585,11 +586,12 @@
 (define (multiplicand p) (caddr p))
 
 (define (make-exponentiation base exponent)
-  (cond ((=number? exponent 0) 1)
-        ((=number? exponent 1) base)
-        ((=number? base 0) 0)
-        ((=number? base 1) 1)
-        (else (list '** base exponent))))
+  (cond
+   ((=number? exponent 0) 1)
+   ((=number? exponent 1) base)
+   ((=number? base 0) 0)
+   ((=number? base 1) 1)
+   (else (list '** base exponent))))
 
 (define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
 
@@ -601,9 +603,10 @@
 ;; 2.3.3
 
 (define (element-of-set? x set)
-  (cond ((null? set) false)
-        ((equal? x (car set)) true)
-        (else (element-of-set? x (cdr set)))))
+  (cond
+   ((null? set) false)
+   ((equal? x (car set)) true)
+   (else (element-of-set? x (cdr set)))))
 
 (define (adjoin-set x set)
   (if (element-of-set? x set)
@@ -611,47 +614,53 @@
       (cons x set)))
 
 (define (intersection-set set1 set2)
-  (cond ((or (null? set1) (null? set2)) '())
-        ((element-of-set? (car set1) set2)
-         (cons (car set1)
-               (intersection-set (cdr set1) set2)))
-        (else (intersection-set (cdr set1) set2))))
+  (cond
+   ((or (null? set1) (null? set2)) '())
+   ((element-of-set? (car set1) set2)
+    (cons (car set1)
+	  (intersection-set (cdr set1) set2)))
+   (else (intersection-set (cdr set1) set2))))
 
 (define (union-set s1 s2)
-  (cond [(null? s1) s2]
-        [(element-of-set? (car s1) s2) (union-set (cdr s1) s2)]
-        [else (cons (car s1) (union-set (cdr s1) s2))]))
+  (cond
+   [(null? s1) s2]
+   [(element-of-set? (car s1) s2) (union-set (cdr s1) s2)]
+   [else (cons (car s1) (union-set (cdr s1) s2))]))
 
 
 (define (element-of-set-ordered? x set)
-  (cond [(null? set) #f]
-	[(= x (car set)) #t]
-	[(< x (car set)) #f]
-	[else (element-of-set? x (cdr set))]))
+  (cond
+   [(null? set) #f]
+   [(= x (car set)) #t]
+   [(< x (car set)) #f]
+   [else (element-of-set? x (cdr set))]))
 
 (define (intersection-set-ordered set1 set2)
   (if (or (null? set1) (null? set2))
       '()
       (let ((x1 (car set1)) (x2 (car set2)))
-	(cond [(= x1 x2) (cons x1 (intersection-set-ordered
-				   (cdr set1)
-				   (cdr set2)))]
-	      [(< x1 x2) (intersection-set-ordered (cdr set1) set2)]
-	      [(> x1 x2) (intersection-set-ordered set1 (cdr set2))]))))
+	(cond
+	 [(= x1 x2) (cons x1 (intersection-set-ordered
+			      (cdr set1)
+			      (cdr set2)))]
+	 [(< x1 x2) (intersection-set-ordered (cdr set1) set2)]
+	 [(> x1 x2) (intersection-set-ordered set1 (cdr set2))]))))
 
 (define (adjoin-set-ordered x set)
-  (cond [(null? set) (cons x null)]
-	[(<= x (car set)) (cons x set)]
-	[else (cons (car set) (adjoin-set-ordered x (cdr set)))]))
+  (cond
+   [(null? set) (cons x null)]
+   [(<= x (car set)) (cons x set)]
+   [else (cons (car set) (adjoin-set-ordered x (cdr set)))]))
 
 (define (union-set-ordered set1 set2)
-  (cond [(null? set1) set2]
-	[(< (car set1) (car set2))
-	 (cons (car set1) (union-set-ordered (cdr set1) set2))]
-	[(= (car set1) (car set2))
-	 (cons (car set1) (union-set-ordered (cdr set1) (cdr set2)))]
-	[(> (car set1) (car set2))
-	 (cons (car set2) (union-set-ordered set1 (cdr set2)))]))
+  (cond
+   [(null? set1) set2]
+   [(< (car set1) (car set2))
+    (cons (car set1) (union-set-ordered (cdr set1) set2))]
+   [(= (car set1) (car set2))
+    (cons (car set1) (union-set-ordered (cdr set1) (cdr set2)))]
+   [(> (car set1) (car set2))
+    (cons (car set2) (union-set-ordered set1 (cdr set2)))]))
 
 ;; set as tree
 (define (entry tree) (car tree))
@@ -664,15 +673,16 @@
   (list entry left right))
 
 (define (adjoin-set-tree x set)
-  (cond ((null? set) (make-tree x '() '()))
-	((= x (entry set)) set)
-	((< x (entry set))
-	 (make-tree (entry set)
-		    (adjoin-set x (left-branch set))
-		    (right-branch set)))
-	((> x (entry set))
-	 (make-tree (entry set) (left-branch set)
-		    (adjoin-set x (right-branch set))))))
+  (cond
+   ((null? set) (make-tree x '() '()))
+   ((= x (entry set)) set)
+   ((< x (entry set))
+    (make-tree (entry set)
+	       (adjoin-set x (left-branch set))
+	       (right-branch set)))
+   ((> x (entry set))
+    (make-tree (entry set) (left-branch set)
+	       (adjoin-set x (right-branch set))))))
 
 (define (tree->list-1 tree)
   (if (null? tree)
@@ -752,9 +762,86 @@
 
 ;; Exercise 2.66
 (define (lookup given-key set-of-records)
-  (cond [(null? set-of-records) #f]
-	[(equal? (key (entry set-of-records)) given-key)
-	 (entry set-of-records)]
-	[(< given-key (entry set-of-records))
-	 (lookup given-key (left-branch set-of-records))]
-	[else (lookup given-key (right-branch set-of-records))]))
+  (cond
+   [(null? set-of-records) #f]
+   [(equal? (key (entry set-of-records)) given-key)
+    (entry set-of-records)]
+   [(< given-key (entry set-of-records))
+    (lookup given-key (left-branch set-of-records))]
+   [else (lookup given-key (right-branch set-of-records))]))
+
+
+;; 2.3.4  Example: Huffman Encoding Trees
+(define (make-leaf symbol weight)
+  (list 'leaf symbol weight))
+(define (leaf? object)
+  (eq? (car object) 'leaf))
+(define (symbol-leaf x) (cadr x))
+(define (weight-leaf x) (caddr x))
+
+(define (make-code-tree left right)
+  (list left
+        right
+        (append (symbols left) (symbols right))
+        (+ (weight left) (weight right))))
+
+(define (left-branch tree) (car tree))
+(define (right-branch tree) (cadr tree))
+
+(define (symbols tree)
+  (if (leaf? tree)
+      (list (symbol-leaf tree))
+      (caddr tree)))
+
+(define (weight tree)
+  (if (leaf? tree)
+      (weight-leaf tree)
+      (cadddr tree)))
+
+(define (decode bits tree)
+  (define (choose-branch bit branch)
+    (cond
+     ((= bit 0) (left-branch branch))
+     ((= bit 1) (right-branch branch))
+     (else (error 'chosse-branch "bad bit" bit))))
+  (define (decode-1 bits current-branch)
+    (if (null? bits)
+        '()
+        (let ((next-branch
+               (choose-branch (car bits) current-branch)))
+          (if (leaf? next-branch)
+              (cons (symbol-leaf next-branch)
+                    (decode-1 (cdr bits) tree))
+              (decode-1 (cdr bits) next-branch)))))
+  (decode-1 bits tree))
+
+(define (encode-symbol char tree)
+  (let* ([include-char?
+	  (lambda (char chars)
+	    (not (not (memq char chars))))])
+    (cond
+     [(not (include-char? char (symbols tree)))
+      (error 'encode "unexpected symbol" char)]
+     [(leaf? tree) '()]
+     [(include-char? char (symbols (left-branch tree)))
+      (cons 0 (encode-symbol char (left-branch tree)))]
+     [else (cons 1 (encode-symbol char (right-branch tree)))])))
+
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+(define (make-leaf-set pairs)
+  (define (adjoin-set x set)
+    (cond ((null? set) (list x))
+	  ((< (weight x) (weight (car set))) (cons x set))
+	  (else (cons (car set)
+		      (adjoin-set x (cdr set))))))
+  (if (null? pairs)
+      '()
+      (let ((pair (car pairs)))
+        (adjoin-set (make-leaf (car pair)    ; symbol
+                               (cadr pair))  ; frequency
+                    (make-leaf-set (cdr pairs))))))
