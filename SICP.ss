@@ -798,6 +798,31 @@
       (weight-leaf tree)
       (cadddr tree)))
 
+(define (adjoin-set x set)
+    (cond ((null? set) (list x))
+	  ((< (weight x) (weight (car set))) (cons x set))
+	  (else (cons (car set)
+		      (adjoin-set x (cdr set))))))
+
+(define (make-leaf-set pairs)
+  (if (null? pairs)
+      '()
+      (let ((pair (car pairs)))
+        (adjoin-set (make-leaf (car pair)    ; symbol
+                               (cadr pair))  ; frequency
+                    (make-leaf-set (cdr pairs))))))
+
+(define (generate-huffman-tree pairs)
+  (define (successive-merge leaf-set)
+    (cond
+     [(null? leaf-set) '()]
+     [(= 1 (length leaf-set)) (car leaf-set)]
+     [else (successive-merge
+	    (adjoin-set (make-code-tree (car leaf-set)
+					(cadr leaf-set))
+			(cddr leaf-set)))]))
+  (successive-merge (make-leaf-set pairs)))
+
 (define (decode bits tree)
   (define (choose-branch bit branch)
     (cond
@@ -832,16 +857,3 @@
       '()
       (append (encode-symbol (car message) tree)
               (encode (cdr message) tree))))
-
-(define (make-leaf-set pairs)
-  (define (adjoin-set x set)
-    (cond ((null? set) (list x))
-	  ((< (weight x) (weight (car set))) (cons x set))
-	  (else (cons (car set)
-		      (adjoin-set x (cdr set))))))
-  (if (null? pairs)
-      '()
-      (let ((pair (car pairs)))
-        (adjoin-set (make-leaf (car pair)    ; symbol
-                               (cadr pair))  ; frequency
-                    (make-leaf-set (cdr pairs))))))
