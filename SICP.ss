@@ -1,5 +1,10 @@
 ;;#lang racket
 
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+
 ;; Ex 1.11
 (define (f1 n)
   (if (< n 3)
@@ -13,12 +18,12 @@
         (f2-iter (+ a (* 2 b) (* 3 c)) a b (sub1 counter))))
   (f2-iter 2 1 0 n))
 
-; Ex 1.12
-;     1
-;    1 1
-;   1 2 1
-;  1 3 3 1
-; 1 4 6 4 1
+					; Ex 1.12
+					;     1
+					;    1 1
+					;   1 2 1
+					;  1 3 3 1
+					; 1 4 6 4 1
 (define (pt r c)
   (if (or (equal? c 1)
           (equal? r c))
@@ -799,10 +804,10 @@
       (cadddr tree)))
 
 (define (adjoin-set x set)
-    (cond ((null? set) (list x))
-	  ((< (weight x) (weight (car set))) (cons x set))
-	  (else (cons (car set)
-		      (adjoin-set x (cdr set))))))
+  (cond ((null? set) (list x))
+	((< (weight x) (weight (car set))) (cons x set))
+	(else (cons (car set)
+		    (adjoin-set x (cdr set))))))
 
 (define (make-leaf-set pairs)
   (if (null? pairs)
@@ -876,4 +881,97 @@
    [(number? datum) datum]
    [(pair? datum) (cdr datum)]
    [else (error 'contents "Bad tagged datum" datum)]))
+
+
+;; Exercise 3.1
+(define (make-accumulator initial)
+  (lambda (amount)
+    (set! initial (+ initial amount))
+    initial))
+
+
+;; Exercise 3.2
+(define (make-monitored f)
+  (let ([count 0])
+    (lambda (m)
+      (case m
+	[(how-many-calls?) count]
+	[(reset-count) (set! count 0)]
+	[else (set! count (add1 count))
+	      (f m)]))))
+
+
+;; Exercise 3.3, 3.4
+(define (make-account balance password)
+  (define incorrects 0)
+  (define (call-the-cops) "Cops are comming")
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (define (dispatch input-pswd m)
+    (cond
+     ((not (eq? password input-pswd)) 
+      (lambda (amount)
+	(if (>= incorrects 7)
+	    (call-the-cops)
+	    (begin (set! incorrects (add1 incorrects))
+		   "Incorrect password"))))
+     (else (set! incorrects 0)
+	   (cond
+	    ((eq? m 'withdraw) withdraw)
+	    ((eq? m 'deposit) deposit)
+	    (else (error 'make-account "Unknown request" m))))))
+  dispatch)
+
+
+;; Exercise 3.5
+(define (random-in-range low high)
+  (let ((range (- high low)))
+    (+ low (random range))))
+
+(define (monte-carlo trials experiment)
+  (define (iter trials-remaining trials-passed)
+    (cond
+     ((= trials-remaining 0)
+      (/ trials-passed trials))
+     ((experiment)
+      (iter (- trials-remaining 1) (+ trials-passed 1)))
+     (else
+      (iter (- trials-remaining 1) trials-passed))))
+  (iter trials 0))
+
+(define (estimate-integral predicate x1 x2 y1 y2 trials)
+  (let ([rect-area (* (- x2 x1) (- y2 y1))]
+	[experiment
+	 (lambda ()
+	   (predicate (random-in-range x1 x2)
+		      (random-in-range y1 y2)))])
+    (* rect-area (monte-carlo trials experiment))))
+
+;; (exact->inexact 
+;;  (/ (estimate-integral 
+;;      (lambda (x y) (<= (+ (* (- x 5) (- x 5))
+;; 			  (* (- y 7) (- y 7)))
+;; 		       9)) 
+;;      2 8 4 10 1000000)
+;;     9))
+
+
+;; Exercise 3.6
+(define rand
+  (let ((x random-init))
+    (lambda (m)
+      (case m
+	[(generate) 
+	 (set! x (rand-update x))
+	 x]
+	[(reset)
+	 (lambda (init)
+	   (set! x init))]))))
+
 
