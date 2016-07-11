@@ -1,4 +1,3 @@
-#lang racket
 
 ;;;;;;;;;;;; Continuation ;;;;;;;;;;;;;;;;
 (define atom?
