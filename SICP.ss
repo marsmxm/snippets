@@ -963,6 +963,7 @@
 
 
 ;; Exercise 3.6
+(define random-init 0)
 (define rand
   (let ((x random-init))
     (lambda (m)
@@ -974,4 +975,13 @@
 	 (lambda (init)
 	   (set! x init))]))))
 
+
+;; Exercise 3.8
+(define f
+  (let ([state -1])
+    (lambda (num)
+      (if (eq? state 0)
+	  0
+	  (begin (set! state num)
+		 num)))))
 

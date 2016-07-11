@@ -1,5 +1,7 @@
 package lab;
 
+import com.google.common.collect.Lists;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -14,10 +16,21 @@ import java.util.List;
  */
 public class Lab {
     private static void f(List<? extends Person> ps) {
-
+        Person p = ps.get(0);
+        System.out.println(p);
     }
 
-    public static void main(String[] args) throws URISyntaxException {
+    private static void g(List<? super Staff> ss) {
+        ss.add(new Staff());
+        System.out.println(ss);
+    }
+
+    public static void main(String[] args) throws URISyntaxException, CloneNotSupportedException {
+        Person p = new Person();
+        System.out.println(p);
+        System.out.println(p.clone());
+
+
         LocalDate today = LocalDate.now();
 
         System.out.println(String.format("%d%tm", today.getYear(), today.getMonth()));
@@ -25,6 +38,15 @@ public class Lab {
     }
 }
 
-class Person {}
+class Person implements Cloneable {
 
-class Staff extends Person {}
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+}
+
+class Staff extends Person {
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+}
