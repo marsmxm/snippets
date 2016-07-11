@@ -857,3 +857,22 @@
       '()
       (append (encode-symbol (car message) tree)
               (encode (cdr message) tree))))
+
+
+;; Exercise 2.78
+(define (attach-tag type-tag contents)
+  (cond
+   [(eq? type-tag 'scheme-number) contents]
+   [else (cons type-tag contents)]))
+
+(define (type-tag datum)
+  (cond
+   [(number? datum) 'scheme-number]
+   [(pair? datum) (car datum)]
+   [else (error 'type-tag "Bad tagged datum" datum)]))
+
+(define (contents datum)
+  (cond
+   [(number? datum) datum]
+   [(pair? datum) (cdr datum)]
+   [else (error 'contents "Bad tagged datum" datum)]))
