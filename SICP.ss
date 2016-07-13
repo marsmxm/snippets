@@ -1035,3 +1035,16 @@
 	(helper ls '(()))))))
 
 
+;; Exercise 3.18
+(define cyclic?-1
+  (lambda (ls)
+    (letrec ([helper
+	      (lambda (xs seen)
+		(cond
+		 [(null? xs) #f]
+		 [(memq xs seen) #t]
+		 [else (helper (cdr xs) (cons xs seen))]))])
+      (helper ls '()))))
+
+
+;; Exercise 3.19
