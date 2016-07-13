@@ -1,5 +1,3 @@
-;;#lang racket
-
 (define (gcd a b)
   (if (= b 0)
       a
@@ -984,4 +982,56 @@
 	  0
 	  (begin (set! state num)
 		 num)))))
+
+
+;; Exercise 3.16
+(define (count-pairs x)
+  (if (not (pair? x))
+      0
+      (+ (count-pairs (car x))
+         (count-pairs (cdr x))
+	 1)))
+
+(count-pairs '(a b c))
+;; => 3
+
+(let* ([third '(c)]
+       [second (cons 'b third)]
+       [first (cons third second)])
+  (count-pairs first))
+;; => 4
+
+(let* ([third '(c)]
+       [second (cons third third)]
+       [first (cons second second)])
+  (count-pairs first))
+;; => 7
+
+;; (let* ([third '(c)]
+;;        [second (cons 'b third)]
+;;        [first (cons 'a second)])
+;;   (set-cdr! third first)
+;;   (count-pairs first))
+;; => never return
+
+
+;; Exercise 3.17
+(define count-pairs-good
+  (letrec ([last-pair
+	    (lambda (xs)
+	      (if (null? (cdr xs))
+		  xs
+		  (last-pair (cdr xs))))])
+    (lambda (ls)
+      (letrec ([helper
+		(lambda (xs seen)
+		  (if (or (not (pair? xs))
+			  (memq xs seen))
+		      0
+		      (begin (set-cdr! (last-pair seen) (list xs))
+			     (+ (helper (car xs) seen)
+				(helper (cdr xs) seen)
+				1))))])
+	(helper ls '(()))))))
+
 
