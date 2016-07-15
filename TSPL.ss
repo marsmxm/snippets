@@ -110,17 +110,18 @@
 (define list-cyclic?
   (lambda (ls)
     (letrec ([race
-	      (lambda (hare tortoise initial?)
+	      (lambda (hare tortoise)
 		(cond
-		 [(or (null? hare)
-		      (null? tortoise)
-		      (null? (cdr tortoise))
-		      (null? (cdr hare))
-		      (null? (cdr (cdr hare)))) #f]
-		 [initial? (race (cdr (cdr hare)) (cdr tortoise) #f)]
+		 [(or (not (pair? hare))
+		      (not (pair? (cdr hare)))) #f]
 		 [(eq? hare tortoise) #t]
-		 [else (race (cdr (cdr hare)) (cdr tortoise) #f)]))])
-      (race ls ls #t))))
+		 [else (race (cddr hare) (cdr tortoise))]))])
+      (cond
+       [(not (pair? ls)) #f]
+       [else (race (cdr ls) ls)]))))
+
+;; TODO detect "set-car!" cyclic
+
 
 (define my-list?
   (lambda (ls)

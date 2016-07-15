@@ -1036,15 +1036,18 @@
 
 
 ;; Exercise 3.18
-(define cyclic?-1
+(define list-cyclic?
   (lambda (ls)
-    (letrec ([helper
-	      (lambda (xs seen)
+    (letrec ([race
+	      (lambda (hare tortoise)
 		(cond
-		 [(null? xs) #f]
-		 [(memq xs seen) #t]
-		 [else (helper (cdr xs) (cons xs seen))]))])
-      (helper ls '()))))
+		 [(or (not (pair? hare))
+		      (not (pair? (cdr hare)))) #f]
+		 [(eq? hare tortoise) #t]
+		 [else (race (cddr hare) (cdr tortoise))]))])
+      (cond
+       [(not (pair? ls)) #f]
+       [else (race (cdr ls) ls)]))))
 
 
-;; Exercise 3.19
+
