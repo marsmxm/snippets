@@ -1050,4 +1050,51 @@
        [else (race (cdr ls) ls)]))))
 
 
+;; Exercise 3.21
+(define print-queue
+  (lambda (q) (car q)))
+
+
+;; Exercise 3.22
+(define (make-queue)
+  (let ((front-ptr '())
+        (rear-ptr '()))
+    (define (set-front-ptr! item) (set! front-ptr item))
+    (define (set-rear-ptr! item) (set! rear-ptr item))
+    (define (empty-queue?) (null? front-ptr))
+    (define (front-queue)
+      (if (empty-queue?)
+	  (error 'front-queue "FRONT called with an empty queue" front-ptr)
+	  (car front-ptr)))
+    (define (insert-queue! item)
+      (let ((new-pair (cons item '())))
+	(cond ((empty-queue?)
+	       (set-front-ptr! new-pair)
+	       (set-rear-ptr! new-pair)
+	       dispatch)
+	      (else
+	       (set-cdr! rear-ptr new-pair)
+	       (set-rear-ptr! new-pair)
+	       dispatch))))
+    (define (delete-queue!)
+      (cond ((empty-queue?)
+	     (error 'delete-queue "DELETE! called with an empty queue" front-ptr))
+	    (else
+	     (set-front-ptr! (cdr front-ptr))
+	     dispatch)))
+    (define (print-queue) front-ptr)
+    (define (dispatch m)
+      (case m
+	[(front-ptr) front-ptr]
+	[(rear-ptr) rear-ptr]
+	[(set-front-ptr!) set-front-ptr!]
+	[(set-rear-ptr!) set-rear-ptr!]
+	[(empty-queue?) (empty-queue?)]
+	[(front-queue) (front-queue)]
+	[(insert-queue!) insert-queue!]
+	[(delete-queue!) (delete-queue!)]
+	[(print-queue) (print-queue)]))
+    dispatch))
+
+
 
