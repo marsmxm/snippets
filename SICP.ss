@@ -1097,4 +1097,72 @@
     dispatch))
 
 
+;; Exercise 3.24
+(define (make-table same-key?)
+  (let ((local-table (list '*table*))
+	(key-predict
+	 (lambda (k1) 
+	   (lambda (k2) (same-key? k1 k2)))))
+    (define (lookup key-1 key-2)
+      (let ((subtable (assp (key-predict key-1) (cdr local-table))))
+        (if subtable
+            (let ((record (assp (key-predict key-2) (cdr subtable))))
+              (if record
+                  (cdr record)
+                  #f))
+            #f)))
+    (define (insert! key-1 key-2 value)
+      (let ((subtable (assp (key-predict key-1) (cdr local-table))))
+        (if subtable
+            (let ((record (assp (key-predict key-2) (cdr subtable))))
+              (if record
+                  (set-cdr! record value)
+                  (set-cdr! subtable
+                            (cons (cons key-2 value)
+                                  (cdr subtable)))))
+            (set-cdr! local-table
+                      (cons (list key-1
+                                  (cons key-2 value))
+                            (cdr local-table)))))
+      'ok)    
+    (define (dispatch m)
+      (cond ((eq? m 'lookup-proc) lookup)
+            ((eq? m 'insert-proc!) insert!)
+	    ((eq? m 'change-same-key) (lambda (new-same-key?) (set! same-key? new-same-key?)))
+	    ((eq? m 'print) local-table)
+            (else (error 'table "Unknown operation" m))))
+    dispatch))
 
+
+;; Exercise 3.25
+(define (make-table-flex)
+  (let ((local-table (list '*table*)))
+    (define (lookup key-1 key-2)
+      (let ((subtable (assoc key-1 (cdr local-table))))
+        (if subtable
+            (let ((record (assoc key-2 (cdr subtable))))
+              (if record
+                  (cdr record)
+                  #f))
+            #f)))
+    (define (insert! keys value)
+      (letrec ([insert-helper
+	     (lambda (keys table)
+	       (let ([subtable (assoc (car keys) (cdr table))])
+		 (if subtable
+		     (if (null? (cdr keys))
+			 (set-cdr! subtable value)
+			 (insert-helper (cdr keys) subtable))
+		     (if (null? (cdr keys))
+			 (set-cdr! table (cons (cons (car keys) value)
+					       (cdr table)))
+			 (let ([new-table (cons (car keys) '())])
+			   (set-cdr! table (cons new-table (cdr table)))
+			   (insert-helper (cdr keys) new-table))))))]))
+      'ok)    
+    (define (dispatch m)
+      (cond ((eq? m 'lookup-proc) lookup)
+            ((eq? m 'insert-proc!) insert!)
+	    ((eq? m 'print) local-table)
+            (else (error 'table "Unknown operation" m))))
+    dispatch))

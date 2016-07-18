@@ -119,7 +119,6 @@
       (cond
        [(not (pair? ls)) #f]
        [else (race (cdr ls) ls)]))))
-
 ;; TODO detect "set-car!" cyclic
 
 
