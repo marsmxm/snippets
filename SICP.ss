@@ -1138,14 +1138,22 @@
 ;; Exercise 3.25
 (define (make-table-flex)
   (let ((local-table (list '*table*)))
-    (define (lookup key-1 key-2)
-      (let ((subtable (assoc key-1 (cdr local-table))))
-        (if subtable
-            (let ((record (assoc key-2 (cdr subtable))))
-              (if record
-                  (cdr record)
-                  #f))
-            #f)))
+    (define (lookup keys)
+      (letrec ([lookup-helper
+		(lambda (keys table)
+		  (let ([subtable (if (pair? (cdr table))
+				      (assoc (car keys) (cdr table))
+				      #f)])
+		    (if subtable
+			(if (null? (cdr keys))
+			    (if (eq? (car keys) (car subtable))
+				(cdr subtable)
+				#f)
+			    (lookup-helper (cdr keys) subtable))
+				    #f)))])
+	(if (not (list? keys))
+	    (error 'lookup "Please put keys in a list" keys)
+	    (lookup-helper keys local-table))))
     (define (insert! keys value)
       (letrec ([insert-helper
 		(lambda (keys table)
@@ -1156,12 +1164,15 @@
 			(if (null? (cdr keys))
 			    (set-cdr! subtable value)
 			    (insert-helper (cdr keys) subtable))
-			(if (null? (cdr keys))
-			    (set-cdr! table (cons (cons (car keys) value)
-						  (cdr table)))
-			    (let ([new-table (cons (car keys) '())])
-			      (set-cdr! table (cons new-table (cdr table)))
-			      (insert-helper (cdr keys) new-table))))))])
+			(begin (and (not (pair? (cdr table))) ;; if current table is a record,
+				    (set-cdr! table '()))     ;; remove the value
+			       (if (null? (cdr keys))
+				   (set-cdr! table
+					     (cons (cons (car keys) value)
+						   (cdr table)))
+				   (let ([new-table (cons (car keys) '())])
+				     (set-cdr! table (cons new-table (cdr table)))
+				     (insert-helper (cdr keys) new-table)))))))])
 	(if (not (list? keys))
 	    (error 'insert! "Please put keys in a list" keys)
 	    (insert-helper keys local-table)))
@@ -1172,3 +1183,9 @@
 	    ((eq? m 'print) local-table)
             (else (error 'table "Unknown operation" m))))
     dispatch))
+
+
+;; Exercise 3.26
+;; TODO tree table
+
+
