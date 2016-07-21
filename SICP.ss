@@ -1190,9 +1190,9 @@
 
 
 ;; 3.3.4  A Simulator for Digital Circuits
-(define (get-signal wire) ...)
-(define (set-signal! wire) ...)
-(define (add-action! wire) ...)
+(define (get-signal wire) (error 'get-signal "Not impletemented" 'get-signal))
+(define (set-signal! wire) (error 'set-signal! "Not impletemented" 'set-signal!))
+(define (add-action! wire) (error 'add-action! "Not impletemented" 'add-action!))
 
 (define (logical-not s)
   (cond ((= s 0) 1)
@@ -1229,6 +1229,7 @@
   (add-action! a2 and-action-procedure)
   'ok)
 
+;; Exercise 3.28
 (define (or-gate a1 a2 output)
   (define (or-action-procedure)
     (let ([new-value (logical-or (get-signal a1) (get-signal a2))])
@@ -1238,6 +1239,7 @@
   (add-action! a2 or-action-procedure)
   'ok)
 
+;; Exercise 3.29
 (define (or-gate-compound a1 a2 output)
   (let ([and-output (make-wire)]
 	[and-input1 (make-wire)]
@@ -1247,3 +1249,31 @@
     (and-gate and-input1 and-input2 and-output)
     (inverter and-output output)
     'ok))
+
+(define (half-adder a b s c)
+  (let ((d (make-wire)) (e (make-wire)))
+    (or-gate a b d)
+    (and-gate a b c)
+    (inverter c e)
+    (and-gate d e s)
+    'ok))
+
+(define (full-adder a b c-in sum c-out)
+  (let ((s (make-wire))
+        (c1 (make-wire))
+        (c2 (make-wire)))
+    (half-adder b c-in s c1)
+    (half-adder a s sum c2)
+    (or-gate c1 c2 c-out)
+    'ok))
+
+;; Exercise 3.30
+(define (ripple-carry-adder As Bs Ss C)
+  (let ([internal-c-outs '()]
+	[attach-fa
+	 (lambda (a b c-in sum c-out)
+	   (full-adder a b ))]))
+  (cond
+   [(null? As)
+    (error 'ripple-carry-adder "No wire found..." As)]
+   [else ]))
