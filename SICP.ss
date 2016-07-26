@@ -1190,14 +1190,70 @@
 
 
 ;; 3.3.4  A Simulator for Digital Circuits
-(define (get-signal wire) (error 'get-signal "Not impletemented" 'get-signal))
-(define (set-signal! wire) (error 'set-signal! "Not impletemented" 'set-signal!))
-(define (add-action! wire) (error 'add-action! "Not impletemented" 'add-action!))
+(define (make-wire)
+  (let ((signal-value 0)
+	(action-procedures '()))
+    (define (set-my-signal! new-value)
+      (if (not (= signal-value new-value))
+          (begin (set! signal-value new-value)
+                 (call-each action-procedures))
+          'done))
+    (define (accept-action-procedure! proc)
+      (set! action-procedures (cons proc action-procedures))
+      (proc))
+    (define (dispatch m)
+      (cond ((eq? m 'get-signal) signal-value)
+            ((eq? m 'set-signal!) set-my-signal!)
+            ((eq? m 'add-action!) accept-action-procedure!)
+            (else (error 'wire "Unknown operation" m))))
+    dispatch))
+
+(define (call-each procedures)
+  (if (null? procedures)
+      'done
+      (begin
+        ((car procedures))
+        (call-each (cdr procedures)))))
+
+(define (get-signal wire)
+  (wire 'get-signal))
+(define (set-signal! wire new-value)
+  ((wire 'set-signal!) new-value))
+(define (add-action! wire action-procedure)
+  ((wire 'add-action!) action-procedure))
+
+(define the-agenda (make-agenda))
+(define inverter-delay 2)
+(define and-gate-delay 3)
+(define or-gate-delay 5)
+
+(define (probe name wire)
+  (add-action! wire
+               (lambda ()        
+                 (newline)
+                 (display name)
+                 (display " ")
+                 (display (current-time the-agenda))
+                 (display "  New-value = ")
+                 (display (get-signal wire)))))
+
+(define (after-delay delay action)
+  (add-to-agenda! (+ delay (current-time the-agenda))
+                  action
+                  the-agenda))
+
+(define (propagate)
+  (if (empty-agenda? the-agenda)
+      'done
+      (let ((first-item (first-agenda-item the-agenda)))
+        (first-item)
+        (remove-first-agenda-item! the-agenda)
+        (propagate))))
 
 (define (logical-not s)
   (cond ((= s 0) 1)
         ((= s 1) 0)
-        (else (error "Invalid signal" s))))
+        (else (error 'logical-not "Invalid signal" s))))
 
 (define (logical-and s1 s2)
   (cond
@@ -1269,11 +1325,21 @@
 
 ;; Exercise 3.30
 (define (ripple-carry-adder As Bs Ss C)
-  (let ([internal-c-outs '()]
-	[attach-fa
-	 (lambda (a b c-in sum c-out)
-	   (full-adder a b ))]))
-  (cond
-   [(null? As)
-    (error 'ripple-carry-adder "No wire found..." As)]
-   [else ]))
+  (letrec ([internal-c-outs
+	    (let ([zero-c-in (make-wire)])
+	      (set-signal! zero-c-in 0)
+	      (list zero-c-in))]
+	   [attach-fa
+	    (lambda (a b s c-out)
+	      (let ([c-in (car internal-c-outs)])
+		(full-adder a b c-in s c-out)
+		(set! internal-c-outs (cons c-cout internal-c-outs))))]
+	   [helper
+	    (lambda (as bs cs)
+	      (if (null? (cdr as))
+		  (attach-fa (car as) (car bs) (car cs) C)
+		  (begin (attach-fa (car as) (car bs) (car cs) (make-wire))
+			 (helper (cdr as) (cdr bs) (cdr cs)))))])
+    (if (null? As)
+	(error 'ripple-carry-adder "No wire" As)
+	(helper As Bs Ss))))
