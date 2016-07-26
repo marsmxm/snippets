@@ -130,3 +130,28 @@
      [(null? (cdr ls)) #t]
      [(not (pair? (cdr ls))) #f]
      [else (my-list? (cdr ls))])))
+
+
+;; Exercise 3.1.1
+;; (let ([x (memv 'a ls)])
+;;   (and x (memv 'b x)))
+;; =>
+;; ((lambda (x) (and x (memv 'b x))) (memv 'a ls))
+;; =>
+;; ((lambda (x) (if x (and (memv 'b x)) #f)) (memv 'a ls))
+;; =>
+;; ((lambda (x) (if x (memv 'b x) #f)) (memv 'a ls))
+
+
+;; Exercise 3.1.2
+;; (or (memv x '(a b c)) (list x))
+;; =>
+;; (let ([t (memv x '(a b c))])
+;;   (if t t (or (list x))))
+;; =>
+;; (let ([t (memv x '(a b c))])
+;;   (if t t (list x)))
+
+
+;; 
+
