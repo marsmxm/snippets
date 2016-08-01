@@ -153,5 +153,35 @@
 ;;   (if t t (list x)))
 
 
-;; 
+;; Exercise 3.1.3
+(define-syntax my-let*
+  (syntax-rules ()
+    [(_ ((x e)) b1 b2 ...)
+     (let ((x e)) b1 b2 ...)]
+    [(_ ((x1 e1) (x2 e2) ...) b1 b2 ...)
+     (let ((x1 e1))
+       (my-let* ((x2 e2) ...) b1 b2 ...))]))
 
+
+;; Exercise 3.1.4
+(define-syntax my-when
+  (syntax-rules ()
+    [(_ test e1 e2 ...)
+     (if test (begin e1 e2 ...))]))
+
+(define-syntax my-unless
+  (syntax-rules ()
+    [(_ test e1 e2 ...)
+     (my-when (not test) e1 e2 ...)]))
+
+
+;; Exercise 3.2.2
+(define factor
+  (lambda (n)
+    (letrec ([f (lambda (n i)
+		  (cond
+		   [(>= i n) (list n)]
+		   [(integer? (/ n i))
+		    (cons i (f (/ n i) i))]
+		   [else (f n (+ i 1))]))])
+      (f n 2))))

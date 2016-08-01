@@ -6,4 +6,4 @@ target/
 .idea/
 *.iml
 .emacs.desktop
-.eamcs.desktop.lock
+.emacs.desktop.lock
