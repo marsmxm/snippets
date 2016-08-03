@@ -185,3 +185,37 @@
 		    (cons i (f (/ n i) i))]
 		   [else (f n (+ i 1))]))])
       (f n 2))))
+
+
+;; Exericse 3.2.4
+(define fibonacci-1
+  (let ([count 0])
+    (lambda (n)
+      (let fib ([i n])
+	(cond
+	 [(= i 0) 0]
+	 [(= i 1) (display "count: ") (display count) (newline) 1]
+	 [else (set! count (+ 2 count)) (+ (fib (- i 1)) (fib (- i 2)))])))))
+
+(define fibonacci-2
+  (let ([count 0])
+    (lambda (n)
+      (if (= n 0)
+	  0
+	  (let fib ([i n] [a1 1] [a2 0])
+	    (if (= i 1)
+		(begin (display "count: ") (display count) (newline) a1)
+		(begin (set! count (+ count 1)) (fib (- i 1) (+ a1 a2) a1))))))))
+
+
+;; Exercise 3.2.5
+(define-syntax my-let
+  (syntax-rules ()
+    [(_ ((x e) ...) b1 b2 ...)
+     ((lambda (x ...) b1 b2 ...) e ...)]
+    [(_ name ((x e) ...) b1 b2 ...)
+     (letrec ((name (lambda (x ...) b1 b2 ...)))
+       (name e ...))]))
+
+
+

@@ -26,7 +26,7 @@
                     (cdr xs)
                     (lambda (dl dp ds)
                       (col
-                       (cons al dl)
+                       (append al dl)
                        (* ap dp)
                        (+ as ds))))))])))
 
