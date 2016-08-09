@@ -265,3 +265,31 @@
 	  (if (integer? remain)
 	      (cons i (f remain i))
 	      (f n (if (= i 2) 3 (+ i 2)))))]))))
+
+
+;; Exercise 3.3.1
+;; ((lambda (foo)
+;;    (begin (print (car foo))
+;; 	  ((cdr foo) (cons (+ 1 (car foo)) (cdr foo)))))
+;;  (call/cc (lambda (k) (cons 0 k))))
+
+
+;; Exercise 3.3.2
+(define product-old
+  (lambda (ls)
+    (call/cc
+     (lambda (break)
+       (let f ([ls ls])
+	 (cond
+	  [(null? ls) 1]
+	  [(= (car ls) 0) (break 0)]
+	  [else (* (car ls) (f (cdr ls)))]))))))
+
+(define product-new
+  (lambda (ls)
+    (if (memq 0 ls)
+	0
+	(let f ([ls ls])
+	  (if (null? ls)
+	      1
+	      (* (car ls) (f (cdr ls))))))))
