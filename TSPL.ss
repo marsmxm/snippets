@@ -217,3 +217,51 @@
      (letrec ((name (lambda (x ...) b1 b2 ...)))
        (name e ...))]))
 
+
+;; Exercise 3.2.6
+;; (define-syntax or ; incorrect!
+;;   (syntax-rules ()
+;;     [(_) #f]
+;;     [(_ e1 e2 ...)
+;;      (let ([t e1])
+;;        (if t t (or e2 ...)))]))
+
+;; (define-syntax or ; correct
+;;   (syntax-rules ()
+;;     [(_) #f]
+;;     [(_ e) e]
+;;     [(_ e1 e2 e3 ...)
+;;      (let ([t e1])
+;;        (if t t (or e2 e3 ...)))]))
+
+;; (letrec ([even?
+;;           (lambda (x)
+;;             (or (= x 0)
+;;                 (odd? (- x 1))))]
+;;          [odd?
+;;           (lambda (x)
+;;             (and (not (= x 0))
+;;                  (even? (- x 1))))])
+;;   (list (even? 20) (odd? 20))) ; => (#t #f)
+
+
+;; Exercise 3.2.7
+(define factor-old
+  (lambda (n)
+    (let f ([n n] [i 2])
+      (cond
+       [(>= i n) (list n)]
+       [(integer? (/ n i))
+	(cons i (f (/ n i) i))]
+       [else (f n (+ i 1))])))) 
+
+(define factor-new
+  (lambda (n)
+    (let f ([n n] [i 2])
+      (cond
+       [(> i (sqrt n)) (list n)]
+       [else 
+	(let ([remain (/ n i)])
+	  (if (integer? remain)
+	      (cons i (f remain i))
+	      (f n (if (= i 2) 3 (+ i 2)))))]))))
