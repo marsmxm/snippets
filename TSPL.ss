@@ -269,8 +269,9 @@
 
 ;; Exercise 3.3.1
 ;; ((lambda (foo)
-;;    (begin (print (car foo))
-;; 	  ((cdr foo) (cons (+ 1 (car foo)) (cdr foo)))))
+;;    (display (car foo))
+;;    (newline)
+;;    ((cdr foo) (cons (+ 1 (car foo)) (cdr foo))))
 ;;  (call/cc (lambda (k) (cons 0 k))))
 
 
