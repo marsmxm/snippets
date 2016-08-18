@@ -294,3 +294,28 @@
 	  (if (null? ls)
 	      1
 	      (* (car ls) (f (cdr ls))))))))
+
+
+;; Exercise 3.3.3, 3.3.4
+(define lwp-list (make-queue))
+(define lwp
+  (lambda (thunk)
+    (putq! lwp-list thunk))) 
+
+(define start
+  (lambda ()
+    (let ([p (getq lwp-list)])
+      (delq! lwp-list)
+      (p))))
+
+(define pause
+  (lambda ()
+    (call/cc
+     (lambda (k)
+       (lwp (lambda () (k #f)))
+       (start)))))
+
+(define quit
+  (lambda ()
+    (if (not (emptyq? lwp-list))
+	(start))))
