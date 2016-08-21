@@ -319,3 +319,11 @@
   (lambda ()
     (if (not (emptyq? lwp-list))
 	(start))))
+
+
+;; Exercise 3.4.1
+(define reciprocal
+  (lambda (n success failure)
+    (if (= n 0)
+        (failure "oops!")
+        (success (/ 1 n)))))
