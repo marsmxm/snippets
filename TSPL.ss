@@ -327,3 +327,43 @@
     (if (= n 0)
         (failure "oops!")
         (success (/ 1 n)))))
+
+
+;; Exercise 3.4.2
+(define retry #f)
+
+;; (define factorial-retry
+;;   (lambda (x)
+;;     (let f ([x x]
+;; 	    [accu 1])
+;;       (if (= x 0)
+;; 	  (begin (set! retry (lambda (seed) (* seed accu)))
+;; 		 accu)
+;; 	  (f (sub1 x) (* accu x))))))
+
+(define factorial-retry
+  (lambda (x)
+    (let f ([x x]
+	    [k (lambda (x) x)])
+      (if (= x 0)
+	  (begin (set! retry k)
+		 (k 1))
+	  (f (sub1 x) (lambda (y) (* x (k y))))))))
+
+
+;; Exercise 3.4.3
+
+;; Rewrite the following expression in CPS to avoid using call/cc.
+;; (define reciprocals
+;;   (lambda (ls)
+;;     (call/cc
+;;       (lambda (k)
+;;         (map (lambda (x)
+;;                (if (= x 0)
+;;                    (k "zero found")
+;;                    (/ 1 x)))
+;;              ls)))))
+
+;; (reciprocals '(2 1/3 5 1/4)) <graphic> (1/2 3 1/5 4)
+;; (reciprocals '(2 1/3 0 5 1/4)) <graphic> "zero found"
+
