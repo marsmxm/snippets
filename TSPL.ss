@@ -364,6 +364,51 @@
 ;;                    (/ 1 x)))
 ;;              ls)))))
 
-;; (reciprocals '(2 1/3 5 1/4)) <graphic> (1/2 3 1/5 4)
-;; (reciprocals '(2 1/3 0 5 1/4)) <graphic> "zero found"
+;; (reciprocals '(2 1/3 5 1/4)) => (1/2 3 1/5 4)
+;; (reciprocals '(2 1/3 0 5 1/4)) => "zero found"
 
+(define map-co
+  (lambda (f ls k)
+    (if (null? ls)
+	(k '())
+	(map-co f (cdr ls)
+		(lambda (x)
+		  (k (cons (f (car ls))
+			   x)))))))
+
+(define reciprocals-co
+  (lambda (ls)
+    (let f ([ls ls]
+	    [k (lambda (x) x)])
+      (cond
+       [(null? ls) (k '())]
+       [(zero? (car ls)) "zero found"]
+       [else (f (cdr ls)
+		(lambda (y) (k (cons (/ 1 (car ls)) y))))]))))
+
+
+;; Exercise 3.5.1, 3.5.2
+(define calc
+  (lambda (expr)
+    (call/cc
+     (lambda (ek)
+       (define do-calc
+	 (lambda (expr)
+	   (cond
+	    [(number? expr) expr]
+	    [(and (list? expr) (= (length expr) 3))
+	     (let ([op (car expr)] [args (cdr expr)])
+	       (case op
+		 [(add) (apply-op + args)]
+		 [(sub) (apply-op - args)]
+		 [(mul) (apply-op * args)]
+		 [(div) (apply-op / args)]
+		 [else (complain "invalid operator" op)]))]
+	    [else (complain "invalid expression" expr)])))
+       (define apply-op
+	 (lambda (op args)
+	   (op (do-calc (car args)) (do-calc (cadr args)))))
+       (define-syntax complain
+	 (syntax-rules ()
+	   [(_ msg expr) (ek (list msg expr))]))
+       (do-calc expr))))) 
