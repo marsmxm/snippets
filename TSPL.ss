@@ -387,28 +387,28 @@
 		(lambda (y) (k (cons (/ 1 (car ls)) y))))]))))
 
 
-;; Exercise 3.5.1, 3.5.2
+;; Exercise 3.5.1, 3.5.2, 3.5.3
 (define calc
   (lambda (expr)
-    (call/cc
-     (lambda (ek)
-       (define do-calc
-	 (lambda (expr)
-	   (cond
-	    [(number? expr) expr]
-	    [(and (list? expr) (= (length expr) 3))
-	     (let ([op (car expr)] [args (cdr expr)])
-	       (case op
-		 [(add) (apply-op + args)]
-		 [(sub) (apply-op - args)]
-		 [(mul) (apply-op * args)]
-		 [(div) (apply-op / args)]
-		 [else (complain "invalid operator" op)]))]
-	    [else (complain "invalid expression" expr)])))
-       (define apply-op
-	 (lambda (op args)
-	   (op (do-calc (car args)) (do-calc (cadr args)))))
-       (define-syntax complain
-	 (syntax-rules ()
-	   [(_ msg expr) (ek (list msg expr))]))
-       (do-calc expr))))) 
+    (define do-calc
+      (lambda (expr)
+	(cond
+	 [(number? expr) expr]
+	 [(and (list? expr) (= (length expr) 3))
+	  (let ([op (car expr)] [args (cdr expr)])
+	    (case op
+	      [(add) (apply-op + args)]
+	      [(sub) (apply-op - args)]
+	      [(mul) (apply-op * args)]
+	      [(div) (apply-op / args)]
+	      [else (complain 'do-calc "invalid operator" op)]))]
+	 [else (complain 'do-calc "invalid expression" expr)])))
+    (define apply-op
+      (lambda (op args)
+	(op (do-calc (car args)) (do-calc (cadr args)))))
+    (define-syntax complain
+      (syntax-rules ()
+	[(_ symb msg expr) (assertion-violation symb msg expr)]))
+    (do-calc expr)))
+
+
