@@ -1222,6 +1222,7 @@
 (define (add-action! wire action-procedure)
   ((wire 'add-action!) action-procedure))
 
+(define (make-agenda) 'notimplemented)
 (define the-agenda (make-agenda))
 (define inverter-delay 2)
 (define and-gate-delay 3)
@@ -1343,3 +1344,35 @@
     (if (null? As)
 	(error 'ripple-carry-adder "No wire" As)
 	(helper As Bs Ss))))
+
+;; 3.5 Streams
+(define cons-stream cons)
+
+(define stream-car car)
+
+(define stream-cdr
+  (lambda (s)
+    (force (cdr s))))
+
+(define (stream-ref s n)
+  (if (= n 0)
+      (stream-car s)
+      (stream-ref (stream-cdr s) (- n 1))))
+
+(define stream-null? null?)
+
+(define the-empty-stream '())
+
+;; Exercise 3.5.1
+(define (stream-map proc . argstreams)
+  (if (stream-null? (car argstreams))
+      the-empty-stream
+      (cons-stream
+       (apply proc (map stream-car argstreams))
+       (delay (apply stream-map
+                     (cons proc (map stream-cdr argstreams)))))))
+
+(define (add-streams s1 s2)
+  (stream-map + s1 s2))
+
+;; Exercise 3.5.
