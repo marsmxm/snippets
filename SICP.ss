@@ -1377,6 +1377,12 @@
 
 (define ones (cons-stream 1 (delay ones)))
 
+(define fibs
+  (cons-stream 0
+               (delay (cons-stream 1
+                                   (delay (add-streams (stream-cdr fibs)
+                                                       fibs))))))
+
 (define (add-streams s1 s2)
   (stream-map + s1 s2))
 
@@ -1426,3 +1432,16 @@
    (delay (expand (remainder (* num radix) den) den radix))))
 ;; The result is the rational value that num divide den in base radix.
 
+;; Exercise 3.59
+(define (integrate-series coefficients)
+  (let f ([power 1]
+          [s coefficients])
+    (cons-stream
+     (* (/ 1 power) (stream-car s))
+     (delay (f (add1 power) (stream-cdr s))))))
+
+(define cosine-series
+  (cons-stream 1 (delay (scale-stream (integrate-series sine-series) -1))))
+
+(define sine-series
+  (cons-stream 0 (delay (integrate-series cosine-series))))
