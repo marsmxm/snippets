@@ -1,0 +1,3 @@
+[submodule "progfun/src/CourseraCodeSamplesReactiveProgramming"]
+	path = progfun/src/CourseraCodeSamplesReactiveProgramming
+	url = https://github.com/headinthebox/CourseraCodeSamplesReactiveProgramming
