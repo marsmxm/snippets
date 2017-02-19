@@ -1359,6 +1359,12 @@
       (stream-car s)
       (stream-ref (stream-cdr s) (- n 1))))
 
+(define (stream-take s n)
+  (if (zero? n)
+      '()
+      (cons (stream-car s)
+            (stream-take (stream-cdr s) (sub1 n)))))
+
 (define stream-null? null?)
 
 (define the-empty-stream '())
@@ -1371,6 +1377,14 @@
        (apply proc (map stream-car argstreams))
        (delay (apply stream-map
                      (cons proc (map stream-cdr argstreams)))))))
+
+(define (stream-filter pred stream)
+  (cond ((stream-null? stream) the-empty-stream)
+        ((pred (stream-car stream))
+         (cons-stream (stream-car stream)
+                      (delay (stream-filter pred
+                                            (stream-cdr stream)))))
+        (else (stream-filter pred (stream-cdr stream)))))
 
 (define (scale-stream stream factor)
   (stream-map (lambda (x) (* x factor)) stream))
@@ -1440,8 +1454,203 @@
      (* (/ 1 power) (stream-car s))
      (delay (f (add1 power) (stream-cdr s))))))
 
+(define exp-series
+  (cons-stream 1 (delay (integrate-series exp-series))))
+
 (define cosine-series
   (cons-stream 1 (delay (scale-stream (integrate-series sine-series) -1))))
 
 (define sine-series
   (cons-stream 0 (delay (integrate-series cosine-series))))
+
+
+;; Exercise 3.60
+(define (mul-series s1 s2)
+  (cons-stream (* (stream-car s1) (stream-car s2))
+               (delay
+                 (add-streams (scale-stream (stream-cdr s2) (stream-car s1))
+                              (mul-series (stream-cdr s1) s2)))))
+
+;; Exercise 3.61
+(define (invert-unit-series s)
+  (letrec ([x (cons-stream 1
+                           (delay
+                             (mul-series (stream-cdr s)
+                                         (scale-stream x -1))))])
+    x))
+
+
+;; Exercise 3.62
+(define (div-series numer denom)
+  (if (zero? (stream-car denom))
+      (error 'div-series "devide by zero" denom)
+      (mul-series numer (invert-unit-series denom))))
+
+
+;; 3.5.3 Exploiting the Stream Paradigm
+(define (sum ls)
+  (if (null? ls)
+      0
+      (+ (car ls) (sum (cdr ls)))))
+
+(define (average . ls)
+  (if (> (length ls) 0)
+      (/ (sum ls) (length ls))
+      (error 'average "null args" ls)))
+
+(define square
+  (lambda (n)
+    (* n n)))
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream
+     1.0
+     (delay
+       (stream-map (lambda (guess)
+                     (sqrt-improve guess x))
+                   guesses))))
+  guesses)
+
+;; π/4 = 1 - 1/3 + 1/5 - 1/7 ... 
+(define (pi-summands n)
+  (cons-stream (/ 1.0 n)
+               (delay (stream-map - (pi-summands (+ n 2))))))
+
+(define pi-stream
+  (scale-stream (partial-sums (pi-summands 1)) 4))
+
+(define (euler-transform s)
+  (let ((s0 (stream-ref s 0))           ; Sn-1
+        (s1 (stream-ref s 1))           ; Sn
+        (s2 (stream-ref s 2)))          ; Sn+1
+    (cons-stream (- s2 (/ (square (- s2 s1))
+                          (+ s0 (* -2 s1) s2)))
+                 (delay (euler-transform (stream-cdr s))))))
+
+;; a stream of streams in which each stream is
+;; the transform of the preceding one
+(define (make-tableau transform s)
+  (cons-stream s
+               (delay (make-tableau transform
+                                    (transform s)))))
+
+(define (accelerated-sequence transform s)
+  (stream-map stream-car
+              (make-tableau transform s)))
+
+
+;; Exercise 3.64
+(define (stream-limit x tolerance)
+  (let f ([fst (stream-car x)]
+          [snd (stream-car (stream-cdr x))]
+          [s (stream-cdr (stream-cdr x))])
+    (if (< (abs (- snd fst))
+           tolerance)
+        snd
+        (f snd
+           (stream-car s)
+           (stream-cdr s)))))
+
+
+;; Exercise 3.65
+(define ln2-stream
+  (letrec ([ln2-summands
+            (lambda (n)
+              (cons-stream (/ 1.0 n)
+                           (delay (stream-map - (ln2-summands (add1 n))))))])
+    (partial-sums (ln2-summands 1))))
+
+
+(define (interleave s1 s2)
+  (if (stream-null? s1)
+      s2
+      (cons-stream (stream-car s1)
+                   (delay (interleave s2 (stream-cdr s1))))))
+
+(define (pairs0 f s t)
+  (cons-stream
+   (f (stream-car s) (stream-car t))
+   (delay
+     (interleave
+      (stream-map (lambda (x) (f (stream-car s) x))
+                  (stream-cdr t))
+      (pairs0 f (stream-cdr s) (stream-cdr t))))))
+
+(define (pairs s t)
+  (pairs0 list s t))
+
+;; Exercise 3.69
+(define (triples s t u)
+  (cons-stream
+   (list 
+    (stream-car s)
+    (stream-car t) 
+    (stream-car u))
+   (delay (interleave
+           (stream-map (lambda (x) (cons (stream-car s) x))
+                       (stream-cdr (pairs t u)))
+           (triples (stream-cdr s)
+                    (stream-cdr t)
+                    (stream-cdr u))))))
+
+
+(define pythagoreans
+  (stream-filter
+   (lambda (triple)
+     (eq? (+ (square (car triple))
+             (square (cadr triple)))
+          (square (caddr triple))))
+   (triples integers integers integers)))
+
+
+(define (integral integrand initial-value dt)
+  (define int
+    (cons-stream initial-value
+                 (delay (add-streams (scale-stream integrand dt)
+                                     int))))
+  int)
+
+
+;; Exercise 3.73
+(define RC
+  (lambda (R C dt)
+    (lambda (is v0)
+      (add-stream
+       (scale-stream is R)
+       (integral (scale-stream is (/ 1 C))
+                 v0
+                 dt)))))
+
+
+;; Exercise 3.74
+(define sign-change-detector
+  (lambda (x y)
+    (cond
+     [(and (>= x 0 (< y 0))) 1]
+     [(and (< 0 x) (>= y 0)) -1]
+     [else 0])))
+
+(define (make-zero-crossings input-stream last-value)
+  (cons-stream
+   (sign-change-detector (stream-car input-stream) last-value)
+   (delay (make-zero-crossings (stream-cdr input-stream)
+                               (stream-car input-stream)))))
+
+(define zero-crossings (make-zero-crossings sense-data 0))
+
+(define zero-crossings-new
+  (stream-map sign-change-detector sense-data (cons-stream 0 (delay sense-data))))
+
+
+;; Exercise 3.76
+(define smooth
+  (lambda (s)
+    (stream-map
+     (lambda (x y) (/ (+ x y) 2))
+     s
+     (stream-cdr s))))
+
