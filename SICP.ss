@@ -1346,7 +1346,9 @@
 	(helper As Bs Ss))))
 
 ;; 3.5 Streams
-(define cons-stream cons)
+(define-syntax cons-stream
+  (syntax-rules ()
+    [(_ a b) (cons a (delay b))]))
 
 (define stream-car car)
 
@@ -1375,40 +1377,40 @@
       the-empty-stream
       (cons-stream
        (apply proc (map stream-car argstreams))
-       (delay (apply stream-map
-                     (cons proc (map stream-cdr argstreams)))))))
+       (apply stream-map
+              (cons proc (map stream-cdr argstreams))))))
 
 (define (stream-filter pred stream)
   (cond ((stream-null? stream) the-empty-stream)
         ((pred (stream-car stream))
          (cons-stream (stream-car stream)
-                      (delay (stream-filter pred
-                                            (stream-cdr stream)))))
+                      (stream-filter pred
+                                     (stream-cdr stream))))
         (else (stream-filter pred (stream-cdr stream)))))
 
 (define (scale-stream stream factor)
   (stream-map (lambda (x) (* x factor)) stream))
 
-(define ones (cons-stream 1 (delay ones)))
+(define ones (cons-stream 1 ones))
 
 (define fibs
   (cons-stream 0
-               (delay (cons-stream 1
-                                   (delay (add-streams (stream-cdr fibs)
-                                                       fibs))))))
+               (cons-stream 1
+                            (add-streams (stream-cdr fibs)
+                                         fibs))))
 
 (define (add-streams s1 s2)
   (stream-map + s1 s2))
 
-(define integers (cons-stream 1 (delay (add-streams ones integers))))
+(define integers (cons-stream 1 (add-streams ones integers)))
 
 ;; Exercise 3.54
 (define (mul-streams s1 s2)
   (stream-map * s1 s2))
 
-(define factorials (cons-stream 1 (delay (mul-streams
-                                          (add-streams ones integers)
-                                          factorials))))
+(define factorials (cons-stream 1 (mul-streams
+                                   (add-streams ones integers)
+                                   factorials)))
 
 ;; Exercise 3.55
 (define (partial-sums s)
@@ -1416,8 +1418,8 @@
           [s-part (stream-cdr s)])
     (cons-stream
      accu
-     (delay (f (+ accu (stream-car s-part))
-               (stream-cdr s-part))))))
+     (f (+ accu (stream-car s-part))
+        (stream-cdr s-part)))))
 
 ;; Exercise 3.56
 (define (merge s1 s2)
@@ -1427,23 +1429,23 @@
          (let ((s1car (stream-car s1))
                (s2car (stream-car s2)))
            (cond ((< s1car s2car)
-                  (cons-stream s1car (delay (merge (stream-cdr s1) s2))))
+                  (cons-stream s1car (merge (stream-cdr s1) s2)))
                  ((> s1car s2car)
-                  (cons-stream s2car (delay (merge s1 (stream-cdr s2)))))
+                  (cons-stream s2car (merge s1 (stream-cdr s2))))
                  (else
                   (cons-stream s1car
-                               (delay (merge (stream-cdr s1)
-                                             (stream-cdr s2))))))))))
+                               (merge (stream-cdr s1)
+                                      (stream-cdr s2)))))))))
 
-(define S (cons-stream 1 (delay (merge (scale-stream S 2)
-                                       (merge (scale-stream S 3)
-                                              (scale-stream S 5))))))
+(define S (cons-stream 1 (merge (scale-stream S 2)
+                                (merge (scale-stream S 3)
+                                       (scale-stream S 5)))))
 
 ;; Exercise 3.58
 (define (expand num den radix)
   (cons-stream
    (quotient (* num radix) den)
-   (delay (expand (remainder (* num radix) den) den radix))))
+   (expand (remainder (* num radix) den) den radix)))
 ;; The result is the rational value that num divide den in base radix.
 
 ;; Exercise 3.59
@@ -1452,31 +1454,29 @@
           [s coefficients])
     (cons-stream
      (* (/ 1 power) (stream-car s))
-     (delay (f (add1 power) (stream-cdr s))))))
+     (f (add1 power) (stream-cdr s)))))
 
 (define exp-series
-  (cons-stream 1 (delay (integrate-series exp-series))))
+  (cons-stream 1 (integrate-series exp-series)))
 
 (define cosine-series
-  (cons-stream 1 (delay (scale-stream (integrate-series sine-series) -1))))
+  (cons-stream 1 (scale-stream (integrate-series sine-series) -1)))
 
 (define sine-series
-  (cons-stream 0 (delay (integrate-series cosine-series))))
+  (cons-stream 0 (integrate-series cosine-series)))
 
 
 ;; Exercise 3.60
 (define (mul-series s1 s2)
   (cons-stream (* (stream-car s1) (stream-car s2))
-               (delay
-                 (add-streams (scale-stream (stream-cdr s2) (stream-car s1))
-                              (mul-series (stream-cdr s1) s2)))))
+               (add-streams (scale-stream (stream-cdr s2) (stream-car s1))
+                            (mul-series (stream-cdr s1) s2))))
 
 ;; Exercise 3.61
 (define (invert-unit-series s)
   (letrec ([x (cons-stream 1
-                           (delay
-                             (mul-series (stream-cdr s)
-                                         (scale-stream x -1))))])
+                           (mul-series (stream-cdr s)
+                                       (scale-stream x -1)))])
     x))
 
 
@@ -1509,16 +1509,15 @@
   (define guesses
     (cons-stream
      1.0
-     (delay
-       (stream-map (lambda (guess)
-                     (sqrt-improve guess x))
-                   guesses))))
+     (stream-map (lambda (guess)
+                   (sqrt-improve guess x))
+                 guesses)))
   guesses)
 
 ;; π/4 = 1 - 1/3 + 1/5 - 1/7 ... 
 (define (pi-summands n)
   (cons-stream (/ 1.0 n)
-               (delay (stream-map - (pi-summands (+ n 2))))))
+               (stream-map - (pi-summands (+ n 2)))))
 
 (define pi-stream
   (scale-stream (partial-sums (pi-summands 1)) 4))
@@ -1529,14 +1528,14 @@
         (s2 (stream-ref s 2)))          ; Sn+1
     (cons-stream (- s2 (/ (square (- s2 s1))
                           (+ s0 (* -2 s1) s2)))
-                 (delay (euler-transform (stream-cdr s))))))
+                 (euler-transform (stream-cdr s)))))
 
 ;; a stream of streams in which each stream is
 ;; the transform of the preceding one
 (define (make-tableau transform s)
   (cons-stream s
-               (delay (make-tableau transform
-                                    (transform s)))))
+               (make-tableau transform
+                             (transform s))))
 
 (define (accelerated-sequence transform s)
   (stream-map stream-car
@@ -1561,7 +1560,7 @@
   (letrec ([ln2-summands
             (lambda (n)
               (cons-stream (/ 1.0 n)
-                           (delay (stream-map - (ln2-summands (add1 n))))))])
+                           (stream-map - (ln2-summands (add1 n)))))])
     (partial-sums (ln2-summands 1))))
 
 
@@ -1569,16 +1568,15 @@
   (if (stream-null? s1)
       s2
       (cons-stream (stream-car s1)
-                   (delay (interleave s2 (stream-cdr s1))))))
+                   (interleave s2 (stream-cdr s1)))))
 
 (define (pairs0 f s t)
   (cons-stream
    (f (stream-car s) (stream-car t))
-   (delay
-     (interleave
-      (stream-map (lambda (x) (f (stream-car s) x))
-                  (stream-cdr t))
-      (pairs0 f (stream-cdr s) (stream-cdr t))))))
+   (interleave
+    (stream-map (lambda (x) (f (stream-car s) x))
+                (stream-cdr t))
+    (pairs0 f (stream-cdr s) (stream-cdr t)))))
 
 (define (pairs s t)
   (pairs0 list s t))
@@ -1590,12 +1588,12 @@
     (stream-car s)
     (stream-car t) 
     (stream-car u))
-   (delay (interleave
-           (stream-map (lambda (x) (cons (stream-car s) x))
-                       (stream-cdr (pairs t u)))
-           (triples (stream-cdr s)
-                    (stream-cdr t)
-                    (stream-cdr u))))))
+   (interleave
+    (stream-map (lambda (x) (cons (stream-car s) x))
+                (stream-cdr (pairs t u)))
+    (triples (stream-cdr s)
+             (stream-cdr t)
+             (stream-cdr u)))))
 
 
 (define pythagoreans
@@ -1610,8 +1608,8 @@
 (define (integral integrand initial-value dt)
   (define int
     (cons-stream initial-value
-                 (delay (add-streams (scale-stream integrand dt)
-                                     int))))
+                 (add-streams (scale-stream integrand dt)
+                              int)))
   int)
 
 
@@ -1627,23 +1625,25 @@
 
 
 ;; Exercise 3.74
+(define sense-data integers)
+
 (define sign-change-detector
   (lambda (x y)
     (cond
-     [(and (>= x 0 (< y 0))) 1]
+     [(and (>= x 0) (< y 0)) 1]
      [(and (< 0 x) (>= y 0)) -1]
      [else 0])))
 
 (define (make-zero-crossings input-stream last-value)
   (cons-stream
    (sign-change-detector (stream-car input-stream) last-value)
-   (delay (make-zero-crossings (stream-cdr input-stream)
-                               (stream-car input-stream)))))
+   (make-zero-crossings (stream-cdr input-stream)
+                        (stream-car input-stream))))
 
 (define zero-crossings (make-zero-crossings sense-data 0))
 
 (define zero-crossings-new
-  (stream-map sign-change-detector sense-data (cons-stream 0 (delay sense-data))))
+  (stream-map sign-change-detector sense-data (cons-stream 0 sense-data)))
 
 
 ;; Exercise 3.76
@@ -1654,3 +1654,173 @@
      s
      (stream-cdr s))))
 
+
+;; 4.1  The Metacircular Evaluator
+(define (eval exp env)
+  (cond ((self-evaluating? exp) exp)
+        ((variable? exp) (lookup-variable-value exp env))
+        ((quoted? exp) (text-of-quotation exp))
+        ((assignment? exp) (eval-assignment exp env))
+        ((definition? exp) (eval-definition exp env))
+        ((if? exp) (eval-if exp env))
+        ((lambda? exp)
+         (make-procedure (lambda-parameters exp)
+                         (lambda-body exp)
+                         env))
+        ((begin? exp) 
+         (eval-sequence (begin-actions exp) env))
+        ((cond? exp) (eval (cond->if exp) env))
+        ((application? exp)
+         (apply (eval (operator exp) env)
+                (list-of-values (operands exp) env)))
+        (else
+         (error "Unknown expression type -- EVAL" exp))))
+
+(define (apply procedure arguments)
+  (cond ((primitive-procedure? procedure)
+         (apply-primitive-procedure procedure arguments))
+        ((compound-procedure? procedure)
+         (eval-sequence
+           (procedure-body procedure)
+           (extend-environment
+             (procedure-parameters procedure)
+             arguments
+             (procedure-environment procedure))))
+        (else
+         (error
+          "Unknown procedure type -- APPLY" procedure))))
+
+(define (list-of-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (eval (first-operand exps) env)
+            (list-of-values (rest-operands exps) env))))
+
+(define (eval-if exp env)
+  (if (true? (eval (if-predicate exp) env))
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))
+
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps) (eval (first-exp exps) env))
+        (else (eval (first-exp exps) env)
+              (eval-sequence (rest-exps exps) env))))
+
+(define (eval-assignment exp env)
+  (set-variable-value! (assignment-variable exp)
+                       (eval (assignment-value exp) env)
+                       env)
+  'ok)
+
+(define (eval-definition exp env)
+  (define-variable! (definition-variable exp)
+                    (eval (definition-value exp) env)
+                    env)
+  'ok)
+
+;; Exercise 4.1
+(define (list-of-values-l2r exps env)
+  (if (no-operands? exps)
+      '()
+      (let ([first (eval (first-operand exps))])
+        (cons first
+              (list-of-values-l2r (rest-operands exps) env)))))
+
+(define (list-of-values-r2l exps env)
+  (list-of-values-l2r (reverse-exps exps) env))
+
+
+;; 4.1.2  Representing Expressions
+(define (self-evaluating? exp)
+  (cond
+   [(number? exp) true]
+   [(string? exp) true]
+   [else false]))
+
+(define (variable? exp) (symbol? exp))
+
+(define (quoted? exp)
+  (tagged-list? exp 'quote))
+
+(define (text-of-quotation exp) (cadr exp))
+
+(define (tagged-list? exp tag)
+  (if (pair? exp)
+      (eq? (car exp) tag)
+      false))
+
+(define (assignment? exp)
+  (tagged-list? exp 'set!))
+(define (assignment-variable exp) (cadr exp))
+(define (assignment-value exp) (caddr exp))
+
+(define (definition? exp)
+  (tagged-list? exp 'define))
+(define (definition-variable exp)
+  (if (symbol? (cadr exp))
+      (cadr exp)
+      (caadr exp)))
+(define (definition-value exp)
+  (if (symbol? (cadr exp))
+      (caddr exp)
+      (make-lambda (cdadr exp)   ; formal parameters
+                   (cddr exp)))) ; body
+
+(define (lambda? exp) (tagged-list? exp 'lambda))
+(define (lambda-parameters exp) (cadr exp))
+(define (lambda-body exp) (cddr exp))
+(define (make-lambda parameters body)
+  (cons 'lambda (cons parameters body)))
+
+(define (if? exp) (tagged-list? exp 'if))
+(define (if-predicate exp) (cadr exp))
+(define (if-consequent exp) (caddr exp))
+(define (if-alternative exp)
+  (if (not (null? (cdddr exp)))
+      (cadddr exp)
+      'false))
+
+(define (make-if predicate consequent alternative)
+  (list 'if predicate consequent alternative))
+
+(define (begin? exp) (tagged-list? exp 'begin))
+(define (begin-actions exp) (cdr exp))
+(define (last-exp? seq) (null? (cdr seq)))
+(define (first-exp seq) (car seq))
+(define (rest-exps seq) (cdr seq))
+
+(define (sequence->exp seq)
+  (cond ((null? seq) seq)
+        ((last-exp? seq) (first-exp seq))
+        (else (make-begin seq))))
+(define (make-begin seq) (cons 'begin seq))
+
+(define (application? exp) (pair? exp))
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))
+(define (no-operands? ops) (null? ops))
+(define (first-operand ops) (car ops))
+(define (rest-operands ops) (cdr ops))
+
+(define (cond? exp) (tagged-list? exp 'cond))
+(define (cond-clauses exp) (cdr exp))
+(define (cond-else-clause? clause)
+  (eq? (cond-predicate clause) 'else))
+(define (cond-predicate clause) (car clause))
+(define (cond-actions clause) (cdr clause))
+(define (cond->if exp)
+  (expand-clauses (cond-clauses exp)))
+
+(define (expand-clauses clauses)
+  (if (null? clauses)
+      'false                          ; no else clause
+      (let ((first (car clauses))
+            (rest (cdr clauses)))
+        (if (cond-else-clause? first)
+            (if (null? rest)
+                (sequence->exp (cond-actions first))
+                (error "ELSE clause isn't last -- COND->IF"
+                       clauses))
+            (make-if (cond-predicate first)
+                     (sequence->exp (cond-actions first))
+                     (expand-clauses rest))))))
