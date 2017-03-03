@@ -1901,7 +1901,7 @@
   (eq? x 'false))
 
 (define (make-procedure parameters body env)
-  (list 'procedure parameters body env))
+  (list 'procedure parameters (scan-out-defines body) env))
 (define (compound-procedure? p)
   (tagged-list? p 'procedure))
 (define (procedure-parameters p) (cadr p))
@@ -1937,9 +1937,12 @@
             (else (scan (cdr vars) (cdr vals)))))
     (if (eq? env the-empty-environment)
         (error 'lookup "Unbound variable" var)
-        (let ((frame (first-frame env)))
-          (scan (frame-variables frame)
-                (frame-values frame)))))
+        (let* ((frame (first-frame env))
+               (value 
+                (scan (frame-variables frame)
+                      (frame-values frame))))
+          (if (eq? value '*unassigned*)
+              (error 'lookup "Unassaigned variable" var)))))
   (env-loop env))
 
 (define (set-variable-value! var val env)
@@ -2103,4 +2106,30 @@
                      (procedure-body object)
                      '<procedure-env>))
       (display object)))
+
+
+;; Exercise 4.16
+(define scan-out-defines
+  (lambda (pbody)
+    (define (transform defs new-body)
+      (cons 'let
+            (cons (map (lambda (def) (list (definition-variable def)
+                                           '*unassigned*))
+                       defs)
+                  (append
+                   (map (lambda (def) (list 'set!
+                                            (definition-variable def)
+                                            (definition-value def)))
+                        defs)
+                   new-body))))
+    (if (null? pbody)
+        pbody
+        (let extract ([defs '()]
+                      [body pbody])
+          (if (null? body)
+              (transform defs body)
+              (let ([exp (car body)])
+                (if (definition? exp)
+                    (extract (cons exp defs) (cdr body))
+                    (transform defs body))))))))
 
