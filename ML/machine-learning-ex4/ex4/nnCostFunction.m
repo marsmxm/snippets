@@ -38,6 +38,18 @@ Theta2_grad = zeros(size(Theta2));
 %         variable J. After implementing Part 1, you can verify that your
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
+
+% Add bias units to input layer, 5000 x 401
+X = [ones(m, 1) X];
+% hiddent units, Theta1: 25 x 401
+A2 = sigmoid(X * Theta1');
+A2 = [ones(m, 1) A2]; % 5000 x 26
+% output layer, Theta2: num_labels x 26
+A3 = sigmoid(A2 * Theta2'); % 5000 x num_labels
+% transform each yk to a num_labels dimensional vector
+Y = full(sparse(1:length(y), y, 1, length(y), num_labels)); % 5000 x num_labels
+J = 1 / m * sum(sum(-Y .* log(A3) - (1 - Y) .* log(1 - A3)));
+
 %
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
@@ -54,6 +66,28 @@ Theta2_grad = zeros(size(Theta2));
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+D1 = zeros(size(Theta1));
+D2 = zeros(size(Theta2));
+for t = 1:m
+  a_1 = X(t, :)';
+  z_2 = Theta1 * a_1;
+  a_2 = [1; sigmoid(z_2)];
+  z_3 = Theta2 * a_2;
+  a_3 = sigmoid(z_3);
+
+  y_t = zeros(num_labels, 1);
+  y_t(y(t)) = 1;
+
+  delta_3 = a_3 - y_t;
+  delta_2 = Theta2(:, 2:end)' * delta_3 .* sigmoidGradient(z_2);
+
+  D2 = D2 + delta_3 * a_2';
+  D1 = D1 + delta_2 * a_1';
+end
+
+Theta1_grad = D1 / m;
+Theta2_grad = D2 / m;
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
@@ -61,24 +95,11 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+J = J + lambda / (2 * m) * ...
+    (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Theta1_grad = Theta1_grad + lambda / m * [zeros(hidden_layer_size, 1) Theta1(:, 2:end)];
+Theta2_grad = Theta2_grad + lambda / m * [zeros(num_labels, 1) Theta2(:, 2:end)];
 
 % -------------------------------------------------------------
 

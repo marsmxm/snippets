@@ -144,7 +144,7 @@ initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];
 fprintf('\nChecking Backpropagation... \n');
 
 %  Check gradients by running checkNNGradients
-checkNNGradients;
+%checkNNGradients;
 
 fprintf('\nProgram paused. Press enter to continue.\n');
 pause;
@@ -159,7 +159,7 @@ fprintf('\nChecking Backpropagation (w/ Regularization) ... \n')
 
 %  Check gradients by running checkNNGradients
 lambda = 3;
-checkNNGradients(lambda);
+%checkNNGradients(lambda);
 
 % Also output the costFunction debugging values
 debug_J  = nnCostFunction(nn_params, input_layer_size, ...
