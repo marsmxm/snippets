@@ -164,7 +164,7 @@ pause;
 %  lambda to see how the fit and learning curve change.
 %
 
-lambda = 0;
+lambda = 1;
 [theta] = trainLinearReg(X_poly, y, lambda);
 
 % Plot training data and fit
@@ -212,9 +212,19 @@ ylabel('Error');
 
 fprintf('lambda\t\tTrain Error\tValidation Error\n');
 for i = 1:length(lambda_vec)
-	fprintf(' %f\t%f\t%f\n', ...
-            lambda_vec(i), error_train(i), error_val(i));
+  fprintf(' %f\t%f\t%f\n', ...
+          lambda_vec(i), error_train(i), error_val(i));
 end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+[min_error, min_index] = min(error_val);
+best_lambda = lambda_vec(min_index);
+fprintf('Best lambda is %f, validation error of it is %f.\n',
+        best_lambda, min_error);
+
+theta = trainLinearReg(X_poly, y, best_lambda);
+error_test = linearRegCostFunction(X_poly_test, ytest, theta, 0);
+fprintf('The test error using the best λ %d is %f.\n', best_lambda, error_test);
+
