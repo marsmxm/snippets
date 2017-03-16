@@ -7,3 +7,5 @@ target/
 *.iml
 .emacs.desktop
 .emacs.desktop.lock
+wikipedia.dat
+
