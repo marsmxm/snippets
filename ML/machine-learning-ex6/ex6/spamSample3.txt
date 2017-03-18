@@ -1,0 +1,5 @@
+The pitfalls of relying on decentralized PDF exporters and converters
+There are literally hundreds of PDF exporters and converters out there. Of course, there’s the downloadable type, such as the Free Foxit Reader. But there are also free online software versions, written by many different developers for the main reason of avoiding paying for the high cost of Adobe Acrobat to create PDF files.
+And therein lies the problem.
+Anyone with a penchant for open source software knows that one of the drawbacks can be the “Wild West” of compatibility. Which matters when the document you create or convert isn’t compatible with someone else’s version of the same software, or won’t render onscreen.
+Also, all of these bits and pieces of software offer different features. For example, one user may want to export the links in PDF documents. Another may need to…
