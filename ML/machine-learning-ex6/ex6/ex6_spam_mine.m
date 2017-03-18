@@ -71,11 +71,14 @@ fprintf('\nTraining Linear SVM (Spam Classification)\n')
 fprintf('(this may take 1 to 2 minutes) ...\n')
 
 C = 0.1;
-model = svmTrain(X, y, C, @linearKernel);
+% model = svmTrain(X, y, C, @linearKernel);
+libsvm_options = '-s 0 -t 0 -c 0.1';
+model = svmtrain(y, X, libsvm_options);
 
-p = svmPredict(model, X);
+% p = svmPredict(model, X);
+p = svmpredict(y, X, model);
 
-fprintf('Training Accuracy: %f\n', mean(double(p == y)) * 100);
+% fprintf('Training Accuracy: %f\n', mean(double(p == y)) * 100);
 
 %% =================== Part 4: Test Spam Classification ================
 %  After training the classifier, we can evaluate it on a test set. We have
@@ -87,9 +90,10 @@ load('spamTest.mat');
 
 fprintf('\nEvaluating the trained Linear SVM on a test set ...\n')
 
-p = svmPredict(model, Xtest);
+% p = svmPredict(model, Xtest);
+p = svmpredict(ytest, Xtest, model);
 
-fprintf('Test Accuracy: %f\n', mean(double(p == ytest)) * 100);
+% fprintf('Test Accuracy: %f\n', mean(double(p == ytest)) * 100);
 pause;
 
 
@@ -102,7 +106,7 @@ pause;
 %
 
 % Sort the weights and obtin the vocabulary list
-[weight, idx] = sort(model.w, 'descend');
+[weight, idx] = sort(model.sv_coef' * model.SVs, 'descend');
 vocabList = getVocabList();
 
 fprintf('\nTop predictors of spam: \n');
@@ -125,13 +129,14 @@ pause;
 % Set the file to be read in (change this to spamSample2.txt,
 % emailSample1.txt or emailSample2.txt to see different predictions on
 % different emails types). Try your own emails as well!
-filename = 'spamSample1.txt';
+filename = 'spamSample3.txt';
 
 % Read and predict
 file_contents = readFile(filename);
 word_indices  = processEmail(file_contents);
 x             = emailFeatures(word_indices);
-p = svmPredict(model, x);
+% p = svmPredict(model, x);
+p = svmpredict([1], x', model);
 
 fprintf('\nProcessed %s\n\nSpam Classification: %d\n', filename, p);
 fprintf('(1 indicates spam, 0 indicates not spam)\n\n');
