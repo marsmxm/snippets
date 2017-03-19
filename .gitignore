@@ -8,4 +8,7 @@ target/
 .emacs.desktop
 .emacs.desktop.lock
 wikipedia.dat
+*.o
+*.mex
+
 
