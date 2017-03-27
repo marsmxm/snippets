@@ -8,5 +8,6 @@ target/
 .emacs.desktop
 .emacs.desktop.lock
 wikipedia.dat
+stackoverflow.csv
 *.o
 *.mex
