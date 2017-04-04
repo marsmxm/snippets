@@ -122,7 +122,13 @@ class StackOverflow extends Serializable {
       }
     }
 
-    ???
+    scored.map(pair => {
+      val langIndex = firstLangInTag(pair._1.tags, langs)
+      langIndex match {
+        case None => (-1, pair._2)
+        case Some(i) => (i * langSpread, pair._2)
+      }
+    }).filter(_._1 >= 0)
   }
 
 
@@ -157,7 +163,7 @@ class StackOverflow extends Serializable {
     val res =
       if (langSpread < 500)
         // sample the space regardless of the language
-        vectors.takeSample(false, kmeansKernels, 42)
+        vectors.takeSample(withReplacement = false, kmeansKernels, 42)
       else
         // sample the space uniformly from each language partition
         vectors.groupByKey.flatMap({
@@ -177,7 +183,9 @@ class StackOverflow extends Serializable {
 
   /** Main kmeans computation */
   @tailrec final def kmeans(means: Array[(Int, Int)], vectors: RDD[(Int, Int)], iter: Int = 1, debug: Boolean = false): Array[(Int, Int)] = {
-    val newMeans = means.clone() // you need to compute newMeans
+    val clusters = vectors.map(vector => (findClosest(vector, means), vector)).groupByKey().sortByKey()
+
+    val newMeans = clusters.map(c => averageVectors(c._2)).collect.toList.toArray
 
     // TODO: Fill in the newMeans array
     val distance = euclideanDistance(means, newMeans)
@@ -239,7 +247,7 @@ class StackOverflow extends Serializable {
   def findClosest(p: (Int, Int), centers: Array[(Int, Int)]): Int = {
     var bestIndex = 0
     var closest = Double.PositiveInfinity
-    for (i <- 0 until centers.length) {
+    for (i <- centers.indices) {
       val tempDist = euclideanDistance(p, centers(i))
       if (tempDist < closest) {
         closest = tempDist
