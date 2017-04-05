@@ -183,9 +183,13 @@ class StackOverflow extends Serializable {
 
   /** Main kmeans computation */
   @tailrec final def kmeans(means: Array[(Int, Int)], vectors: RDD[(Int, Int)], iter: Int = 1, debug: Boolean = false): Array[(Int, Int)] = {
-    val clusters = vectors.map(vector => (findClosest(vector, means), vector)).groupByKey().sortByKey()
+    val clusters = vectors.map(vector => (findClosest(vector, means), vector)).groupByKey.sortByKey().collect()
 
-    val newMeans = clusters.map(c => averageVectors(c._2)).collect.toList.toArray
+    val newMeans = means.indices.map(i => {
+      clusters.find(_._1 == i) match {
+        case Some(cluster) => averageVectors(cluster._2)
+      }
+    }).toArray
 
     // TODO: Fill in the newMeans array
     val distance = euclideanDistance(means, newMeans)
