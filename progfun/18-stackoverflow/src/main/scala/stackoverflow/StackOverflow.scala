@@ -188,6 +188,7 @@ class StackOverflow extends Serializable {
     val newMeans = means.indices.map(i => {
       clusters.find(_._1 == i) match {
         case Some(cluster) => averageVectors(cluster._2)
+        case None => means(i)
       }
     }).toArray
 
