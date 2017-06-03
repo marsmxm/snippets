@@ -53,7 +53,13 @@ Theta_grad = zeros(size(Theta));
 
 J = sum(sum((X * Theta' - Y) .^ 2 .* R)) / 2;
 
-
+for i = 1:num_movies
+    for j = 1:num_users
+      if R(i, j) == 1
+        X_grad(i) = 
+      end
+    end
+end
 
 
 
