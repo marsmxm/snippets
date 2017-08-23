@@ -4,6 +4,9 @@ target/
 *~
 *#
 .idea/
+.settings/
+.classpath
+.project
 progfun/.idea/*
 *.iml
 .emacs.desktop
