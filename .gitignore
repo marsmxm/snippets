@@ -15,3 +15,5 @@ wikipedia.dat
 stackoverflow.csv
 *.o
 *.mex
+__pycache__
+
