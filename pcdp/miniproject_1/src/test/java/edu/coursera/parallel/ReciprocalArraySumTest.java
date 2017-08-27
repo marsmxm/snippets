@@ -105,6 +105,8 @@ public class ReciprocalArraySumTest extends TestCase {
 
         final long seqTime = (seqEndTime - seqStartTime) / REPEATS;
         final long parTime = (parEndTime - parStartTime) / REPEATS;
+        
+        System.out.println(String.format("N: %d, ntasks: %d, seq: %d, par: %d", N, ntasks, seqTime, parTime));
 
         return (double)seqTime / (double)parTime;
     }
