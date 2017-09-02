@@ -60,7 +60,7 @@ public class StudentAnalyticsTest extends TestCase {
             analytics.averageAgeOfEnrolledStudentsParallelStream(students);
         }
         final long endParallel = System.currentTimeMillis();
-
+        System.out.println("Sequential: " + (endSequential - startSequential) + ", Parallel: " + (endParallel - startParallel));
         return (double)(endSequential - startSequential) / (double)(endParallel - startParallel);
     }
 
