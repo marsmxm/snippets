@@ -102,6 +102,7 @@ public class StudentAnalyticsTest extends TestCase {
         }
         final long endParallel = System.currentTimeMillis();
 
+        System.out.println("Sequential: " + (endSequential - startSequential) + ", Parallel: " + (endParallel - startParallel));
         return (double)(endSequential - startSequential) / (double)(endParallel - startParallel);
     }
 
@@ -145,6 +146,7 @@ public class StudentAnalyticsTest extends TestCase {
         }
         final long endParallel = System.currentTimeMillis();
 
+        System.out.println("Sequential: " + (endSequential - startSequential) + ", Parallel: " + (endParallel - startParallel));
         return (double)(endSequential - startSequential) / (double)(endParallel - startParallel);
     }
 
