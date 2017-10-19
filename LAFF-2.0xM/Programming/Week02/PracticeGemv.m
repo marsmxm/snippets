@@ -1,4 +1,4 @@
-disp( 'To end practice, enter Control-C' )
+disp( 'To end practice, enter Control-C in MATLAB, or press the Stop button in MATLAB Online' )
 
 for i=1:10
     size_A = randi( [1,3], 2,1 );
@@ -14,7 +14,7 @@ for i=1:10
         answ = A * x;
         correct = 1;
         for j=1:m_A
-            y( j,1 ) = input('');
+            y( j,1 ) = input(' ');
             if y( j, 1 ) ~= answ( j )
                 correct = 0;
             end
