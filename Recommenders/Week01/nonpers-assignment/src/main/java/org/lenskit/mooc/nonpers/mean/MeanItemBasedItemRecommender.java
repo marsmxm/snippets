@@ -86,6 +86,20 @@ public class MeanItemBasedItemRecommender extends AbstractItemBasedItemRecommend
         List<Result> results = new ArrayList<>();
 
         // TODO Find the top N items by mean rating
+        for (long item : items) {
+            results.add(Results.create(item, model.getMeanRating(item)));
+        }
+
+        Collections.sort(results, new Comparator<Result>() {
+            @Override
+            public int compare(Result o1, Result o2) {
+                return -Double.compare(o1.getScore(), o2.getScore());
+            }
+        });
+
+        if (n >= 0) {
+            results = results.subList(0, n);
+        }
 
         return Results.newResultList(results);
     }
