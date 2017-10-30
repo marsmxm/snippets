@@ -52,16 +52,31 @@ public class ItemMeanModelProvider implements Provider<ItemMeanModel> {
     @Override
     public ItemMeanModel get() {
         // TODO Set up data structures for computing means
+        // itemId -> Ratings
+        Map<Long, List<Rating>> itemRatingsMap = new HashMap<>();
 
         try (ObjectStream<Rating> ratings = dao.query(Rating.class).stream()) {
             for (Rating r: ratings) {
                 // this loop will run once for each rating in the data set
                 // TODO process this rating
+                if (itemRatingsMap.containsKey(r.getItemId())) {
+                    itemRatingsMap.get(r.getItemId()).add(r);
+                } else {
+                    itemRatingsMap.put(r.getItemId(), Lists.newArrayList(r));
+                }
             }
         }
 
         Long2DoubleOpenHashMap means = new Long2DoubleOpenHashMap();
         // TODO Finalize means to store them in the mean model
+        for (long itemId : itemRatingsMap.keySet()) {
+            double sum = 0.0;
+            List<Rating> ratings = itemRatingsMap.get(itemId);
+            for (Rating r : ratings) {
+                sum += r.getValue();
+            }
+            means.put(itemId, sum / ratings.size());
+        }
 
         logger.info("computed mean ratings for {} items", means.size());
         return new ItemMeanModel(means);
