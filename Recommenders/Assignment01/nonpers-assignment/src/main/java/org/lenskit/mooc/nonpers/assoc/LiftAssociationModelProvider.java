@@ -13,7 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Build an association rule model using a lift metric.
@@ -73,6 +76,15 @@ public class LiftAssociationModelProvider implements Provider<AssociationModel> 
             Long2DoubleMap itemScores = new Long2DoubleOpenHashMap();
 
             // TODO Compute lift association formulas for all other 'Y' items with respect to this 'X'
+            // loop over the 'y' items
+            for (Long2ObjectMap.Entry<LongSortedSet> yEntry: itemUsers.long2ObjectEntrySet()) {
+                long yId = yEntry.getLongKey();
+                LongSortedSet yUsers = yEntry.getValue();
+
+                Set<Long> intersection = new HashSet<>(yUsers);
+                intersection.retainAll(xUsers);
+                itemScores.put(yId, intersection.size() * allUsers.size() * 1.0 / (xUsers.size() * yUsers.size()));
+            }
 
             // save the score map to the main map
             assocMatrix.put(xId, itemScores);
