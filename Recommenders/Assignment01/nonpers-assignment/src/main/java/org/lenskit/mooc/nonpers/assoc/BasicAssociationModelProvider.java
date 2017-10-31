@@ -11,7 +11,10 @@ import org.lenskit.util.io.ObjectStream;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Build a model for basic association rules.  This class computes the association for all pairs of items.
@@ -71,6 +74,9 @@ public class BasicAssociationModelProvider implements Provider<AssociationModel>
                 LongSortedSet yUsers = yEntry.getValue();
 
                 // TODO Compute P(Y & X) / P(X) and store in itemScores
+                Set<Long> intersection = new HashSet<>(yUsers);
+                intersection.retainAll(xUsers);
+                itemScores.put(yId, intersection.size() * 1.0 / xUsers.size());
             }
 
             // save the score map to the main map
