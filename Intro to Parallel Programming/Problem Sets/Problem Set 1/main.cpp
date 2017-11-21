@@ -28,6 +28,11 @@ int main(int argc, char **argv) {
   bool useEpsCheck = false;
   switch (argc)
   {
+	case 1:
+	  input_file = "cinque_terre_small.jpg";
+	  output_file = "HW1_output.png";
+	  reference_file = "HW1_reference.png";
+	  break;
 	case 2:
 	  input_file = std::string(argv[1]);
 	  output_file = "HW1_output.png";

@@ -1,0 +1,8 @@
+﻿  main.cpp
+c:\users\marsm\src\snippets\intro to parallel programming\problem sets\problem set 1\hw1.cpp(65): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  CUDA_HW1.vcxproj -> C:\Users\marsm\src\snippets\Intro to Parallel Programming\Problem Sets\Problem Set 1\CUDA_HW1\x64\Debug\CUDA_HW1.exe
+  CUDA_HW1.vcxproj -> C:\Users\marsm\src\snippets\Intro to Parallel Programming\Problem Sets\Problem Set 1\CUDA_HW1\x64\Debug\CUDA_HW1.pdb (Full PDB)
+  copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\cudart*.dll" "C:\Users\marsm\src\snippets\Intro to Parallel Programming\Problem Sets\Problem Set 1\CUDA_HW1\x64\Debug\"
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\cudart32_90.dll
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\cudart64_90.dll
+          2 file(s) copied.
