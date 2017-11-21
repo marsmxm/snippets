@@ -11,9 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 
 /**
  * An item-based item scorer that uses association rules.
@@ -67,6 +66,20 @@ public class AssociationItemBasedItemRecommender extends AbstractItemBasedItemRe
         List<Result> results = new ArrayList<>();
 
         // TODO Compute the n highest-scoring items from candidates
+        for (long item : candidates) {
+            results.add(Results.create(item, model.getItemAssociation(refItem, item)));
+        }
+
+        Collections.sort(results, new Comparator<Result>() {
+            @Override
+            public int compare(Result o1, Result o2) {
+                return -Double.compare(o1.getScore(), o2.getScore());
+            }
+        });
+
+        if (n >= 0) {
+            results = results.subList(0, n);
+        }
 
         return Results.newResultList(results);
     }
