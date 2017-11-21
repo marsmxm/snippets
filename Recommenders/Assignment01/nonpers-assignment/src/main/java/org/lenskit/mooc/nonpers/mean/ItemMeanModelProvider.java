@@ -1,7 +1,7 @@
 package org.lenskit.mooc.nonpers.mean;
 
+import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import org.lenskit.data.dao.DataAccessObject;
 import org.lenskit.data.ratings.Rating;
 import org.lenskit.inject.Transient;
@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provider class that builds the mean rating item scorer, computing item means from the

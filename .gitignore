@@ -16,4 +16,6 @@ stackoverflow.csv
 *.o
 *.mex
 __pycache__
+.gradle
+build/
 
