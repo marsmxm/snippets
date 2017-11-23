@@ -155,7 +155,7 @@ def linear_function():
 
 # In[8]:
 
-print( "result = " + str(linear_function()))
+print("result = " + str(linear_function()))
 
 
 # *** Expected Output ***: 
@@ -943,7 +943,7 @@ def model(X_train, Y_train, X_test, Y_test, learning_rate = 0.0001,
     
     # Backpropagation: Define the tensorflow optimizer. Use an AdamOptimizer.
     ### START CODE HERE ### (1 line)
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate = learning_rate).minimize(cost)
+    optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate).minimize(cost)
     ### END CODE HERE ###
     
     # Initialize all the variables
