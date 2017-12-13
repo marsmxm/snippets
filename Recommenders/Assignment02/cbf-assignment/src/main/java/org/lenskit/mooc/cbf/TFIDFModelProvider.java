@@ -65,6 +65,18 @@ public class TFIDFModelProvider implements Provider<TFIDFModel> {
                 String tag = tagApplication.get(TagData.TAG);
                 // TODO Count this tag application in the term frequency vector
                 // TODO Also count it in the document frequencey vector when needed
+                Double tagCount = work.get(tag);
+                if (tagCount == null) {
+                    work.put(tag, 1.0);
+                    Double tagDF = docFreq.get(tag);
+                    if (tagDF == null) {
+                        docFreq.put(tag, 1.0);
+                    } else {
+                        docFreq.put(tag, tagDF + 1.0);
+                    }
+                } else {
+                    work.put(tag, tagCount + 1.0);
+                }
             }
 
             itemVectors.put(item, work);
@@ -88,10 +100,20 @@ public class TFIDFModelProvider implements Provider<TFIDFModel> {
             Map<String, Double> tv = new HashMap<>(entry.getValue());
 
             // TODO Convert this vector to a TF-IDF vector
+            Double sqrSum = 0.0;
+            for (Map.Entry<String, Double> e : tv.entrySet()) {
+                Double newValue = e.getValue() * docFreq.get(e.getKey());
+                sqrSum += newValue * newValue;
+                e.setValue(newValue);
+            }
             // TODO Normalize the TF-IDF vector to be a unit vector
             // Normalize it by dividing each element by its Euclidean norm, which is the
             // square root of the sum of the squares of the values.
-
+            Double sqrt = Math.sqrt(sqrSum);
+            for (Map.Entry<String, Double> e : tv.entrySet()) {
+                e.setValue(e.getValue() / sqrt);
+            }
+            
             modelData.put(entry.getKey(), tv);
         }
 
