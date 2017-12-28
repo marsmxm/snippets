@@ -1,9 +1,6 @@
 package org.lenskit.mooc.uu;
 
-import com.google.common.collect.Maps;
-import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2DoubleSortedMap;
 import org.lenskit.api.Result;
 import org.lenskit.api.ResultMap;
 import org.lenskit.basic.AbstractItemScorer;
@@ -11,10 +8,7 @@ import org.lenskit.data.dao.DataAccessObject;
 import org.lenskit.data.entities.CommonAttributes;
 import org.lenskit.data.ratings.Rating;
 import org.lenskit.results.Results;
-import org.lenskit.util.ScoredIdAccumulator;
-import org.lenskit.util.TopNScoredIdAccumulator;
-import org.lenskit.util.collections.LongUtils;
-import org.lenskit.util.math.Scalars;
+import org.lenskit.util.IdBox;
 import org.lenskit.util.math.Vectors;
 
 import javax.annotation.Nonnull;
@@ -45,8 +39,21 @@ public class SimpleUserUserItemScorer extends AbstractItemScorer {
     @Nonnull
     @Override
     public ResultMap scoreWithDetails(long user, @Nonnull Collection<Long> items) {
-        // TODO Score the items for the user with user-user CF
-        throw new UnsupportedOperationException("not yet implemented");
+        List<Result> results = new ArrayList<>();
+
+        // get target user's mean and normalized ratings
+        Long2DoubleOpenHashMap targetUserRatings = getUserRatingVector(user);
+        double targetUserMean = Vectors.mean(targetUserRatings);
+        // normalize
+        for (Map.Entry<Long, Double> entry : targetUserRatings.entrySet()) {
+            entry.setValue(entry.getValue() - targetUserMean);
+        }
+
+        for (Long item : items) {
+
+        }
+
+        return Results.newResultMap(results);
     }
 
     /**
@@ -67,5 +74,17 @@ public class SimpleUserUserItemScorer extends AbstractItemScorer {
 
         return ratings;
     }
+
+    private List<IdBox<List<Rating>>> getAllUserRatings() {
+        return dao.query(Rating.class)
+                .groupBy(CommonAttributes.USER_ID)
+                .get();
+
+    }
+
+    private Double getMeanScore(long user) {
+        return Vectors.mean(getUserRatingVector(user));
+    }
+
 
 }
