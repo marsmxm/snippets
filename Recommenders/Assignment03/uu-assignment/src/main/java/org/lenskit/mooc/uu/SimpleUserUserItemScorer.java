@@ -13,10 +13,7 @@ import org.lenskit.util.math.Vectors;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User-user item scorer.
@@ -49,8 +46,21 @@ public class SimpleUserUserItemScorer extends AbstractItemScorer {
             entry.setValue(entry.getValue() - targetUserMean);
         }
 
-        for (Long item : items) {
+        List<Neighbor> neighbors = getSortedNeighbors(targetUserRatings);
 
+        for (long item : items) {
+            List<Neighbor> neighborsOfItem = findNeighborsOfItem(neighbors, item);
+            if (neighborsOfItem.size() >= 2) {
+                double numerator = 0;
+                double denominator = 0;
+                for (Neighbor neighbor : neighborsOfItem) {
+                    numerator += neighbor.similarity * neighbor.normalizedRatings.get(item);
+                    denominator += Math.abs(neighbor.similarity);
+                }
+
+                double score = targetUserMean + numerator / denominator;
+                results.add(Results.create(item, score));
+            }
         }
 
         return Results.newResultMap(results);
@@ -75,16 +85,60 @@ public class SimpleUserUserItemScorer extends AbstractItemScorer {
         return ratings;
     }
 
-    private List<IdBox<List<Rating>>> getAllUserRatings() {
-        return dao.query(Rating.class)
+    private List<Neighbor> getSortedNeighbors(Long2DoubleOpenHashMap targetUserRatings) {
+        List<Neighbor> neighbors = new ArrayList<>();
+
+        List<IdBox<List<Rating>>> allRatings = dao.query(Rating.class)
                 .groupBy(CommonAttributes.USER_ID)
                 .get();
 
+        for (IdBox<List<Rating>> userBox : allRatings) {
+            long user = userBox.getId();
+            double mean = getMeanScore(userBox.getValue());
+            Long2DoubleOpenHashMap normalized = new Long2DoubleOpenHashMap();
+            for (Rating rating : userBox.getValue()) {
+                normalized.put(rating.getItemId(), rating.getValue() - mean);
+            }
+
+            double similarity = getSimilarity(targetUserRatings, normalized);
+            neighbors.add(new Neighbor(user, normalized, similarity));
+        }
+
+        Collections.sort(neighbors, Neighbor.SIMILARITY_COMPARATOR);
+
+        return neighbors;
     }
 
-    private Double getMeanScore(long user) {
-        return Vectors.mean(getUserRatingVector(user));
+    private List<Neighbor> findNeighborsOfItem(List<Neighbor> sortedNeighbors, long item) {
+        List<Neighbor> result = new ArrayList<>();
+
+        for (Neighbor neighbor : sortedNeighbors) {
+            if (result.size() == neighborhoodSize) {
+                return result;
+            } else {
+                if (neighbor.normalizedRatings.containsKey(item)) {
+                    result.add(neighbor);
+                }
+            }
+        }
+
+        return result;
     }
 
+    private double getMeanScore(List<Rating> ratings) {
+        if (ratings.size() == 0) {
+            return 0;
+        } else {
+            double sum = 0;
+            for (Rating rating : ratings) {
+                sum += rating.getValue();
+            }
+            return sum / ratings.size();
+        }
+    }
 
+    private double getSimilarity(Long2DoubleOpenHashMap ratings1, Long2DoubleOpenHashMap ratings2) {
+        return Vectors.dotProduct(ratings1, ratings2)
+                / (Vectors.euclideanNorm(ratings1) * Vectors.euclideanNorm(ratings2));
+    }
 }
