@@ -3,7 +3,6 @@ package org.lenskit.mooc.ii;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lenskit.data.dao.DataAccessObject;
 import org.lenskit.data.entities.CommonAttributes;
 import org.lenskit.data.ratings.Rating;
@@ -20,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="http://www.grouplens.org">GroupLens Research</a>
@@ -73,6 +73,22 @@ public class SimpleItemItemModelProvider implements Provider<SimpleItemItemModel
 
         // TODO Compute the similarities between each pair of items
         // Ignore nonpositive similarities
+        for (Map.Entry<Long, Long2DoubleMap> entryI : itemVectors.entrySet()) {
+            for (Map.Entry<Long, Long2DoubleMap> entryJ : itemVectors.entrySet()) {
+                if (!Objects.equals(entryI.getKey(), entryJ.getKey())
+                        && !itemSimilarities.containsKey(entryI.getKey())) {
+
+                    Long2DoubleMap valueI = entryI.getValue();
+                    Long2DoubleMap valueJ = entryJ.getValue();
+                    double similirity = Vectors.dotProduct(valueI, valueJ)
+                            / (Vectors.euclideanNorm(valueI) * Vectors.euclideanNorm(valueJ));
+
+                    if (similirity > 0) {
+                        
+                    }
+                }
+            }
+        }
 
         return new SimpleItemItemModel(LongUtils.frozenMap(itemMeans), itemSimilarities);
     }
