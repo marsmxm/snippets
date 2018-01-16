@@ -36,6 +36,14 @@ public class SimpleItemBasedItemScorer extends AbstractItemBasedItemScorer {
         List<Result> results = new ArrayList<>();
 
         // TODO Score the items and put them in results
+        for (Long item : items) {
+            Long2DoubleMap neighbors = model.getNeighbors(item);
+            double score = neighbors.entrySet().stream()
+                    .filter(entry -> basket.contains(entry.getKey()))
+                    .mapToDouble(Map.Entry::getValue)
+                    .sum();
+            results.add(Results.create(item, score));
+        }
 
         return Results.newResultMap(results);
     }
