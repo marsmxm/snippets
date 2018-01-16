@@ -72,22 +72,31 @@ public class SimpleItemItemModelProvider implements Provider<SimpleItemItemModel
         Map<Long,Long2DoubleMap> itemSimilarities = Maps.newHashMap();
 
         // TODO Compute the similarities between each pair of items
-        // Ignore nonpositive similarities
+        // Ignore non-positive similarities
         for (Map.Entry<Long, Long2DoubleMap> entryI : itemVectors.entrySet()) {
+            Long keyI = entryI.getKey();
+            Long2DoubleMap similarities = new Long2DoubleOpenHashMap();
+
             for (Map.Entry<Long, Long2DoubleMap> entryJ : itemVectors.entrySet()) {
-                if (!Objects.equals(entryI.getKey(), entryJ.getKey())
-                        && !itemSimilarities.containsKey(entryI.getKey())) {
+                Long keyJ = entryJ.getKey();
+                if (!Objects.equals(keyI, keyJ)) {
+                    // check if i exits in j's similarities map
+                    if (itemSimilarities.containsKey(keyJ) && itemSimilarities.get(keyJ).containsKey(keyI)) {
+                        similarities.put(keyJ, itemSimilarities.get(keyJ).get(keyI));
+                    } else {
+                        Long2DoubleMap valueI = entryI.getValue();
+                        Long2DoubleMap valueJ = entryJ.getValue();
+                        Double similarity = Vectors.dotProduct(valueI, valueJ)
+                                / (Vectors.euclideanNorm(valueI) * Vectors.euclideanNorm(valueJ));
 
-                    Long2DoubleMap valueI = entryI.getValue();
-                    Long2DoubleMap valueJ = entryJ.getValue();
-                    double similirity = Vectors.dotProduct(valueI, valueJ)
-                            / (Vectors.euclideanNorm(valueI) * Vectors.euclideanNorm(valueJ));
-
-                    if (similirity > 0) {
-                        
+                        if (similarity > 0) {
+                            similarities.put(keyJ, similarity);
+                        }
                     }
                 }
             }
+
+            itemSimilarities.put(keyI, similarities);
         }
 
         return new SimpleItemItemModel(LongUtils.frozenMap(itemMeans), itemSimilarities);
