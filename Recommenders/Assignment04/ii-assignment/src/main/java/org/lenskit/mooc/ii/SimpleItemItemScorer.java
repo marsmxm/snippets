@@ -82,5 +82,23 @@ public class SimpleItemItemScorer extends AbstractItemScorer {
         return ratings;
     }
 
+    private Long2DoubleMap get20NeighborsInOrder(Long2DoubleMap neighbors, Long2DoubleMap ratings) {
+        Long2DoubleMap result = new Long2DoubleOpenHashMap();
+        // to sort items by similarities in desc order
+        TreeSet<Long> items = new TreeSet<>(Comparator.comparingDouble(o -> -neighbors.get(o)));
+        items.addAll(neighbors.keySet());
+
+        int counter = 0;
+        for (Long item : items) {
+            if (counter >= neighborhoodSize) {
+                return result;
+            } else if (ratings.containsKey(item)) {
+                result.put(item, neighbors.get(item));
+                counter++;
+            }
+        }
+
+        return result;
+    }
 
 }
