@@ -9,8 +9,7 @@ import org.lenskit.data.dao.DataAccessObject;
 import org.lenskit.data.entities.CommonAttributes;
 import org.lenskit.data.ratings.Rating;
 import org.lenskit.results.Results;
-import org.lenskit.util.ScoredIdAccumulator;
-import org.lenskit.util.TopNScoredIdAccumulator;
+import org.lenskit.util.math.Vectors;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
