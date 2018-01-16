@@ -46,15 +46,22 @@ public class SimpleItemItemScorer extends AbstractItemScorer {
         Long2DoubleMap ratings = getUserRatingVector(user);
 
         // TODO Normalize the user's ratings by subtracting the item mean from each one.
+        for (Map.Entry<Long, Double> entry : ratings.entrySet()) {
+            entry.setValue(entry.getValue() - itemMeans.get(entry.getKey()));
+        }
 
         List<Result> results = new ArrayList<>();
 
-        for (long item: items ) {
+        for (long item: items) {
             // TODO Compute the user's score for each item, add it to results
+            Long2DoubleMap neighbors20 = get20NeighborsInOrder(model.getNeighbors(item), ratings);
+
+            double score = itemMeans.get(item)
+                    + Vectors.dotProduct(neighbors20, ratings) / neighbors20.values().stream().mapToDouble(d -> d).sum();
+            results.add(Results.create(item, score));
         }
 
         return Results.newResultMap(results);
-
     }
 
     /**
