@@ -1,5 +1,6 @@
 package org.lenskit.mooc.ii;
 
+import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import org.lenskit.api.Result;
 import org.lenskit.api.ResultMap;
 import org.lenskit.basic.AbstractItemBasedItemScorer;
