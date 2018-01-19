@@ -13,10 +13,7 @@ import org.lenskit.util.math.Vectors;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="http://www.grouplens.org">GroupLens Research</a>
