@@ -1,5 +1,5 @@
 (library (register-machine)
-  (export)
+  (export get-register)
   (import (assembler))
 
   (define (make-machine register-names ops controller-text)
@@ -108,4 +108,10 @@
     (get-contents (get-register machine register-name)))
   (define (set-register-contents! machine register-name value)
     (set-contents! (get-register machine register-name) value)
-    'done))
+    'done)
+
+  (define (get-register machine reg-name)
+    ((machine 'get-register) reg-name))
+
+  (define (advance-pc pc)
+    (set-contents! pc (cdr (get-contents pc)))))
