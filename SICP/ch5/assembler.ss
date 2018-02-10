@@ -1,6 +1,6 @@
 (library (assembler)
   (export assemble)
-  (import)
+  (import (only (register-machine) get-register advance-pc))
 
   (define (assemble controller-text machine)
     (extract-labels controller-text
@@ -74,6 +74,26 @@
            (make-restore inst machine stack pc))
           ((eq? (car inst) 'perform)
            (make-perform inst machine labels ops pc))
-          (else (error "Unknown instruction type -- ASSEMBLE"
+          (else (error 'make-execution-procedure
+		       "Unknown instruction type -- ASSEMBLE"
                        inst))))
+
+  (define (make-assign inst machine labels operations pc)
+    (let ((target
+	   (get-register machine (assign-reg-name inst)))
+	  (value-exp (assign-value-exp inst)))
+      (let ((value-proc
+	     (if (operation-exp? value-exp)
+		 (make-operation-exp
+		  value-exp machine labels operations)
+		 (make-primitive-exp
+		  (car value-exp) machine labels))))
+	(lambda ()                ; execution procedure for assign
+	  (set-contents! target (value-proc))
+	  (advance-pc pc)))))
+
+  (define (assign-reg-name assign-instruction)
+    (cadr assign-instruction))
+  (define (assign-value-exp assign-instruction)
+    (cddr assign-instruction))
   )
