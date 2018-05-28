@@ -1901,6 +1901,3 @@
          [j (an-integer-between i k)])
     (require (= (+ (* i i) (* j j)) (* k k)))
     (list i j k)))
-
-
-
