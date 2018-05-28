@@ -1,0 +1,30 @@
+
+plugins {
+    // Apply the java plugin to add support for Java
+    id 'java'
+
+    // Apply the application plugin to add support for building an application
+    id 'application'
+}
+
+ext.classifier      = ':jdk8' // ':'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations.all {
+    resolutionStrategy {
+        failOnVersionConflict()
+    }
+}
+
+mainClassName = 'App'
+
+
+dependencies {
+    compile 'co.paralleluniverse:quasar-core:0.7.7:jdk8'
+    testCompile 'junit:junit:4.12'
+}
+
+repositories {
+    jcenter()
+}

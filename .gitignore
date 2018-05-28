@@ -16,6 +16,7 @@ stackoverflow.csv
 *.o
 *.mex
 __pycache__
-.gradle
+.gradle/
 build/
+out/
 ResNet50.h5
