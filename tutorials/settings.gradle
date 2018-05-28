@@ -1,4 +1,4 @@
-rootProject.name = 'samples'
+rootProject.name = 'tutorials'
 
 include 'hazelcast'
 include 'zookeeper'
