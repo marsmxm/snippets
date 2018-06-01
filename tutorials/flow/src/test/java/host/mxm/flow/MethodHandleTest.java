@@ -1,13 +1,16 @@
 package host.mxm.flow;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -58,6 +61,54 @@ public class MethodHandleTest {
 
         System.out.println(i);
         System.out.println("time used: " + (System.currentTimeMillis() - start));
+    }
+
+    @Test
+    public void official() throws Throwable {
+        Object x, y;
+        String s;
+        int i;
+        MethodType mt;
+        MethodHandle mh;
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+        // mt is (char,char)String
+        mt = MethodType.methodType(String.class, char.class, char.class);
+        mh = lookup.findVirtual(String.class, "replace", mt);
+        s = (String) mh.invokeExact("daddy", 'd', 'n');
+        // invokeExact(Ljava/lang/String;CC)Ljava/lang/String;
+        assertEquals("nanny", s);
+
+        // weakly typed invocation (using MHs.invoke)
+        s = (String) mh.invokeWithArguments("sappy", 'p', 'v');
+        assertEquals("savvy", s);
+
+        // mt is (Object[])List
+        mt = MethodType.methodType(List.class, Object[].class);
+        mh = lookup.findStatic(Arrays.class, "asList", mt);
+        assert mh.isVarargsCollector();
+        x = mh.invoke("one", "two");
+        // invoke(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+        assertEquals(Arrays.asList("one", "two"), x);
+
+        // mt is (Object,Object,Object)Object
+        mt = MethodType.genericMethodType(3);
+        mh = mh.asType(mt);
+        x = mh.invokeExact((Object) 1, (Object) 2, (Object) 3);
+        // invokeExact(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        assertEquals(Arrays.asList(1, 2, 3), x);
+
+        // mt is ()int
+        mt = MethodType.methodType(int.class);
+        mh = lookup.findVirtual(List.class, "size", mt);
+        i = (int) mh.invokeExact(Arrays.asList(1, 2, 3));
+        // invokeExact(Ljava/util/List;)I
+        assert i == 3;
+
+        mt = MethodType.methodType(void.class, String.class);
+        mh = lookup.findVirtual(PrintStream.class, "println", mt);
+        mh.invokeExact(System.out, "Hello, world.");
+        // invokeExact(Ljava/io/PrintStream;Ljava/lang/String;)V
     }
 
     @Test
