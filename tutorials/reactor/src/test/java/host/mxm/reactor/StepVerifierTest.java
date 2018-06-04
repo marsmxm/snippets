@@ -1,6 +1,7 @@
 package host.mxm.reactor;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -8,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 public class StepVerifierTest {
