@@ -1,4 +1,4 @@
-package host.mxm.littlejava.part2;
+package host.mxm.littlejava.ch1;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -7,7 +7,14 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Mu Xian Ming (Sam)
  */
-public final class Part2 {
+public abstract class Part1 {
+    public static void main(String[] args) {
+        assertTrue(new Tomato(new Onion(new Skewer())).isVegetarian());
+        assertFalse(new Lamb(new Onion(new Skewer())).onlyOnions());
+        assertTrue(new Onion(new Onion(new Skewer())).onlyOnions());
+    }
+
+
     abstract static class ShishD {
         abstract boolean onlyOnions();
         abstract boolean isVegetarian();
@@ -72,11 +79,4 @@ public final class Part2 {
             return s.isVegetarian();
         }
     }
-    
-    public static void main(String[] args) {
-        assertTrue(new Tomato(new Onion(new Skewer())).isVegetarian());
-        assertFalse(new Lamb(new Onion(new Skewer())).onlyOnions());
-        assertTrue(new Onion(new Onion(new Skewer())).onlyOnions());
-    }
 }
-
