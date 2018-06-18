@@ -32,5 +32,6 @@ public class SetEval extends EvalD<SetD> {
                 .accept(new SetEval());
 
         System.out.println(s);
+        System.out.println(System.currentTimeMillis());
     }
 }
