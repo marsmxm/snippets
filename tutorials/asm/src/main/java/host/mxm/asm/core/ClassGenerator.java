@@ -7,10 +7,12 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.V1_5;
 
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.util.CheckClassAdapter;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 /**
  *
@@ -34,19 +36,21 @@ public final class ClassGenerator {
 
     public static void main(String[] args) {
         ClassWriter cw = new ClassWriter(0);
+        TraceClassVisitor tcv = new TraceClassVisitor(cw, new PrintWriter(System.out));
+        CheckClassAdapter cv = new CheckClassAdapter(tcv);
 
-        cw.visit(V1_5, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE,
+        cv.visit(V1_5, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE,
                  "host/mxm/asm/core/ComparableI", null, "java/lang/Object",
                  new String[] { "host/mxm/asm/core/ClassGenerator$MesurableI" });
-        cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "LESS", "I",
+        cv.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "LESS", "I",
                       null, new Integer(-1)).visitEnd();
-        cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "EQUAL", "I",
+        cv.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "EQUAL", "I",
                       null, new Integer(0)).visitEnd();
-        cw.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "GREATER", "I",
+        cv.visitField(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "GREATER", "I",
                       null, new Integer(1)).visitEnd();
-        cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, "compareTo",
+        cv.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, "compareTo",
                        "(Ljava/lang/Object;)I", null, null).visitEnd();
-        cw.visitEnd();
+        cv.visitEnd();
         byte[] b = cw.toByteArray();
 
         Class<?> c = new MyClassLoader().defineClass("host.mxm.asm.core.ComparableI", b);
