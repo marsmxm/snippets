@@ -1,0 +1,753 @@
+     76    1       3       java.util.concurrent.ConcurrentHashMap::tabAt (22 bytes)
+     77    2       3       jdk.internal.misc.Unsafe::getObjectAcquire (7 bytes)
+     82    3       3       java.lang.Object::<init> (1 bytes)
+     86    4       3       java.lang.StringLatin1::hashCode (42 bytes)
+     86    5       3       java.lang.String::isLatin1 (19 bytes)
+     86    6       3       java.lang.String::hashCode (49 bytes)
+     86    7       3       java.lang.String::coder (15 bytes)
+     86    8       3       java.lang.Math::floorMod (10 bytes)
+     87   10       3       java.util.ImmutableCollections$SetN::probe (60 bytes)
+     87    9       3       java.lang.Math::floorDiv (22 bytes)
+     88   11       3       java.lang.String::equals (65 bytes)
+     88   13       3       java.lang.StringLatin1::equals (36 bytes)
+     88   12       1       java.util.ImmutableCollections$Set0::hashCode (2 bytes)
+     89   14       1       java.util.Collections$EmptySet::hashCode (2 bytes)
+     89   15       3       java.util.Collections::emptySet (4 bytes)
+     89   16       3       java.lang.module.ModuleDescriptor$Exports::<init> (10 bytes)
+     89   18       4       java.lang.StringLatin1::hashCode (42 bytes)
+     90   17       3       java.lang.module.ModuleDescriptor$Exports::hashCode (38 bytes)
+     90   19       3       java.util.Objects::equals (23 bytes)
+     90   20       3       java.util.Objects::requireNonNull (14 bytes)
+     91   21       3       jdk.internal.module.Builder::newExports (11 bytes)
+     91   23       3       java.util.AbstractCollection::<init> (5 bytes)
+     91   24       1       java.lang.Object::<init> (1 bytes)
+     91    3       3       java.lang.Object::<init> (1 bytes)   made not entrant
+     91   25       3       jdk.internal.module.Builder::newExports (12 bytes)
+     92   22       3       java.lang.module.ModuleDescriptor$1::newExports (15 bytes)
+     92   26       3       java.util.ImmutableCollections$Set1::hashCode (8 bytes)
+     93   27       3       java.util.Set::of (66 bytes)
+     93   28       3       java.lang.module.ModuleDescriptor$Exports::equals (62 bytes)
+     94   30       3       jdk.internal.module.Builder::newRequires (7 bytes)
+     94   29       1       java.util.Collections$EmptySet::contains (2 bytes)
+     94   33       3       java.util.AbstractSet::<init> (5 bytes)
+     94    4       3       java.lang.StringLatin1::hashCode (42 bytes)   made not entrant
+     95   32       3       java.util.ImmutableCollections$AbstractImmutableSet::<init> (5 bytes)
+     95   31       3       java.lang.module.ModuleDescriptor$Requires::hashCode (63 bytes)
+     96   34       1       java.lang.module.ModuleDescriptor::name (5 bytes)
+     96   35       1       java.lang.module.ModuleReference::descriptor (5 bytes)
+     97   36       3       java.net.URI::hash (33 bytes)
+     97   37       3       java.lang.String::charAt (25 bytes)
+     98   38       3       java.lang.StringLatin1::charAt (28 bytes)
+    101   39       3       java.lang.String::length (11 bytes)
+    105   41       3       java.util.ImmutableCollections$SetN$1::hasNext (47 bytes)
+    105   42       3       java.util.ImmutableCollections$SetN$1::next (35 bytes)
+    105   40       3       java.util.concurrent.ConcurrentHashMap::spread (10 bytes)
+    106   43       3       java.util.HashMap::hash (20 bytes)
+    108   44       3       java.util.ImmutableCollections$MapN::probe (64 bytes)
+    108   48       3       java.util.HashMap::putVal (300 bytes)
+    109   53       4       java.lang.String::hashCode (49 bytes)
+    109   47       3       java.util.HashMap::put (13 bytes)
+    110   54       3       java.util.HashMap::getNode (148 bytes)
+    110   46       1       java.lang.module.ModuleDescriptor$Requires::name (5 bytes)
+    111   45       1       java.lang.module.ModuleDescriptor$Requires::modifiers (5 bytes)
+    111   49       3       java.util.HashMap$Node::<init> (26 bytes)
+    111   58       3       java.lang.module.ModuleDescriptor::hashCode (170 bytes)
+    112   59       3       java.util.HashMap::get (23 bytes)
+    112   55       3       java.util.HashMap::newNode (13 bytes)
+    112   56       3       java.util.HashMap::afterNodeInsertion (1 bytes)
+    112   60       3       java.util.HashMap$HashIterator::hasNext (13 bytes)
+    113   61       3       java.util.HashSet::add (20 bytes)
+    113   65     n 0       java.lang.Object::hashCode (native)   
+    113   64       3       java.util.HashMap$HashIterator::nextNode (100 bytes)
+    113   63       3       jdk.internal.module.ModuleReferenceImpl::hashCode (56 bytes)
+    114   69       3       java.util.HashMap$HashIterator::<init> (79 bytes)
+    114   66       3       java.lang.module.ResolvedModule::hashCode (16 bytes)
+    115   76       1       java.util.HashMap::afterNodeInsertion (1 bytes)
+    115   56       3       java.util.HashMap::afterNodeInsertion (1 bytes)   made not entrant
+    115   73       1       java.util.Collections$EmptySet::isEmpty (2 bytes)
+    115    6       3       java.lang.String::hashCode (49 bytes)   made not entrant
+    115   74       1       java.lang.module.ModuleDescriptor$Exports::source (5 bytes)
+    115   75       1       java.lang.module.ModuleDescriptor$Exports::targets (5 bytes)
+    115   78       3       java.lang.module.ModuleDescriptor$Exports::isQualified (18 bytes)
+    115   80       4       java.util.ImmutableCollections$SetN$1::hasNext (47 bytes)
+    115   52       1       java.util.ImmutableCollections$Set1::size (2 bytes)
+    115   67       3       java.util.HashMap::containsKey (18 bytes)
+    116   79       3       java.util.AbstractCollection::isEmpty (13 bytes)
+    116   81       3       java.util.HashMap::putIfAbsent (13 bytes)
+    116   84       4       java.util.HashMap::hash (20 bytes)
+    116   77       1       java.util.ImmutableCollections$SetN::size (5 bytes)
+    116   82       3       java.util.ImmutableCollections$Set1::contains (9 bytes)
+    116   68       3       java.util.HashMap$KeyIterator::next (8 bytes)
+    117   83       1       java.util.ImmutableCollections$Set2::size (2 bytes)
+    117   57       1       java.lang.module.ModuleDescriptor::requires (5 bytes)
+    117   70       3       java.util.HashMap::keySet (25 bytes)
+    117   41       3       java.util.ImmutableCollections$SetN$1::hasNext (47 bytes)   made not entrant
+    117   43       3       java.util.HashMap::hash (20 bytes)   made not entrant
+    117   88       3       java.util.HashMap::resize (356 bytes)
+    118   89       4       java.util.ImmutableCollections$SetN$1::next (35 bytes)
+    119   86       3       java.util.ImmutableCollections$SetN::contains (14 bytes)
+    119   62       1       java.lang.module.ModuleDescriptor::isAutomatic (5 bytes)
+    119   71       3       java.util.HashMap$KeySet::iterator (12 bytes)
+    119   91       4       java.lang.module.ModuleDescriptor$Exports::isQualified (18 bytes)
+    119   51       1       java.util.Collections$1::hasNext (5 bytes)
+    119   72       3       java.util.HashMap$KeyIterator::<init> (11 bytes)
+    119   85       1       java.lang.module.ModuleDescriptor::exports (5 bytes)
+    120   90       1       java.lang.module.ResolvedModule::reference (5 bytes)
+    120   92       4       java.util.HashMap::putVal (300 bytes)
+    120   78       3       java.lang.module.ModuleDescriptor$Exports::isQualified (18 bytes)   made not entrant
+    120   94       4       java.lang.String::equals (65 bytes)
+    120   50       1       java.lang.module.ModuleDescriptor::provides (5 bytes)
+    120   93       3       java.util.ImmutableCollections$Set2::contains (28 bytes)
+    120   97       3       java.util.HashSet::iterator (13 bytes)
+    120   87       1       java.lang.module.ModuleDescriptor::uses (5 bytes)
+    121   98       3       java.lang.Math::min (11 bytes)
+    121   96       1       java.lang.module.ModuleDescriptor$Provides::service (5 bytes)
+    121   99     n 0       java.lang.System::arraycopy (native)   (static)
+    121  100       3       java.lang.module.ResolvedModule::descriptor (8 bytes)
+    121   42       3       java.util.ImmutableCollections$SetN$1::next (35 bytes)   made not entrant
+    121   95       4       java.util.HashMap::newNode (13 bytes)
+    121  101       3       java.util.AbstractMap::<init> (5 bytes)
+    121  102       3       java.lang.String::<init> (15 bytes)
+    122   11       3       java.lang.String::equals (65 bytes)   made not entrant
+    122  103       4       java.lang.StringLatin1::equals (36 bytes)
+    122  105       3       java.util.ImmutableCollections$SetN::iterator (9 bytes)
+    122  106       3       java.util.ImmutableCollections$SetN$1::<init> (15 bytes)
+    122  107       3       java.lang.StringLatin1::lastIndexOf (125 bytes)
+    123  108       3       java.util.HashMap::<init> (11 bytes)
+    123  109       1       java.util.KeyValueHolder::getKey (5 bytes)
+    123  110       1       java.util.KeyValueHolder::getValue (5 bytes)
+    123  111       3       java.util.HashSet::contains (9 bytes)
+    124  112   !   3       java.util.concurrent.ConcurrentHashMap::putVal (432 bytes)
+    124  116     n 0       jdk.internal.misc.Unsafe::compareAndSetLong (native)   
+    124  118     n 0       jdk.internal.misc.Unsafe::compareAndSetObject (native)   
+    125    1       3       java.util.concurrent.ConcurrentHashMap::tabAt (22 bytes)   made not entrant
+    125   55       3       java.util.HashMap::newNode (13 bytes)   made not entrant
+    125  104       4       java.util.HashMap::putIfAbsent (13 bytes)
+    126   13       3       java.lang.StringLatin1::equals (36 bytes)   made not entrant
+    127  112   !   3       java.util.concurrent.ConcurrentHashMap::putVal (432 bytes)   COMPILE SKIPPED: invalid non-klass dependency
+    127  120       3       java.util.concurrent.ConcurrentHashMap::tabAt (22 bytes)
+    127  123       1       java.util.concurrent.ConcurrentHashMap::spread (10 bytes)
+    127   40       3       java.util.concurrent.ConcurrentHashMap::spread (10 bytes)   made not entrant
+    127  122   !   3       java.util.concurrent.ConcurrentHashMap::putVal (432 bytes)
+    130  113       3       java.util.concurrent.ConcurrentHashMap::addCount (289 bytes)
+    132  117       3       java.util.concurrent.ConcurrentHashMap$Node::<init> (20 bytes)
+    132  119       3       java.util.concurrent.ConcurrentHashMap::putIfAbsent (8 bytes)
+    132  114       3       java.util.concurrent.ConcurrentHashMap::casTabAt (21 bytes)
+    132  125       3       java.util.Optional::ofNullable (15 bytes)
+    133  126       3       java.util.HashSet::<init> (16 bytes)
+    133  115       3       java.util.ImmutableCollections$Set2$1::hasNext (14 bytes)
+    133  121       1       java.lang.module.ModuleDescriptor::packages (5 bytes)
+    133  124       1       java.lang.module.ModuleDescriptor$Version::toString (5 bytes)
+    133  127       1       java.util.ImmutableCollections$Set0::size (2 bytes)
+    133  128       1       java.lang.module.ResolvedModule::configuration (5 bytes)
+    134  129       3       java.util.ImmutableCollections$Set1::iterator (8 bytes)
+    134  130       3       java.util.Collections::singletonIterator (9 bytes)
+    134  131       3       java.util.Collections$1::<init> (15 bytes)
+    134  132       3       java.util.Collections$1::next (25 bytes)
+    134  135       3       java.lang.module.ResolvedModule::name (11 bytes)
+    135  134       3       java.util.ImmutableCollections$Set2$1::next (49 bytes)
+    135  136       3       java.util.Collections$UnmodifiableCollection$1::hasNext (10 bytes)
+    135  133       1       java.lang.module.ModuleDescriptor::isOpen (5 bytes)
+    136  137       1       jdk.internal.module.ModuleReferenceImpl::moduleResolution (5 bytes)
+    136  138       4       java.util.ImmutableCollections$SetN::probe (60 bytes)
+    136  139       3       java.util.ImmutableCollections$SetN::<init> (90 bytes)
+    138  143       1       java.util.Collections$EmptyIterator::hasNext (2 bytes)
+    138  142       3       java.util.HashMap$ValueIterator::next (8 bytes)
+    138  140       3       java.util.Map::entry (10 bytes)
+    138  141       3       java.util.KeyValueHolder::<init> (21 bytes)
+    138  150     n 0       java.lang.Module::addExportsToAllUnnamed0 (native)   (static)
+    139  146       3       jdk.internal.module.ModuleBootstrap$2::hasNext (30 bytes)
+    139  149       3       jdk.internal.module.ModuleBootstrap$2::next (52 bytes)
+    139  147       3       java.util.ImmutableCollections$MapN::get (21 bytes)
+    140  145       3       java.util.Collections$UnmodifiableCollection$1::next (10 bytes)
+    140  144       1       java.lang.Module::getDescriptor (5 bytes)
+    141   10       3       java.util.ImmutableCollections$SetN::probe (60 bytes)   made not entrant
+    141  148       4       java.util.HashMap::resize (356 bytes)
+    142  151       3       java.lang.StringLatin1::indexOf (61 bytes)
+    144   53       4       java.lang.String::hashCode (49 bytes)   made not entrant
+    144  152       3       java.lang.String::hashCode (49 bytes)
+    145   48       3       java.util.HashMap::putVal (300 bytes)   made not entrant
+    149   81       3       java.util.HashMap::putIfAbsent (13 bytes)   made not entrant
+    149  153       3       java.lang.StringLatin1::canEncode (13 bytes)
+    152  154       3       java.lang.AbstractStringBuilder::ensureCapacityInternal (39 bytes)
+    153  156     n 0       jdk.internal.misc.Unsafe::putObjectVolatile (native)   
+    153  155       3       jdk.internal.misc.Unsafe::putObjectRelease (9 bytes)
+    162   88       3       java.util.HashMap::resize (356 bytes)   made not entrant
+    165  157       3       java.util.zip.ZipUtils::SH (21 bytes)
+    168  158       3       java.util.jar.Attributes$Name::isValid (32 bytes)
+    169  159       3       java.util.jar.Attributes$Name::isAlpha (30 bytes)
+    169  160       3       java.lang.CharacterData::of (120 bytes)
+    170  161       3       java.lang.CharacterDataLatin1::getProperties (11 bytes)
+    170  162       3       java.lang.AbstractStringBuilder::isLatin1 (19 bytes)
+    171  163       3       java.lang.StringBuilder::append (8 bytes)
+    171  164       3       java.lang.AbstractStringBuilder::append (77 bytes)
+    172  165       3       java.util.concurrent.ConcurrentHashMap::setTabAt (20 bytes)
+    173  166       3       java.lang.String::indexOf (29 bytes)
+    174  167       3       java.lang.StringLatin1::lastIndexOf (40 bytes)
+    174  168       3       java.lang.AbstractStringBuilder::putStringAt (29 bytes)
+    174  169       3       java.lang.String::indexOf (7 bytes)
+    175  170       3       java.lang.String::checkBoundsBeginEnd (60 bytes)
+    177  172       3       java.util.Arrays::copyOfRange (63 bytes)
+    177   24       1       java.lang.Object::<init> (1 bytes)   made not entrant
+    178  174       3       java.lang.StringLatin1::newString (17 bytes)
+    178  173       3       java.lang.Character::toLowerCase (9 bytes)
+    178  171       3       java.lang.String::substring (58 bytes)
+    179  175       4       java.lang.String::isLatin1 (19 bytes)
+    180    5       3       java.lang.String::isLatin1 (19 bytes)   made not entrant
+    180  176       3       sun.nio.fs.UnixPath::checkNotNul (16 bytes)
+    181  177       4       java.lang.AbstractStringBuilder::ensureCapacityInternal (39 bytes)
+    181  178       4       java.lang.StringBuilder::append (8 bytes)
+    181  179       4       java.lang.AbstractStringBuilder::append (77 bytes)
+    182  180       1       java.lang.reflect.Method::getName (5 bytes)
+    182  181       1       java.lang.Object::<init> (1 bytes)
+    186  182 %     3       host.mxm.sample.GraalTest::timeHashing @ 11 (99 bytes)
+    186  154       3       java.lang.AbstractStringBuilder::ensureCapacityInternal (39 bytes)   made not entrant
+    188  183       1       java.lang.Class::getClassLoader0 (5 bytes)
+    188  184       3       host.mxm.sample.GraalTest::timeHashing (99 bytes)
+    189  163       3       java.lang.StringBuilder::append (8 bytes)   made not entrant
+    189  164       3       java.lang.AbstractStringBuilder::append (77 bytes)   made not entrant
+    190  185 %     4       host.mxm.sample.GraalTest::timeHashing @ 11 (99 bytes)
+    192  186       3       java.util.concurrent.ConcurrentHashMap::get (162 bytes)
+    200  182 %     3       host.mxm.sample.GraalTest::timeHashing @ 11 (99 bytes)   made not entrant
+    200  185 %     4       host.mxm.sample.GraalTest::timeHashing @ 11 (99 bytes)   made not entrant
+Length: 1 took: 914545 ns
+    202  187 %     4       host.mxm.sample.GraalTest::timeHashing @ 11 (99 bytes)
+    219  188       4       host.mxm.sample.GraalTest::timeHashing (99 bytes)
+Length: 2 took: 1958411 ns
+    233  184       3       host.mxm.sample.GraalTest::timeHashing (99 bytes)   made not entrant
+Length: 3 took: 2853640 ns
+    243  189       3       java.lang.AbstractStringBuilder::newCapacity (55 bytes)
+Length: 4 took: 3911270 ns
+Length: 5 took: 4938855 ns
+Length: 6 took: 5830327 ns
+Length: 7 took: 7248524 ns
+Length: 8 took: 7731122 ns
+Length: 9 took: 8602481 ns
+Length: 10 took: 10095409 ns
+    505  190       1       java.nio.Buffer::position (5 bytes)
+Length: 11 took: 11000729 ns
+Length: 12 took: 11654155 ns
+Length: 13 took: 12664328 ns
+Length: 14 took: 16124154 ns
+Length: 15 took: 18093688 ns
+    786  191       1       java.nio.Buffer::limit (5 bytes)
+Length: 16 took: 15817365 ns
+Length: 17 took: 16504761 ns    909  192       3       java.lang.String::getBytes (44 bytes)
+
+Length: 18 took: 19042464 ns
+Length: 19 took: 18810262 ns
+Length: 20 took: 19450932 ns
+Length: 21 took: 29268848 ns
+Length: 22 took: 21538391 ns
+Length: 23 took: 25059467 ns
+Length: 24 took: 23224272 ns
+Length: 25 took: 28656335 ns
+Length: 26 took: 24473013 ns
+Length: 27 took: 25365757 ns
+   1915  193       3       java.nio.ByteBuffer::arrayOffset (35 bytes)
+Length: 28 took: 27965060 ns
+Length: 29 took: 26730612 ns
+   2245  194       3       java.lang.AbstractStringBuilder::Length: 30 took: 28598722 nsappend (45 bytes)
+
+   2321  195       3       java.lang.StringBuilder::toString (35 bytes)
+Length: 31 took: 29367873 ns
+   2358  196       3       java.nio.Buffer::position (55 bytes)
+Length: 32 took: 31235237 ns
+Length: 33 took: 31222781 ns
+Length: 34 took: 34000499 ns
+Length: 35 took: 32688086 ns
+Length: 36 took: 35270416 ns
+   3029  197       3       java.nio.CharBuffer::arrayOffset (35 bytes)
+Length: 37 took: 41556595 ns
+Length: 38 took: 36709760 ns
+Length: 39 took: 37000029 ns
+Length: 40 took: 37079053 ns
+Length: 41 took: 38965429 ns
+Length: 42 took: 41039216 ns
+Length: 43 took: 50006908 ns
+Length: 44 took: 41635017 ns
+Length: 45 took: 43418681 ns
+Length: 46 took: 43433419 ns
+Length: 47 took: 47116577 ns
+Length: 48 took: 49928892 ns
+Length: 49 took: 50103111 ns
+Length: 50 took: 55879532 ns
+Length: 51 took: 51170270 ns
+Length: 52 took: 52020764 ns
+   6214  198       3       java.nio.charset.CoderResult::isUnderflow (13 bytes)
+Length: 53 took: 54154951 ns
+Length: 54 took: 52180537 ns
+Length: 55 took: 56667682 ns
+Length: 56 took: 53843029 ns
+Length: 57 took: 59644644 ns
+   7418  199       3       java.lang.StringLatin1::inflate (34 bytes)
+   7419  200       3       java.nio.CharBuffer::position (8 bytes)
+Length: 58 took: 57518379 ns   7715  201       3      
+ java.nio.CharBuffer::position (6 bytes)
+Length: 59 took: 60116682 ns
+   7965  202       3       sun.nio.cs.UTF_8$Encoder::encodeArrayLoop (489 bytes)
+Length: 60 took: 61590059 ns
+Length: 61 took: 59356866 ns
+Length: 62 took: 67297605 ns
+Length: 63 took: 64038537 ns
+Length: 64 took: 62803209 ns
+   9368  204       3       java.io.BufferedWriter::ensureOpen (18 bytes)
+   9369  203       1       java.io.FileDescriptor::access$100 (5 bytes)
+Length: 65 took: 76576127 ns
+Length: 66 took: 65552656 ns
+Length: 67 took: 65249658 ns
+Length: 68 took: 66616902 ns
+Length: 69 took: 67829270 ns
+Length: 70 took: 69967298 ns
+Length: 71 took: 68064820 ns
+Length: 72 took: 70681108 ns
+Length: 73 took: 69679132 ns
+Length: 74 took: 73817726 ns
+Length: 75 took: 74260110 ns
+Length: 76 took: 72531777 ns
+Length: 77 took: 73550616 ns
+Length: 78 took: 75450116 ns
+Length: 79 took: 75812748 ns
+Length: 80 took: 76694773 ns
+Length: 81 took: 77529656 ns
+Length: 82 took: 78459457 ns
+Length: 83 took: 78149856 ns
+Length: 84 took: 82058735 ns
+Length: 85 took: 96878645 ns
+Length: 86 took: 82320605 ns
+  16483  205  s    3       java.io.BufferedOutputStream::flush (12 bytes)
+  16483  206       3       java.io.BufferedOutputStream::flushBuffer (29 bytes)
+Length: 87 took: 88034772 ns
+Length: 88 took: 94827645 ns
+Length: 89 took: 86589062 ns
+Length: 90 took: 86128207 ns
+Length: 91 took: 101539143 ns
+  18730  207       3       java.nio.ByteBuffer::array (35 bytes)
+Length: 92 took: 102257899 ns
+Length: 93 took: 90359091 ns
+Length: 94 took: 97336238 ns
+Length: 95 took: 92212037 ns
+Length: 96 took: 91529582 ns
+  21041  208       3       java.io.PrintStream::ensureOpen (18 bytes)
+Length: 97 took: 93241027 ns
+Length: 98 took: 91895435 ns
+Length: 99 took: 95116277 ns
+Length: 100 took: 95927945 ns
+Length: 101 took: 95095636 ns
+Length: 102 took: 96677553 ns
+Length: 103 took: 97727002 ns
+Length: 104 took: 98537700 ns
+Length: 105 took: 99131062 ns
+Length: 106 took: 102648686 ns
+Length: 107 took: 121342654 ns
+  26184  209       3       java.nio.Buffer::limit (74 bytes)
+  26184  210       3       java.nio.Buffer::<init> (99 bytes)
+Length: 108 took: 121003287 ns
+Length: 109 took: 103815691 ns
+Length: 110 took: 105434105 ns
+  27580  211       3       java.nio.ByteBuffer::position (8 bytes)
+Length: 111 took: 105356621 ns
+Length: 112 took: 108566111 ns
+Length: 113 took: 110188747 ns
+Length: 114 took: 107878888 ns
+  29220  212       3       java.nio.ByteBuffer::position (6 bytes)
+Length: 115 took: 108508600 ns
+Length: 116 took: 109180318 ns
+  30169  213       3       java.lang.String::checkBoundsOffCount (61 bytes)
+Length: 117 took: 111230072 ns
+Length: 118 took: 110373768 ns
+Length: 119 took: 112227966 ns
+Length: 120 took: 113479025 ns
+Length: 121 took: 115081709 ns
+  32780  214       3       java.nio.CharBuffer::<init> (22 bytes)
+  32780  215       3       java.nio.CharBuffer::limit (6 bytes)
+Length: 122 took: 115543820 ns
+Length: 123 took: 115645368 ns
+  33860  216   !   3       java.nio.CharBuffer::wrap (20 bytes)
+  33861  217       3       java.nio.HeapCharBuffer::<init> (14 bytes)
+Length: 124 took: 122479686 ns
+Length: 125 took: 148620340 ns
+  34999  218       3       java.nio.Buffer::flip (20 bytes)
+  34999  219       3       java.nio.Buffer::clear (20 bytes)
+Length: 126 took: 121205429 ns
+  35660  220       3       java.nio.ByteBuffer::flip (7 bytes)
+Length: 127 took: 137802304 ns
+  36246  221       3       java.nio.ByteBuffer::clear (7 bytes)
+  36246  222       3       java.lang.String::getChars (54 bytes)
+  36848  224     n 0       java.io.FileOutputStream::writeBytes (native)   
+Length: 128 took: 123190126 ns  36848  223       3       java.io.FileDescriptor$1::getAppend (5 bytes)
+
+  36848  226   !   3       java.io.BufferedWriter::write (117 bytes)
+  36849  227       3       java.io.OutputStream::flush (1 bytes)
+  36849  225       3       java.io.Writer::write (11 bytes)
+Length: 129 took: 125450028 ns
+Length: 130 took: 153350165 ns
+Length: 131 took: 126085152 ns
+Length: 132 took: 129507390 ns
+Length: 133 took: 130273757 ns
+Length: 134 took: 131897432 ns
+Length: 135 took: 131133988 ns
+Length: 136 took: 131876647 ns
+Length: 137 took: 131590333 ns
+Length: 138 took: 140585075 ns
+Length: 139 took: 134790556 ns
+Length: 140 took: 151485073 ns
+Length: 141 took: 153222412 ns
+Length: 142 took: 134100299 ns
+Length: 143 took: 141832448 ns
+Length: 144 took: 145265090 ns
+Length: 145 took: 142043304 ns
+Length: 146 took: 143483163 ns
+Length: 147 took: 140667813 ns
+Length: 148 took: 164975384 ns
+Length: 149 took: 141390377 ns
+Length: 150 took: 143045701 ns
+Length: 151 took: 147845053 ns
+Length: 152 took: 151056190 ns
+Length: 153 took: 151153172 ns
+Length: 154 took: 152805797 ns
+Length: 155 took: 150846202 ns
+Length: 156 took: 151065142 ns
+Length: 157 took: 164477395 ns
+Length: 158 took: 154480451 ns
+Length: 159 took: 149713384 ns
+Length: 160 took: 154246073 ns
+Length: 161 took: 155716796 ns
+Length: 162 took: 156806189 ns
+Length: 163 took: 158802982 ns
+Length: 164 took: 155911997 ns
+Length: 165 took: 157648255 ns
+Length: 166 took: 160375036 ns
+Length: 167 took: 156502080 ns
+Length: 168 took: 163326624 ns
+Length: 169 took: 162367247 ns
+Length: 170 took: 172851918 ns
+Length: 171 took: 162697175 ns
+Length: 172 took: 162644225 ns
+Length: 173 took: 168815564 ns
+Length: 174 took: 170942996 ns
+Length: 175 took: 167737471 ns
+Length: 176 took: 171310614 ns
+Length: 177 took: 166244984 ns
+Length: 178 took: 184396105 ns
+Length: 179 took: 194260246 ns
+Length: 180 took: 176445332 ns
+Length: 181 took: 174447529 ns
+Length: 182 took: 175011875 ns
+Length: 183 took: 173688745 ns
+Length: 184 took: 174409292 ns
+Length: 185 took: 186514784 ns
+  78616  228       3       java.nio.Buffer::hasRemaining (17 bytes)
+  78616  229       3       java.nio.CharBuffer::hasArray (20 bytes)
+  78616  230       3       java.nio.ByteBuffer::hasArray (20 bytes)
+  78616  231       3       java.nio.charset.CoderResult::isOverflow (14 bytes)
+Length: 186 took: 182703768 ns
+Length: 187 took: 177807721 ns
+  80322  232   !   3       java.nio.charset.CharsetEncoder::encode (285 bytes)
+  80324  233       3       sun.nio.cs.UTF_8$Encoder::encodeLoop (28 bytes)
+Length: 188 took: 178760932 ns
+Length: 189 took: 178757445 ns
+Length: 190 took: 180067950 ns
+Length: 191 took: 182243153 ns
+Length: 192 took: 187228227 ns
+  84579  234   !   3       java.io.BufferedWriter::flushBuffer (53 bytes)
+  84579  235       3       java.io.OutputStreamWriter::write (11 bytes)
+  84580  236   !   3       sun.nio.cs.StreamEncoder::write (78 bytes)
+  84581  237       3       sun.nio.cs.StreamEncoder::ensureOpen (18 bytes)
+  84582  238       3       sun.nio.cs.StreamEncoder::implWrite (15 bytes)
+Length: 193 took: 183543979 ns
+Length: 194 took: 185051277 ns
+Length: 195 took: 185997595 ns
+Length: 196 took: 187728169 ns
+Length: 197 took: 186592402 ns
+Length: 198 took: 187046188 ns
+Length: 199 took: 190954621 ns
+Length: 200 took: 190855026 ns
+Length: 201 took: 201781290 ns
+Length: 202 took: 191083561 ns
+Length: 203 took: 191232135 ns
+Length: 204 took: 192590875 ns
+Length: 205 took: 194521553 ns
+Length: 206 took: 194508498 ns
+Length: 207 took: 199678192 ns
+Length: 208 took: 196077865 ns
+Length: 209 took: 205204221 ns
+Length: 210 took: 203553500 ns
+Length: 211 took: 201395512 ns
+Length: 212 took: 203062474 ns
+Length: 213 took: 203639530 ns
+ 103721  239       4       java.lang.AbstractStringBuilder::newCapacity (55 bytes)
+ 103722  189       3       java.lang.AbstractStringBuilder::newCapacity (55 bytes)   made not entrant
+Length: 214 took: 204384409 ns
+Length: 215 took: 209254747 ns
+Length: 216 took: 209475535 ns
+Length: 217 took: 208120131 ns
+Length: 218 took: 210393620 ns
+Length: 219 took: 219311924 ns
+Length: 220 took: 215208667 ns
+Length: 221 took: 211002709 ns
+Length: 222 took: 213009147 ns
+Length: 223 took: 212810341 ns
+Length: 224 took: 211655282 ns
+Length: 225 took: 213595058 ns
+Length: 226 took: 214163726 ns
+Length: 227 took: 212571735 ns
+Length: 228 took: 216935963 ns
+Length: 229 took: 227421804 ns
+Length: 230 took: 221246806 ns
+Length: 231 took: 221577104 ns
+Length: 232 took: 245193987 ns
+Length: 233 took: 264867837 ns
+Length: 234 took: 226775909 ns
+Length: 235 took: 276509337 ns
+Length: 236 took: 227799902 ns
+Length: 237 took: 224572136 ns
+Length: 238 took: 226656341 ns
+Length: 239 took: 228981761 ns
+Length: 240 took: 224807045 ns
+Length: 241 took: 231631313 ns
+Length: 242 took: 274596732 ns
+Length: 243 took: 238461734 ns 135293 
+ 240       3       java.lang.Integer::stringSize (47 bytes)
+ 135293  241       3       java.lang.Integer::getChars (131 bytes)
+Length: 244 took: 255716290 ns
+Length: 245 took: 243995450 ns
+Length: 246 took: 274967122 ns
+Length: 247 took: 252076192 ns
+Length: 248 took: 237566547 ns
+Length: 249 took: 235586799 ns
+Length: 250 took: 237868631 ns
+ 144766  242       3       java.lang.StringBuilder::appendLength: 251 took: 265501039 ns (8 bytes)
+
+ 144766  244       3       java.nio.Buffer::remaining (10 bytes)
+ 144767  243       3       java.lang.AbstractStringBuilder::append (55 bytes)
+Length: 252 took: 242828087 ns
+ 145986  245       3       java.lang.String::toString (2 bytes)
+Length: 253 took: 241059151 ns
+Length: 254 took: 240657523 ns
+ 148226  246       3       java.lang.System::lineSeparator (4 bytes)
+Length: 255 took: 247094483 ns 149350 
+ 247       3       java.lang.Long::stringSize (55 bytes)
+ 149350  248       3       java.lang.Long::getChars (208 bytes)
+Length: 256 took: 258606716 ns 150518  249       3       java.lang.StringBuilder::append (8 bytes)
+
+ 150518  252       3       sun.nio.cs.StreamEncoder::implWrite (137 bytes)
+ 150520  253       3       java.io.OutputStreamWriter::flushBuffer (8 bytes)
+ 150520  254   !   3       sun.nio.cs.StreamEncoder::flushBuffer (42 bytes)
+ 150520  255       3       sun.nio.cs.StreamEncoder::isOpen (13 bytes)
+ 150521  256       3       sun.nio.cs.StreamEncoder::implFlushBuffer (15 bytes)
+ 150521  257       3       sun.nio.cs.StreamEncoder::writeBytes (132 bytes)
+ 150521  250       3       java.lang.AbstractStringBuilder::append (60 bytes)
+ 150524  251       3       java.io.BufferedWriter::newLine (8 bytes)
+Length: 257 took: 239719939 ns
+Length: 258 took: 250657767 ns
+Length: 259 took: 259372652 ns
+Length: 260 took: 262632954 ns
+Length: 261 took: 259947481 ns
+Length: 262 took: 251210027 ns
+Length: 263 took: 253043538 ns
+Length: 264 took: 250164509 ns
+Length: 265 took: 250505128 ns
+Length: 266 took: 253574249 ns
+Length: 267 took: 264059706 ns
+Length: 268 took: 263277407 ns
+Length: 269 took: 255365079 ns
+Length: 270 took: 260992237 ns
+Length: 271 took: 269631289 ns
+Length: 272 took: 264835412 ns
+Length: 273 took: 264575972 ns
+Length: 274 took: 267628959 ns
+Length: 275 took: 264666746 ns
+Length: 276 took: 268854221 ns
+Length: 277 took: 267037454 ns
+Length: 278 took: 269409358 ns
+Length: 279 took: 275746603 ns
+Length: 280 took: 262896448 ns
+Length: 281 took: 262230466 ns
+Length: 282 took: 264822266 ns
+Length: 283 took: 267306759 ns
+Length: 284 took: 277215781 ns
+Length: 285 took: 273217161 ns
+Length: 286 took: 278938677 ns
+Length: 287 took: 277101893 ns
+Length: 288 took: 278494068 ns
+Length: 289 took: 286052708 ns
+Length: 290 took: 280169847 ns
+Length: 291 took: 274210036 ns
+Length: 292 took: 273904255 ns
+Length: 293 took: 276784840 ns
+Length: 294 took: 276306323 ns
+Length: 295 took: 277578823 ns
+Length: 296 took: 277731423 ns
+Length: 297 took: 280107315 ns
+Length: 298 took: 280909783 ns
+Length: 299 took: 280612121 ns
+Length: 300 took: 281173881 ns
+Length: 301 took: 283818413 ns
+Length: 302 took: 283676976 ns
+Length: 303 took: 298987346 ns
+Length: 304 took: 301970661 ns
+Length: 305 took: 302625732 ns
+Length: 306 took: 302059448 ns
+Length: 307 took: 298496517 ns
+Length: 308 took: 294263121 ns
+Length: 309 took: 296162870 ns
+Length: 310 took: 295517197 ns
+Length: 311 took: 298201249 ns
+Length: 312 took: 300652382 ns
+Length: 313 took: 298531905 ns
+Length: 314 took: 300204624 ns
+Length: 315 took: 318264072 ns
+Length: 316 took: 299569235 ns
+Length: 317 took: 300964045 ns
+Length: 318 took: 301201655 ns
+Length: 319 took: 312015039 ns
+Length: 320 took: 308211980 ns
+ 233521  258   !   3       java.io.PrintStream::write (69 bytes)
+ 233521  259  s    3       java.io.BufferedOutputStream::write (67 bytes)
+ 233523  260       3       java.io.FileOutputStream::write (20 bytes)
+Length: 321 took: 301182734 ns
+Length: 322 took: 302976439 ns
+Length: 323 took: 310198287 ns
+Length: 324 took: 306150601 ns
+Length: 325 took: 309939998 ns
+Length: 326 took: 309174904 ns
+Length: 327 took: 313376532 ns
+Length: 328 took: 315081861 ns
+Length: 329 took: 317972230 ns
+Length: 330 took: 318984741 ns
+Length: 331 took: 324684809 ns
+Length: 332 took: 318267836 ns
+Length: 333 took: 325834187 ns
+Length: 334 took: 335712036 ns
+Length: 335 took: 324808706 ns
+Length: 336 took: 332428550 ns
+Length: 337 took: 334850698 ns
+Length: 338 took: 339300154 ns
+Length: 339 took: 319433996 ns
+Length: 340 took: 319595252 ns
+Length: 341 took: 322204949 ns
+Length: 342 took: 320191113 ns
+Length: 343 took: 328219972 ns
+Length: 344 took: 321681962 ns
+Length: 345 took: 341388494 ns
+Length: 346 took: 326154373 ns
+Length: 347 took: 327983160 ns
+Length: 348 took: 328547713 ns
+ 276273  261       4       java.lang.StringLatin1::indexOf (61 bytes)
+ 276276    3       3       java.lang.Object::<init> (1 bytes)   made zombie
+ 276278    4       3       java.lang.StringLatin1::hashCode (42 bytes)   made zombie
+ 276278  151       3       java.lang.StringLatin1::indexOf (61 bytes)   made not entrant
+ 276278    6       3       java.lang.String::hashCode (49 bytes)   made zombie
+ 276278   11       3       java.lang.String::equals (65 bytes)   made zombie
+ 276278   41       3       java.util.ImmutableCollections$SetN$1::hasNext (47 bytes)   made zombie
+ 276278   42       3       java.util.ImmutableCollections$SetN$1::next (35 bytes)   made zombie
+ 276278   43       3       java.util.HashMap::hash (20 bytes)   made zombie
+ 276279   56       3       java.util.HashMap::afterNodeInsertion (1 bytes)   made zombie
+ 276279   78       3       java.lang.module.ModuleDescriptor$Exports::isQualified (18 bytes)   made zombie
+Length: 349 took: 330835069 ns
+Length: 350 took: 337648502 ns
+Length: 351 took: 331257856 ns
+Length: 352 took: 337000135 ns
+Length: 353 took: 330444631 ns
+Length: 354 took: 331386825 ns
+Length: 355 took: 335856308 ns
+Length: 356 took: 334972203 ns
+Length: 357 took: 334897656 ns
+Length: 358 took: 335428241 ns
+Length: 359 took: 335170729 ns
+Length: 360 took: 341723817 ns
+Length: 361 took: 339382355 ns
+Length: 362 took: 338839631 ns
+Length: 363 took: 341938631 ns
+Length: 364 took: 343566153 ns
+Length: 365 took: 343574186 ns
+Length: 366 took: 350738703 ns
+Length: 367 took: 349909190 ns
+Length: 368 took: 347748116 ns
+Length: 369 took: 348840744 ns
+Length: 370 took: 350567752 ns
+Length: 371 took: 351703485 ns
+Length: 372 took: 355097269 ns
+Length: 373 took: 356070143 ns
+Length: 374 took: 354895130 ns
+Length: 375 took: 354872444 ns
+Length: 376 took: 357710493 ns
+Length: 377 took: 359523457 ns
+Length: 378 took: 375446915 ns
+Length: 379 took: 377895642 ns
+Length: 380 took: 374919402 ns
+Length: 381 took: 369233332 ns
+Length: 382 took: 367119102 ns
+Length: 383 took: 367742590 ns
+ 333573  262       3       java.lang.String::valueOf (14 bytes)
+Length: 384 took: 374691101 ns
+ 335349  263   !   3       java.io.PrintStream::println (24 bytes)
+ 335349  264       3       java.io.PrintStream::print (9 bytes)
+ 335350  265   !   3       java.io.PrintStream::write (83 bytes)
+ 335352  266   !   3       java.io.PrintStream::newLine (73 bytes)
+Length: 385 took: 372310177 ns
+Length: 386 took: 384349423 ns
+Length: 387 took: 371748180 ns
+Length: 388 took: 394996756 ns
+Length: 389 took: 377060778 ns
+Length: 390 took: 386754655 ns
+Length: 391 took: 389127337 ns
+Length: 392 took: 395928976 ns
+Length: 393 took: 388437346 ns
+Length: 394 took: 397815961 ns
+Length: 395 took: 394190863 ns
+Length: 396 took: 381669000 ns
+Length: 397 took: 375268119 ns
+Length: 398 took: 380216379 ns
+Length: 399 took: 387804107 ns
+Length: 400 took: 382397081 ns
+Length: 401 took: 414311408 ns
+Length: 402 took: 396357297 ns
+Length: 403 took: 405218654 ns
+Length: 404 took: 411069609 ns
+Length: 405 took: 413859561 ns
+Length: 406 took: 421167686 ns
+Length: 407 took: 416200311 ns
+Length: 408 took: 417380721 ns
+Length: 409 took: 425895573 ns
+Length: 410 took: 416857762 ns
+Length: 411 took: 417066571 ns
+Length: 412 took: 418969947 ns
+Length: 413 took: 419956567 ns
+Length: 414 took: 421776834 ns
+Length: 415 took: 424318138 ns
+Length: 416 took: 421486283 ns
+Length: 417 took: 422949278 ns
+Length: 418 took: 422859556 ns
+Length: 419 took: 429298049 ns
+Length: 420 took: 433191858 ns
+Length: 421 took: 430891317 ns
+Length: 422 took: 428339273 ns
+Length: 423 took: 432294249 ns
+Length: 424 took: 441901727 ns
+Length: 425 took: 432164087 ns
+Length: 426 took: 432591123 ns
+Length: 427 took: 438201577 ns
+Length: 428 took: 436073015 ns
+Length: 429 took: 445169975 ns
+Length: 430 took: 440776980 ns
+Length: 431 took: 444603464 ns
+Length: 432 took: 430242563 ns
+Length: 433 took: 444324055 ns
+Length: 434 took: 441367431 ns
+Length: 435 took: 439690883 ns
+Length: 436 took: 446230817 ns
+Length: 437 took: 446244726 ns
+Length: 438 took: 452230689 ns
+Length: 439 took: 454563320 ns
+Length: 440 took: 452322380 ns
+Length: 441 took: 453566335 ns
+Length: 442 took: 451682510 ns
+Length: 443 took: 458042417 ns
+Length: 444 took: 454522534 ns
+Length: 445 took: 450100259 ns
+Length: 446 took: 449566396 ns
+Length: 447 took: 453922732 ns
+Length: 448 took: 452701727 ns
+Length: 449 took: 474253136 ns
