@@ -1,4 +1,4 @@
-public class Expression {
+public final class Expression {
     static class BadResultException extends RuntimeException {
         private static final long serialVersionUID = -7471855055854681068L;
         BadResultException(String s) { super(s); }
@@ -15,9 +15,11 @@ public class Expression {
         final int value;
         Int(int value) { this.value = value; }
 
+        @Override
         public Exp eval() {
             return this;
         }
+        @Override
         public boolean hasZero() {
             return value == 0;
         }
@@ -31,9 +33,11 @@ public class Expression {
         final Int intExp;
         Negate(Int intExp) { this.intExp = intExp; }
 
+        @Override
         public Exp eval() {
             return new Int(-intExp.value);
         }
+        @Override
         public boolean hasZero() {
             return intExp.hasZero();
         }
@@ -48,6 +52,7 @@ public class Expression {
         final Exp e2;
         Add(Exp e1, Exp e2) { this.e1 = e1; this.e2 = e2; }
 
+        @Override
         public Exp eval() {
             try {
                 Int i1 = (Int) e1.eval();
@@ -57,6 +62,7 @@ public class Expression {
                 throw new BadResultException("non-ints in addition");
             }
         }
+        @Override
         public boolean hasZero() {
             return e1.hasZero() || e2.hasZero();
         }
