@@ -33,5 +33,17 @@ let rec hasZero = function e ->
     | Negate e1   -> Negate(noNegConstants e1)
     | Add(e1,e2)  -> Add(noNegConstants e1, noNegConstants e2) *)
 
+(* type ’a ext_exp =
+    Int    of int
+  | Negate of ’a ext_exp
+  | Add    of ’a ext_exp * ’a ext_exp
+  | OtherExtExp  of ’a
+
+let rec eval_ext = function (f, e) ->
+  match e with
+      Int i -> i
+    | Negate e1 -> 0 - (eval_ext (f,e1))
+    | Add(e1,e2) -> (eval_ext (f,e1)) + (eval_ext (f,e2)) 
+    | OtherExtExp e -> f e *)
 ;;
 toString (eval (Add ((Negate (Int 5)), (Int 6))))
