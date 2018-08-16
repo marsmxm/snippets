@@ -1,0 +1,6 @@
+[package]
+name = "enums"
+version = "0.1.0"
+authors = ["Mu Xian Ming (Sam) <mu.xianming@linecorp.com>"]
+
+[dependencies]
