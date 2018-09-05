@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+apply plugin: 'java'
+
+dependencies {
+    compile 'uk.co.real-logic:sbe-tool:1.8.7'
+    compile files('build/classes/java/generated')
+}
+
+sourceSets {
+    generated.java.srcDir 'build/generated'
+}
+
+compileGeneratedJava {
+    dependsOn 'generateCodecs'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
+    options.deprecation = true
+    classpath += sourceSets.main.compileClasspath
+}
+
+compileJava {
+    dependsOn 'compileGeneratedJava'
+}
+
+task generateCodecs(type: JavaExec) {
+    main = 'uk.co.real_logic.sbe.SbeTool'
+    classpath = sourceSets.main.compileClasspath
+    systemProperties(
+            'sbe.output.dir': 'build/generated',
+            'sbe.target.language': 'Java',
+            'sbe.java.generate.interfaces': 'false',
+            'sbe.validation.stop.on.error': 'true',
+            'sbe.validation.xsd': projectDir.toString() + '/src/main/resources/sbe.xsd')
+    args = ['src/main/resources/example-schema.xml']
+}
+
+task runExampleUsingGeneratedStub(dependsOn: 'compileJava', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'host.mxm.sbe.ExampleUsingGeneratedStub'
+}
