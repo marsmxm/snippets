@@ -46,5 +46,6 @@ task generateCodecs(type: JavaExec) {
 
 task runExampleUsingGeneratedStub(dependsOn: 'compileJava', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
+    systemProperties('sbe.encoding.filename': 'encoding_file')
     main = 'host.mxm.sbe.ExampleUsingGeneratedStub'
 }
