@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="/webjars/jquery/jquery.js"></script>
+  <script src="/webjars/fetch/fetch.js"></script>
+  <title>Title</title>
+</head>
+<body>
+  <h1>Test page</h1>
+  <ul></ul>
+
+  <script>
+    const evtSource = new EventSource('/events');
+    const eventList = document.querySelector('ul');
+
+    evtSource.addEventListener("e1", function(e) {
+      console.log(e);
+      var newElement = document.createElement("li");
+
+      const status = JSON.parse(e.data).status;
+      newElement.innerHTML = e.lastEventId + " ping at " + JSON.parse(e.data).status;
+      eventList.appendChild(newElement);
+
+      if (status === "COMPLETE") {
+        evtSource.close();
+      }
+    });
+
+  </script>
+</body>
+</html>
