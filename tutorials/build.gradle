@@ -15,6 +15,7 @@ ext.jUnitPlatformVersion = '1.2.0'
 ext.jUnitJupiterVersion  = "5.2.0"
 
 dependencies {
+    compile "com.google.guava:guava:23.0"
     testCompile group: "org.junit.jupiter", name: "junit-jupiter-api", version: "$jUnitJupiterVersion"
     testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "$jUnitJupiterVersion"
 }
