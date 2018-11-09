@@ -54,7 +54,7 @@ fn use_struct() {
             .expect("Could not find a '.'");
     }
     println!("The novel is {}", novel);
-    let i = ImportantExcerpt { part: first_sentence };
+    let i = ImportantExcerpt { part: novel };
     println!("{:?}", i);
 }
 
