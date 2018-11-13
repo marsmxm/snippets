@@ -45,16 +45,9 @@ struct ImportantExcerpt<'a> {
 }
 
 fn use_struct() {
-    let novel;
-    let first_sentence;
-    {
-        novel = String::from("Call me Ishmael. Some years ago...");
-        first_sentence = novel.split('.')
-            .next()
-            .expect("Could not find a '.'");
-    }
-    println!("The novel is {}", novel);
-    let i = ImportantExcerpt { part: novel };
-    println!("{:?}", i);
+    let novel = String::from("Call me Ishmael. Some years ago...");
+    let first_sentence = novel.split('.')
+        .next()
+        .expect("Could not find a '.'");
+    let i = ImportantExcerpt { part: first_sentence };
 }
-
