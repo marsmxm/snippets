@@ -16,6 +16,7 @@ ext.jUnitJupiterVersion  = "5.2.0"
 
 dependencies {
     compile "com.google.guava:guava:23.0"
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
     testCompile group: "org.junit.jupiter", name: "junit-jupiter-api", version: "$jUnitJupiterVersion"
     testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "$jUnitJupiterVersion"
 }

@@ -31,6 +31,7 @@ repositories {
 
 dependencies {
     compile 'com.google.guava:guava:23.0'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-webflux")
     compile group: 'org.webjars', name: 'webjars-locator', version: '0.34'
