@@ -1,8 +1,12 @@
 package host.mxm.sample;
 
+import java.awt.Color;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -39,8 +43,28 @@ public class Subtyping {
         }
     }
 
+    @AllArgsConstructor
+    static class Point {
+        int x;
+        int y;
+    }
+
+    static class ColorPoint extends Point {
+        String color;
+
+        ColorPoint(int x, int y, String color) {
+            super(x, y);
+            this.color = color;
+        }
+    }
+
     public static void main(String[] args) {
-        List<Speaker> speakers = Lists.newArrayList(new Speaker(), new Speaker1(), new Speaker2());
-        speakers.forEach(s -> System.out.println(s.speak(new Word()).word));
+        List<Point> pts = Lists.newArrayList(new Point(1, 2));
+        List<ColorPoint> cpts = Lists.newArrayList(new ColorPoint(1, 2, "red"));
+        List<? super ColorPoint> ps = pts;
+        ps.add(new ColorPoint(1,2,"red"));
+
+        List<? extends Point> ps1 = cpts;
+        Point p = ps1.get(0);
     }
 }
