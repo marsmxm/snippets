@@ -1,0 +1,6 @@
+[package]
+name = "functions"
+version = "0.1.0"
+authors = ["Mu Xian Ming <marsmxm@gmail.com>"]
+
+[dependencies]
