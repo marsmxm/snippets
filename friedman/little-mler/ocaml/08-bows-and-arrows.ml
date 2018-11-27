@@ -52,3 +52,13 @@ let rec combine = function
   | (Empty, l2) -> l2
   | (Cons (a, l1), l2) -> Cons (a, combine (l1, l2))
   
+let rec combine_c l1 l2 =
+  match (l1, l2) with
+  | (Empty, l2) -> l2
+  | (Cons (a, l1), l2) -> Cons (a, combine (l1, l2))
+
+let rec combine_s l =
+  let base l2 = l2 in
+  match l with
+  | Empty -> base
+  | Cons (a, l1) -> (fun l2 -> Cons (a, combine_s l1 l2))
