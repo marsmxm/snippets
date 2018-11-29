@@ -151,3 +151,56 @@ module NumArith = PON(NumStruct)
 
 let _ = NumStruct.reveal (NumArith.plus (NumStruct.conceal 1) (NumStruct.conceal 2))
 let _ = IntStruct.reveal (IntArith.plus (IntStruct.conceal 1) (IntStruct.conceal 2))
+
+module NumberAsInt2 () : N with type number = int =
+  struct
+    type number = int
+
+    exception Too_small
+
+    let is_zero n = (n = 0)
+    let succ n = n + 1
+
+    let pred = function
+      | m when m > 0 -> m - 1
+      | _ -> raise Too_small
+    
+    let conceal i = i
+    let reveal n = n
+  end
+
+module IntStruct2 = NumberAsInt2()
+module IntArith2 = PON(IntStruct2)
+
+let _ = IntArith2.plus 2 3
+
+type num =
+    Zero
+  | One_more_than of num
+
+module NumberAsNum2 () : N with type number = num =
+  struct
+    type number = num
+
+    exception Too_small
+
+    let is_zero n = (n = Zero)
+    let succ n = One_more_than n
+
+    let pred = function
+      | Zero -> raise Too_small
+      | One_more_than m -> m
+
+    let rec conceal i =
+      if i = 0
+      then Zero
+      else One_more_than (conceal (i - 1))
+    
+    let rec reveal = function
+        Zero -> 0
+      | One_more_than n -> (reveal n) + 1
+    
+  end
+
+module NumStruct2 = NumberAsNum2()
+module NumArith2 = PON(NumStruct2)
