@@ -26,8 +26,21 @@ let rec list_item = function
     if n = 1 then abox else list_item (n - 1, rest)
 
 let rec find n boxes =
-  let nth_item = (list_item (n, boxes)) in
-  match nth_item with
-  | Bacon -> n
-  | Ix i -> find i boxes
+  try
+    let nth_item = (list_item (n, boxes)) in
+    match nth_item with
+    | Bacon -> n
+    | Ix i -> find i boxes
+  with Out_of_range -> find (n / 2) boxes
 
+let t = Cons (Ix 5, Cons (Ix 4, Cons (Bacon, Cons (Ix 2, Cons (Ix 7, Empty)))))
+
+let _ = find 1 t
+
+let rec path n boxes =
+  try
+    let nth_item = (list_item (n, boxes)) in
+    match nth_item with
+    | Bacon -> Cons (n, Empty)
+    | Ix i -> Cons (n, (path i boxes))
+  with Out_of_range -> path (n / 2) boxes
