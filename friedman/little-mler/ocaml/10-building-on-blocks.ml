@@ -204,3 +204,94 @@ module NumberAsNum2 () : N with type number = num =
 
 module NumStruct2 = NumberAsNum2()
 module NumArith2 = PON(NumStruct2)
+
+
+module type S =
+  sig
+    type number1
+    type number2
+
+    val similar : number1 -> number2 -> bool
+  end
+
+module Same (N1 : N) (N2 : N) : S with
+    type number1 = N1.number and
+    type number2 = N2.number =
+  struct
+    type number1 = N1.number
+    type number2 = N2.number
+
+    let rec sim n m =
+      if N1.is_zero n
+      then N2.is_zero m
+      else sim (N1.pred n) (N2.pred m)
+
+    let similar n m =
+      try sim n m
+      with
+          N1.Too_small -> false
+        | N2.Too_small -> false
+  end
+
+module SimIntNum = Same (IntStruct2) (NumStruct2)
+
+let _ = SimIntNum.similar 3 (One_more_than (One_more_than Zero))
+
+module type J =
+  sig
+    val new_plus : int -> int -> int
+  end
+
+module NP (N1 : N_C_R) 
+          (P1 : P with type number = N1.number) : J =
+  struct
+    let new_plus x y =
+      N1.reveal (P1.plus (N1.conceal x) (N1.conceal y))
+  end
+
+module NPStruct = NP (NumStruct) (NumArith)
+
+module type T =
+  sig
+    type number
+    val times : number -> number -> number
+  end
+
+module TON (A_N : N) 
+           (A_P : P with type number = A_N.number) 
+           : (T with type number = A_N.number) = struct
+  type number = A_N.number
+
+  let rec times n1 n2 =
+    if A_N.is_zero n1
+    then n1
+    else A_P.plus n2 (times (A_N.pred n1) n2)
+end
+
+;;
+
+module type Ysig =
+  sig
+    val y : (('a -> 'a) -> ('a -> 'a)) -> ('a -> 'a)
+  end
+
+module Yfunc () : Ysig = struct
+  type 'a t = Into of ('a t -> 'a)
+
+  let rec y f =
+    h f (Into (h f))
+  and h f a =
+    f (g a)
+  and g (Into a) x =
+    a (Into a) x
+end
+
+module Ystruct = Yfunc ()
+
+let mk_fact fact n =
+  if n = 0
+  then 1
+  else n * fact (n - 1)
+
+
+let _ = Ystruct.y mk_fact 10
