@@ -1,4 +1,5 @@
 ;; 01 - Continuation and Coroutines
+;; (resume -> (value -> z)) -> (value -> z)
 (define make-coroutine
   (lambda (f)
     (call/cc
@@ -18,6 +19,19 @@
 		 (maker
 		  (lambda (v) (LCS v)))))))))))))
 
-(make-coroutine
- (lambda (resume)
-   (lambda (init) Body)))
+(define make-coroutine
+  (lambda (f)
+    (call/cc
+     (lambda (maker)
+       (let ([LCS '*])
+	 (let ([resume
+		(lambda (dest val)
+		  (call/cc
+		   (lambda (self)
+		     (set! LCS self)
+		     (dest val))))])
+	   (f resume
+	      (resume maker
+		      (lambda (v) (LCS v))))
+	   (error 'resume  "coroutine-fell-off-end" #f)))))))
+
