@@ -1,5 +1,11 @@
 ;; 01 - Continuation and Coroutines
-;; (resume -> (value -> z)) -> (value -> z)
+;; make-coroutine: (resume -> (value -> z)) -> (value -> z)
+;; f: resume -> (value -> z)
+
+(make-coroutine
+ (lambda (resume)
+   (lambda (init) ...)))
+
 (define make-coroutine
   (lambda (f)
     (call/cc
