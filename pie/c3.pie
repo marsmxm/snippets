@@ -1,0 +1,46 @@
+#lang pie
+
+(claim +
+  (-> Nat Nat Nat))
+
+(define +
+  (λ (n j)
+    (iter-Nat n
+      j
+      (λ (+n-1)
+        (add1 +n-1)))))
+
+
+(claim gauss
+  (-> Nat Nat))
+
+(define gauss
+  (λ (n)
+    (rec-Nat n
+      0
+      (λ (n-1 ans)
+        (+ (add1 n-1) ans)))))
+
+    
+(claim zerop
+  (-> Nat Atom))
+
+(define zerop
+  (λ (n)
+    (rec-Nat n
+      't
+      (λ (n-1 ans)
+        'nil))))
+
+
+(claim *
+  (-> Nat Nat Nat))
+
+(define *
+  (λ (n j)
+    (rec-Nat n
+      0
+      (λ (n-1 ans)
+        (+ j ans)))))
+
+
