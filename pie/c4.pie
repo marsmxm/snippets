@@ -1,0 +1,48 @@
+#lang pie
+
+(claim elim-Pair
+  (∏ ((A U) (D U) (X U))
+    (-> (Pair A D) (-> A D X)
+        X)))
+
+(define elim-Pair
+  (λ (A D X)
+    (λ (p f)
+      (f (car p) (cdr p)))))
+
+
+(claim kar
+  (-> (Pair Nat Nat)
+      Nat))
+
+(define kar
+  (λ (p)
+    (elim-Pair
+      Nat Nat
+      Nat
+      p
+      (lambda (a d) a))))
+
+
+(claim kdr
+  (-> (Pair Nat Nat)
+      Nat))
+
+(define kdr
+  (λ (p)
+    (elim-Pair
+      Nat Nat
+      Nat
+      p
+      (lambda (a d) d))))
+
+
+(claim twin
+  (∏ ((Y U))
+    (-> Y
+        (Pair Y Y))))
+
+(define twin
+  (λ (Y)
+    (λ (y)
+      (cons y y))))
