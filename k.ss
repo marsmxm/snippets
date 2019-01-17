@@ -2,11 +2,11 @@
 ;; make-coroutine: (resume -> (value -> z)) -> (value -> z)
 ;; f: resume -> (value -> z)
 
-(make-coroutine
- (lambda (resume)
-   (lambda (init) ...)))
+;; (make-coroutine
+;;  (lambda (resume)
+;;    (lambda (init) ...)))
 
-(define make-coroutine
+(define make-coroutine1
   (lambda (f)
     (call/cc
      (lambda (maker)
@@ -25,7 +25,13 @@
 		 (maker
 		  (lambda (v) (LCS v)))))))))))))
 
-(define make-coroutine
+(define c1
+  (make-coroutine1
+   (lambda (resume)
+     (lambda (init)
+       ))))
+
+(define make-coroutine2
   (lambda (f)
     (call/cc
      (lambda (maker)
