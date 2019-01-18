@@ -1,0 +1,66 @@
+#lang pie
+
+(claim toppings
+  (List Atom))
+(define toppings
+  (:: 'potato
+    (:: 'butter nil)))
+
+(claim condiments
+  (List Atom))
+(define condiments
+  (:: 'chives
+    (:: 'mayonnaise nil)))
+
+
+(claim length
+  (∏ ((E U))
+    (-> (List E)
+        Nat)))
+(define length
+  (λ (E)
+    (λ (xs)
+      (rec-List xs
+        0
+        (λ (e es eslength)
+          (add1 eslength))))))
+
+
+(claim append
+  (∏ ((E U))
+    (-> (List E) (List E)
+        (List E))))
+(define append
+  (λ (E)
+    (λ (start end)
+      (rec-List start
+        end
+        (λ (e es aes)
+          (:: e aes))))))
+
+
+(claim snoc
+  (∏ ((E U))
+    (-> (List E) E
+        (List E))))
+(define snoc
+  (λ (E)
+    (λ (start e)
+      (rec-List start
+        (:: e nil)
+        (λ (x xs sxs)
+          (:: x sxs))))))
+
+
+(claim concat
+  (∏ ((E U))
+    (-> (List E) (List E)
+        (List E))))
+(define concat
+  (λ (E)
+    (λ (start end)
+      (rec-List end
+        start
+        (λ (e es ces)
+          (snoc E ces e))))))
+
