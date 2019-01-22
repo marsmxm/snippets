@@ -56,6 +56,7 @@
   (∏ ((E U))
     (-> (List E) (List E)
         (List E))))
+;; wrong
 (define concat
   (λ (E)
     (λ (start end)
@@ -63,4 +64,15 @@
         start
         (λ (e es ces)
           (snoc E ces e))))))
+
+(claim reverse
+  (∏ ((E U))
+    (-> (List E) (List E))))
+(define reverse
+  (λ (E)
+    (λ (es)
+      (rec-List es
+        (the (List E) nil)
+        (λ (e es res)
+          (snoc E res e))))))
 
