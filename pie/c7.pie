@@ -1,0 +1,19 @@
+#lang pie
+
+(claim mot-peas
+  (-> Nat U))
+(define mot-peas
+  (λ (k)
+    (Vec Atom k)))
+
+(claim peas
+  (∏ ((how-many-peas Nat))
+    (Vec Atom how-many-peas)))
+(define peas
+  (λ (l)
+    (ind-Nat l
+      mot-peas
+      vecnil
+      (λ (l-1)
+        (λ (peasl-1)
+          (vec:: 'pea peasl-1))))))
