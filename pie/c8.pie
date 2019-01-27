@@ -18,4 +18,41 @@
       1
       (+ 1))))
 
-        
+
+;; +1=add1
+(claim +1=add1
+  (∏ ((n Nat))
+    (= Nat (+ 1 n) (add1 n))))
+(define +1=add1
+  (λ (n)
+    (same (add1 n))))
+
+;; incr=add1
+(claim mot-incr=add1
+  (-> Nat U))
+(define mot-incr=add1
+  (λ (k)
+    (= Nat (incr k) (add1 k))))
+
+(claim base-incr=add1
+  (mot-incr=add1 0))
+(define base-incr=add1
+  (same (add1 0)))
+
+(claim step-incr=add1
+  (∏ ((n-1 Nat))
+    (-> (= Nat (incr n-1) (add1 n-1))
+        (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
+(define step-incr=add1
+  (λ (n-1 incr=add1-n-1)
+    (cong incr=add1-n-1 (+ 1))))
+
+(claim incr=add1
+  (∏ ((n Nat))
+    (= Nat (incr n) (add1 n))))
+(define incr=add1
+  (λ (n)
+    (ind-Nat n
+      mot-incr=add1
+      base-incr=add1
+      step-incr=add1)))
