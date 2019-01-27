@@ -56,3 +56,5 @@
       mot-incr=add1
       base-incr=add1
       step-incr=add1)))
+
+(incr=add1 2)
