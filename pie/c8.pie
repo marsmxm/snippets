@@ -1,0 +1,21 @@
+#lang pie
+
+(claim +
+  (-> Nat Nat
+      Nat))
+(define +
+  (λ (m n)
+    (iter-Nat m
+      n
+      (λ (+-m-1)
+        (add1 +-m-1)))))
+
+(claim incr
+  (-> Nat Nat))
+(define incr
+  (λ (n)
+    (iter-Nat n
+      1
+      (+ 1))))
+
+        
