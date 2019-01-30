@@ -58,19 +58,19 @@
       step-incr=add1)))
 
 
-(claim double
-  (-> Nat Nat))
-(define double
-  (λ (n)
-    (iter-Nat n
-      0
-      (+ 2))))
-
-(claim twice
-  (-> Nat Nat))
-(define twice
-  (λ (n)
-    (+ n n)))
+;(claim double
+;  (-> Nat Nat))
+;(define double
+;  (λ (n)
+;    (iter-Nat n
+;      0
+;      (+ 2))))
+;
+;(claim twice
+;  (-> Nat Nat))
+;(define twice
+;  (λ (n)
+;    (+ n n)))
 
 ;; (double zero) = zero = (twice zero)
 ;;
@@ -123,6 +123,20 @@
       (step-add1+=+add1 j))))
 
 
+(claim double
+  (-> Nat Nat))
+(define double
+  (λ (n)
+    (iter-Nat n
+      0
+      (+ 2))))
+
+(claim twice
+  (-> Nat Nat))
+(define twice
+  (λ (n)
+    (+ n n)))
+
 ;; twice=double
 (claim mot-twice=double
   (-> Nat U))
@@ -160,3 +174,55 @@
       mot-twice=double
       (same 0)
       step-twice=double)))
+
+
+;; twice-Vec
+(claim twice-Vec
+  (∏ ((E U)
+      (l Nat))
+    (-> (Vec E l)
+        (Vec E (twice l)))))
+
+(claim double-Vec
+  (∏ ((E U)
+      (l Nat))
+    (-> (Vec E l)
+        (Vec E (double l)))))
+
+(claim base-double-Vec
+  (∏ ((E U))
+    (-> (Vec E 0)
+        (Vec E (double 0)))))
+(define base-double-Vec
+  (λ (E)
+    (λ (es)
+      vecnil)))
+
+(claim mot-double-Vec
+  (-> U Nat U))
+(define mot-double-Vec
+  (λ (E k)
+    (-> (Vec E k)
+        (Vec E (double k)))))
+
+(claim step-double-Vec
+  (∏ ((E U)
+      (l-1 Nat))
+    (-> (-> (Vec E l-1)
+            (Vec E (double l-1)))
+        (-> (Vec E (add1 l-1))
+            (Vec E (double (add1 l-1)))))))
+(define step-double-Vec
+  (λ (E l-1)
+    (λ (double-Vec-l-1)
+      (λ (es)
+        (vec:: (head es)
+          (vec:: (head es)
+            (double-Vec-l-1 (tail es))))))))
+
+(define double-Vec
+  (λ (E l)
+    (ind-Nat l
+      (mot-double-Vec E)
+      (base-double-Vec E)
+      (step-double-Vec E))))
