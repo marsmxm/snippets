@@ -1,0 +1,10 @@
+#lang pie
+
+(claim more-expectations
+  (Vec Atom 3))
+(define more-expectations
+  (vec:: 'need-induction
+    (vec:: 'understood-induction
+      (vec:: 'built-function vecnil))))
+
+
