@@ -176,13 +176,7 @@
       step-twice=double)))
 
 
-;; twice-Vec
-(claim twice-Vec
-  (∏ ((E U)
-      (l Nat))
-    (-> (Vec E l)
-        (Vec E (twice l)))))
-
+;; double-Vec
 (claim double-Vec
   (∏ ((E U)
       (l Nat))
@@ -226,3 +220,19 @@
       (mot-double-Vec E)
       (base-double-Vec E)
       (step-double-Vec E))))
+
+;; twice-Vec
+(claim twice-Vec
+  (∏ ((E U)
+      (l Nat))
+    (-> (Vec E l)
+        (Vec E (twice l)))))
+
+(define twice-Vec
+  (λ (E l)
+    (λ (es)
+      (replace
+        (symm (twice=double l))
+        (λ (k)
+          (Vec E k))
+        (double-Vec E l es)))))
