@@ -4,3 +4,6 @@
 [submodule "progfun/src/parprog"]
 	path = progfun/src/parprog
 	url = https://github.com/axel22/parprog-snippets
+[submodule "tutorials/reactor-kafka"]
+	path = tutorials/reactor-kafka
+	url = https://github.com/reactor/reactor-kafka/

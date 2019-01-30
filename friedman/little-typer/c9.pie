@@ -130,6 +130,12 @@
   (λ (k)
     (= Nat (twice k) (double k))))
 
+(claim mot-step-twice=double
+  (-> Nat Nat U))
+(define mot-step-twice=double
+  (λ (n-1 k)
+    (= Nat (add1 k) (add1 (add1 (double n-1))))))
+
 (claim step-twice=double
   (∏ ((n-1 Nat))
     (-> (= Nat (twice n-1) (double n-1))
@@ -138,7 +144,12 @@
 (define step-twice=double
   (λ (n-1)
     (λ (twice=double-n-1)
-      (cong twice=double-n-1 (+ 2)))))
+      (replace
+        ; (= Nat (add1 (+ n-1 n-1)) (+ n-1 (add1 n-1)))
+        (add1+=+add1 n-1 n-1)
+        (mot-step-twice=double n-1)
+        ; (= Nat (add1 (add1 (+ n-1 n-1))) (add1 (add1 (double n-1))))
+        (cong twice=double-n-1 (+ 2))))))
 
 (claim twice=double
   (∏ ((n Nat))
