@@ -7,4 +7,30 @@
     (vec:: 'understood-induction
       (vec:: 'built-function vecnil))))
 
+(claim list->vec
+  (Π ((E U))
+    (-> (List E)
+        (Σ ((l Nat))
+          (Vec E l)))))
 
+(claim step-list->vec
+  (Π ((E U))
+    (-> E (List E) (Σ ((l Nat))
+                     (Vec E l))
+        (Σ ((l Nat))
+          (Vec E l)))))
+(define step-list->vec
+  (λ (E)
+    (λ (e es vec->list-es)
+      (cons
+        (add1 (car vec->list-es))
+        (vec:: e (cdr vec->list-es))))))
+
+(define list->vec
+  (λ (E)
+    (λ (es)
+      (rec-List es
+        (the (Σ ((l Nat))
+               (Vec E l))
+          (cons 0 vecnil))
+        (step-list->vec E)))))
