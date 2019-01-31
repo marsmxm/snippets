@@ -70,3 +70,7 @@
   (Π ((E U)
       (es (List E)))
     (Vec E (length E es))))
+
+(define list->vec
+  (λ (E es)
+    TODO))
