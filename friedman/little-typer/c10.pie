@@ -7,30 +7,66 @@
     (vec:: 'understood-induction
       (vec:: 'built-function vecnil))))
 
-(claim list->vec
+;(claim list->vec
+;  (Π ((E U))
+;    (-> (List E)
+;        (Σ ((l Nat))
+;          (Vec E l)))))
+;
+;(claim step-list->vec
+;  (Π ((E U))
+;    (-> E (List E) (Σ ((l Nat))
+;                     (Vec E l))
+;        (Σ ((l Nat))
+;          (Vec E l)))))
+;(define step-list->vec
+;  (λ (E)
+;    (λ (e es vec->list-es)
+;      (cons
+;        (add1 (car vec->list-es))
+;        (vec:: e (cdr vec->list-es))))))
+;
+;(define list->vec
+;  (λ (E)
+;    (λ (es)
+;      (rec-List es
+;        (the (Σ ((l Nat))
+;               (Vec E l))
+;          (cons 0 vecnil))
+;        (step-list->vec E)))))
+;
+;(define list->vec
+;  (λ (E)
+;    (λ (es)
+;      (cons 0 vecnil))))
+
+(claim replicate
+  (Π ((E U)
+      (l Nat))
+    (-> E
+        (Vec E l))))
+(define replicate
+  (λ (E l)
+    (λ (e)
+      (ind-Nat l
+        (λ (k) (Vec E k))
+        vecnil
+        (λ (l-1 replicate-l-1)
+          (vec:: e replicate-l-1))))))
+
+(claim length
   (Π ((E U))
     (-> (List E)
-        (Σ ((l Nat))
-          (Vec E l)))))
-
-(claim step-list->vec
-  (Π ((E U))
-    (-> E (List E) (Σ ((l Nat))
-                     (Vec E l))
-        (Σ ((l Nat))
-          (Vec E l)))))
-(define step-list->vec
-  (λ (E)
-    (λ (e es vec->list-es)
-      (cons
-        (add1 (car vec->list-es))
-        (vec:: e (cdr vec->list-es))))))
-
-(define list->vec
+        Nat)))
+(define length
   (λ (E)
     (λ (es)
       (rec-List es
-        (the (Σ ((l Nat))
-               (Vec E l))
-          (cons 0 vecnil))
-        (step-list->vec E)))))
+        0
+        (λ (x xs length-xs)
+          (add1 length-xs))))))
+
+(claim list->vec
+  (Π ((E U)
+      (es (List E)))
+    (Vec E (length E es))))
