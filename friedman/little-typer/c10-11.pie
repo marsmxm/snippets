@@ -1,0 +1,193 @@
+#lang pie
+
+(claim more-expectations
+  (Vec Atom 3))
+(define more-expectations
+  (vec:: 'need-induction
+    (vec:: 'understood-induction
+      (vec:: 'built-function vecnil))))
+
+;(claim list->vec
+;  (Π ((E U))
+;    (-> (List E)
+;        (Σ ((l Nat))
+;          (Vec E l)))))
+;
+;(claim step-list->vec
+;  (Π ((E U))
+;    (-> E (List E) (Σ ((l Nat))
+;                     (Vec E l))
+;        (Σ ((l Nat))
+;          (Vec E l)))))
+;(define step-list->vec
+;  (λ (E)
+;    (λ (e es vec->list-es)
+;      (cons
+;        (add1 (car vec->list-es))
+;        (vec:: e (cdr vec->list-es))))))
+;
+;(define list->vec
+;  (λ (E)
+;    (λ (es)
+;      (rec-List es
+;        (the (Σ ((l Nat))
+;               (Vec E l))
+;          (cons 0 vecnil))
+;        (step-list->vec E)))))
+;
+;(define list->vec
+;  (λ (E)
+;    (λ (es)
+;      (cons 0 vecnil))))
+
+(claim replicate
+  (Π ((E U)
+      (l Nat))
+    (-> E
+        (Vec E l))))
+(define replicate
+  (λ (E l)
+    (λ (e)
+      (ind-Nat l
+        (λ (k) (Vec E k))
+        vecnil
+        (λ (l-1 replicate-l-1)
+          (vec:: e replicate-l-1))))))
+
+(claim length
+  (Π ((E U))
+    (-> (List E)
+        Nat)))
+(define length
+  (λ (E)
+    (λ (es)
+      (rec-List es
+        0
+        (λ (x xs length-xs)
+          (add1 length-xs))))))
+
+(claim list->vec
+  (Π ((E U)
+      (es (List E)))
+    (Vec E (length E es))))
+(define list->vec
+  (λ (E es)
+    (ind-List es
+      (λ (k)
+        (Vec E (length E k)))
+      vecnil
+      (λ (x xs list->vec-xs)
+        (vec:: x list->vec-xs)))))
+;(define list->vec
+;  (λ (E es)
+;    (ind-List es
+;      (λ (ks) (Vec E (length E ks)))
+;      vecnil
+;      (λ (x xs list->vec-xs)
+;        (replicate E (length E (:: x xs)) x)))))
+
+(claim +
+  (-> Nat Nat
+      Nat))
+(define +
+  (λ (m n)
+    (iter-Nat m
+      n
+      (λ (+-m-1)
+        (add1 +-m-1)))))
+
+
+(claim treats
+  (Vec Atom 3))
+(define treats
+  (vec:: 'kanelbullar
+    (vec:: 'plattar
+      (vec:: 'prinsesstarta vecnil))))
+
+(claim drinks
+  (List Atom))
+(define drinks
+  (:: 'coffee
+    (:: 'cocoa nil)))
+
+(claim vec-append
+  (Π ((E U)
+      (l Nat)
+      (j Nat))
+    (-> (Vec E l) (Vec E j)
+        (Vec E (+ l j)))))
+(define vec-append
+  (λ (E l j)
+    (λ (start end)
+      (ind-Vec l start
+        (λ (k xs)
+          (Vec E (+ k j)))
+        end
+        (λ (l-1 e es)
+          (λ (vec-append-es)
+            (vec:: e vec-append-es)))))))
+
+
+(claim fika
+  (Vec Atom 5))
+(define fika
+  (vec-append Atom 3 2
+    treats
+    (list->vec Atom drinks)))
+
+
+(claim vec->list
+  (Π ((E U)
+      (l Nat))
+    (-> (Vec E l)
+        (List E))))
+(define vec->list
+  (λ (E l)
+    (λ (target)
+      (ind-Vec l target
+        (λ (k xs)
+          (List E))
+        nil
+        (λ (l-1 e es vec->list-es)
+          (:: e vec->list-es))))))
+
+;; Every two equal lists have equal lengths
+(claim list-length=
+  (Π ((E U)
+      (es1 (List E))
+      (es2 (List E)))
+    (-> (= (List E) es1 es2)
+        (= Nat (length E es1) (length E es2)))))
+(define list-length=
+  (λ (E es1 es2)
+    (λ (list=)
+      (cong list= (length E)))))
+
+(claim list->vec->list=
+  (Π ((E U)
+      (es (List E)))
+    (= (List E)
+       es
+       (vec->list E
+         (length E es)
+         (list->vec E es)))))
+
+(claim ::-fun
+  (Π ((E U))
+    (-> E (List E)
+        (List E))))
+(define ::-fun
+  (λ (E e es) (:: e es)))
+
+(define list->vec->list=
+  (λ (E es)
+    (ind-List es
+      (λ (xs)
+        (= (List E)
+          xs
+          (vec->list E
+            (length E xs)
+            (list->vec E xs))))
+      (same nil)
+      (λ (y ys =-ys)
+        (cong =-ys (::-fun E y))))))
