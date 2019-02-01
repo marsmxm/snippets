@@ -1,0 +1,42 @@
+#lang pie
+
+(claim +
+  (-> Nat Nat
+      Nat))
+(define +
+  (λ (m n)
+    (iter-Nat m
+      n
+      (λ (+-m-1)
+        (add1 +-m-1)))))
+
+(claim treats
+  (Vec Atom 3))
+(define treats
+  (vec:: 'bread
+    (vec:: 'pizza
+      (vec:: 'beef vecnil))))
+
+(claim drinks
+  (Vec Atom 2))
+(define drinks
+  (vec:: 'coffee
+    (vec:: 'tea vecnil)))
+
+(claim vec-append
+  (Π ((E U)
+      (l Nat)
+      (j Nat))
+    (-> (Vec E l) (Vec E j)
+        (Vec E (+ l j)))))
+(define vec-append
+  (λ (E l j)
+    (λ (start end)
+      (ind-Vec l start
+        (λ (k xs)
+          (Vec E (+ k j)))
+        end
+        (λ (k e es)
+          (λ (vec-append-es)
+            (vec:: e vec-append-es)))))))
+
