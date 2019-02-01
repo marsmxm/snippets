@@ -70,7 +70,11 @@
   (Π ((E U)
       (es (List E)))
     (Vec E (length E es))))
-
 (define list->vec
   (λ (E es)
-    TODO))
+    (ind-List es
+      (λ (k)
+        (Vec E (length E k)))
+      vecnil
+      (λ (x xs list->vec-xs)
+        (vec:: x list->vec-xs)))))
