@@ -7,3 +7,6 @@
 [submodule "tutorials/reactor-kafka"]
 	path = tutorials/reactor-kafka
 	url = https://github.com/reactor/reactor-kafka/
+[submodule "tutorials/mirage"]
+	path = tutorials/mirage
+	url = git://github.com/mirage/mirage-skeleton.git
