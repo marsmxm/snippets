@@ -114,3 +114,15 @@
       (+ 1)
       (λ (ackermann-n-1)
         (repeat ackermann-n-1)))))
+
+
+(claim even-or-odd
+  (Π ((n Nat))
+    (Either (Even n) (Odd n))))
+
+(claim mot-even-or-odd
+  (-> Nat U))
+(define mot-even-or-odd
+  (λ (k)
+    (Either (Even k) (Odd k))))
+
