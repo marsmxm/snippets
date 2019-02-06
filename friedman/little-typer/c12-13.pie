@@ -126,3 +126,24 @@
   (λ (k)
     (Either (Even k) (Odd k))))
 
+(claim step-even-or-odd
+  (Π ((n-1 Nat))
+    (-> (mot-even-or-odd n-1)
+        (mot-even-or-odd (add1 n-1)))))
+(define step-even-or-odd
+  (λ (n-1)
+    (λ (e-or-o-n-1)
+      (ind-Either e-or-o-n-1
+        (λ (k)
+          (mot-even-or-odd (add1 n-1)))
+        (λ (e-n-1)
+          (right (add1-even->odd n-1 e-n-1)))
+        (λ (o-n-1)
+          (left (add1-odd->even n-1 o-n-1)))))))
+
+(define even-or-odd
+  (λ (n)
+    (ind-Nat n
+      mot-even-or-odd
+      (left zero-is-even)
+      step-even-or-odd)))
