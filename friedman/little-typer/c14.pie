@@ -5,3 +5,50 @@
 (define Maybe
   (λ (X)
     (Either X Trivial)))
+
+(claim nothing
+  (Π ((E U))
+    (Maybe E)))
+(define nothing
+  (λ (E)
+    (right sole)))
+
+(claim just
+  (Π ((E U))
+    (-> E
+        (Maybe E))))
+(define just
+  (λ (E e)
+    (left e)))
+
+(claim maybe-head
+  (Π ((E U))
+    (-> (List E)
+        (Maybe E))))
+(define maybe-head
+  (λ (E es)
+    (rec-List es
+      (nothing E)
+      (λ (x xs ignore)
+        (just E x)))))
+
+(claim maybe-tail
+  (Π ((E U))
+    (-> (List E)
+        (Maybe (List E)))))
+(define maybe-tail
+  (λ (E es)
+    (rec-List es
+      (nothing (List E))
+      (λ (hd tl tail-tl)
+        (just (List E) tl)))))
+
+(claim list-ref
+  (Π ((E U))
+    (-> Nat (List E)
+        (Maybe E))))
+(define list-ref
+  (λ (E n)
+    (rec-Nat n
+      (maybe-head E)
+      TODO)))
