@@ -1,0 +1,7 @@
+#lang pie
+
+(claim Maybe
+  (-> U U))
+(define Maybe
+  (λ (X)
+    (Either X Trivial)))
