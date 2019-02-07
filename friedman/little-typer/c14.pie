@@ -51,4 +51,35 @@
   (λ (E n)
     (rec-Nat n
       (maybe-head E)
-      TODO)))
+      (λ (n-1 lr-n-1)
+        (λ (es)
+          (ind-Either (maybe-tail E es)
+            (λ (mt) (Maybe E))
+            (λ (tl)
+              (lr-n-1 tl))
+            (λ (empty)
+              (nothing E))))))))
+
+
+(claim sandwich
+  (-> Atom Atom))
+(define sandwich
+  (λ (which)
+    'delicous))
+
+(claim menu
+  (Vec Atom 4))
+(define menu
+  (vec:: 'ratatouille
+    (vec:: 'kartoffelmad
+      (vec:: (sandwich 'hero)
+        (vec:: 'prinsesstarta vecnil)))))
+
+
+(claim Fin
+  (-> Nat U))
+(define Fin
+  (λ (n)
+    (iter-Nat n
+      Absurd
+      Maybe)))
