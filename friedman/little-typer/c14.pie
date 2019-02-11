@@ -75,6 +75,11 @@
       (vec:: (sandwich 'hero)
         (vec:: 'prinsesstarta vecnil)))))
 
+(claim similarly-absurd
+  (-> Absurd Absurd))
+(define similarly-absurd
+  (λ (x)
+    x))
 
 (claim Fin
   (-> Nat U))
@@ -83,3 +88,69 @@
     (iter-Nat n
       Absurd
       Maybe)))
+
+(claim fzero
+  (Π ((n Nat))
+    ;; (Fin (add1 n)) =>
+    (Maybe (Fin n))))
+(define fzero
+  (λ (n)
+    (nothing (Fin n))))
+
+(claim fadd1
+  (Π ((n Nat))
+    (-> (Fin n)
+        (Fin (add1 n)))))
+(define fadd1
+  (λ (n)
+    (λ (i-1)
+      (just (Fin n) i-1))))
+
+(claim vec-ref
+  (Π ((E U)
+      (l Nat))
+    (-> (Fin l) (Vec E l)
+        E)))
+
+(claim base-vec-ref
+  (Π ((E U))
+    (-> (Fin zero) (Vec E zero)
+        E)))
+(define base-vec-ref
+  (λ (E)
+    (λ (no-value-ever es)
+      (ind-Absurd no-value-ever
+        E))))
+
+(claim step-vec-ref
+  (Π ((E U)
+      (l-1 Nat))
+    (-> (-> (Fin l-1) (Vec E l-1)
+            E)
+        (-> (Fin (add1 l-1)) (Vec E (add1 l-1))
+            E))))
+(define step-vec-ref
+  (λ (E l-1)
+    (λ (vec-ref-l-1)
+      (λ (i es)
+        (ind-Either i
+          (λ (i) E)
+          (λ (i-1)
+            (vec-ref-l-1 i-1 (tail es)))
+          (λ (triv)
+            (head es)))))))
+
+(define vec-ref
+  (λ (E l)
+    (ind-Nat l
+      (λ (k)
+        (-> (Fin k) (Vec E k)
+            E))
+      (base-vec-ref E)
+      (step-vec-ref E))))
+
+menu
+(vec-ref Atom 4 (fzero 3) menu) ;; first
+(vec-ref Atom 4 (fadd1 3 (fzero 2)) menu) ;; second
+(vec-ref Atom 4 (fadd1 3 (fadd1 2 (fzero 1))) menu) ;; third
+(vec-ref Atom 4 (fadd1 3 (fadd1 2 (fadd1 1 (fzero 0)))) menu) ;; fourth
