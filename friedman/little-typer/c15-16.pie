@@ -40,3 +40,92 @@
         (λ (k)
           (=consequence n k))
         (=consequence-same n)))))
+
+(claim zero-not-add1
+  (Π ((n Nat))
+    (-> (= Nat 0 (add1 n))
+        Absurd)))
+(define zero-not-add1
+  (λ (n)
+    (use-Nat= zero (add1 n))))
+
+(claim donut-absurdity
+  (-> (= Nat 0 6)
+      (= Atom 'powdered 'glazed)))
+(define donut-absurdity
+  (λ (zero=six)
+    (ind-Absurd (zero-not-add1 5 zero=six)
+      (= Atom 'powdered 'glazed))))
+
+(claim sub1
+  (Π ((n Nat)
+      (j Nat))
+    (-> (= Nat (add1 n) (add1 j))
+        (= Nat n j))))
+(define sub1
+  (λ (n j)
+    (use-Nat= (add1 n) (add1 j))))
+
+(claim one-not-six
+  (-> (= Nat 1 6)
+      Absurd))
+(define one-not-six
+  (λ (1=6)
+    (zero-not-add1 4 (sub1 0 5 1=6))))
+
+
+(claim front
+  (Π ((E U)
+      (n Nat))
+    (-> (Vec E (add1 n))
+        E)))
+;(define front
+;  (λ (E n es)
+;    (ind-Vec (add1 n) es
+;      (λ (k xs) E)
+;      TODO
+;      (λ (k h t front-t)
+;        h))))
+(claim mot-front
+  (Π ((E U)
+      (k Nat))
+    (-> (Vec E k)
+        U)))
+(define mot-front
+  (λ (E k es)
+    (Π ((j Nat))
+      (-> (= Nat k (add1 j))
+          E))))
+
+(claim base-front
+  (Π ((E U)
+      (j Nat))
+    (-> (= Nat 0 (add1 j))
+        E)))
+(define base-front
+  (λ (E j 0=j+1)
+    (ind-Absurd (zero-not-add1 j 0=j+1)
+      E)))
+
+(claim step-front
+  (Π ((E U)
+      (l Nat)
+      (e E)
+      (es (Vec E l)))
+    (-> (mot-front E l es)
+        (mot-front E (add1 l) (vec:: e es)))))
+(define step-front
+  (λ (E l e es)
+    (λ (front-es)
+      (λ (j eq)
+        e))))
+
+(define front
+  (λ (E n es)
+    ((ind-Vec (add1 n) es
+       (mot-front E)
+       (base-front E)
+       (step-front E))
+      n
+      (same (add1 n)))))
+
