@@ -1,0 +1,42 @@
+#lang pie
+
+(claim =consequence
+  (-> Nat Nat
+      U))
+(define =consequence
+  (λ (n m)
+    (which-Nat n
+      (which-Nat m
+        Trivial
+        (λ (m-1)
+          Absurd))
+      (λ (n-1)
+        (which-Nat m
+          Absurd
+          (λ (m-1)
+            (= Nat n-1 m-1)))))))
+
+(claim =consequence-same
+  (Π ((n Nat))
+    (=consequence n n)))
+(define =consequence-same
+  (λ (n)
+    (ind-Nat n
+      (λ (k)
+        (=consequence k k))
+      sole
+      (λ (n-1 =consequence-n-1)
+        (same n-1)))))
+
+(claim use-Nat=
+  (Π ((n Nat)
+      (m Nat))
+    (-> (= Nat n m)
+        (=consequence n m))))
+(define use-Nat=
+  (λ (n m)
+    (λ (n=m)
+      (replace n=m ; (= Nat n m)
+        (λ (k)
+          (=consequence n k))
+        (=consequence-same n)))))
