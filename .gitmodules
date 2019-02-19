@@ -10,3 +10,6 @@
 [submodule "tutorials/mirage"]
 	path = tutorials/mirage
 	url = git://github.com/mirage/mirage-skeleton.git
+[submodule "idris/TypeDD-Samples"]
+	path = idris/TypeDD-Samples
+	url = https://github.com/edwinb/TypeDD-Samples
