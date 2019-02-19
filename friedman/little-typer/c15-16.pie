@@ -129,3 +129,55 @@
       n
       (same (add1 n)))))
 
+
+(claim rest
+  (Π ((E U)
+      (n Nat))
+    (-> (Vec E (add1 n))
+        (Vec E n))))
+
+(claim mot-rest
+  (Π ((E U)
+      (k Nat))
+    (-> (Vec E k)
+        U)))
+(define mot-rest
+  (λ (E k es)
+    (Π ((j Nat))
+      (-> (= Nat k (add1 j))
+          (Vec E j)))))
+
+(claim base-rest
+  (Π ((E U)
+      (j Nat))
+    (-> (= Nat 0 (add1 j))
+        (Vec E j))))
+(define base-rest
+  (λ (E j 0=j+1)
+    (ind-Absurd (zero-not-add1 j 0=j+1)
+      (Vec E j))))
+
+(claim step-rest
+  (Π ((E U)
+      (l Nat)
+      (e E)
+      (es (Vec E l)))
+    (-> (mot-rest E l es)
+        (mot-rest E (add1 l) (vec:: e es)))))
+(define step-rest
+  (λ (E l e es)
+    (λ (rest-es)
+      (λ (j l+1=j+1) ; (= Nat (add1 l) (add1 j))
+        (replace (sub1 l j l+1=j+1) ; (= Nat l j)
+          (λ (k)
+            (Vec E k))
+          es)))))
+
+(define rest
+  (λ (E n es)
+    ((ind-Vec (add1 n) es
+       (mot-rest E)
+       (base-rest E)
+       (step-rest E))
+      n
+      (same (add1 n)))))
