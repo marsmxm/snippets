@@ -23,3 +23,6 @@ identity x = x
 
 double : Num t => t -> t
 double x = x + x
+
+twice : (a -> a) -> a -> a
+twice f x = f (f x)
