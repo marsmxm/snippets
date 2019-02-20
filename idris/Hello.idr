@@ -18,3 +18,8 @@ valToString x val = case x of
   True => cast val
   False => val
 
+identity : t -> t
+identity x = x
+
+double : Num t => t -> t
+double x = x + x
