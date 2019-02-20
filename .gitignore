@@ -20,3 +20,5 @@ __pycache__
 build/
 out/
 ResNet50.h5
+*.ibc
+
