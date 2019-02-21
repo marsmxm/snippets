@@ -222,3 +222,39 @@
     (Either X
       (-> X
         Absurd))))
+
+(claim identity
+  (Π ((T U))
+    (-> T T)))
+(define identity
+  (λ (T)
+    (λ (t)
+      t)))
+
+
+(claim zero?
+  (Π ((n Nat))
+    (Dec
+     (= Nat zero n))))
+(define zero?
+  (λ (n)
+    (ind-Nat n
+      (λ (k)
+        (Dec (= Nat zero k)))
+      (left (same zero))
+      (λ (n-1 zero?-n-1)
+        (right (zero-not-add1 n-1))))))
+
+(claim nat=?
+  (Π ((n Nat)
+      (j Nat))
+    (Dec
+     (= Nat n j))))
+(define nat=?
+  (λ (n j)
+    (ind-Nat n
+      (λ (k)
+        (Dec
+          (= Nat k j)))
+      (zero? j)
+      TODO)))
