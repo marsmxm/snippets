@@ -1,4 +1,5 @@
 module Main
+import Data.Vect
 
 main: IO ()
 main = putStrLn (cast 'x')
@@ -9,7 +10,7 @@ StringOrInt x = case x of
   False => String
 
 getStringOrInt : (x : Bool) -> StringOrInt x
-getStringOrInt x = case x of 
+getStringOrInt x = case x of
   True => 42
   False => "Fourty two"
 
@@ -29,7 +30,7 @@ twice f x = f (f x)
 
 palindrome : Nat -> String -> Bool
 palindrome len str = let s = toLower str in
-                         if (length s) > len 
+                         if (length s) > len
                           then (reverse s) == s
                           else False
 
@@ -42,3 +43,26 @@ top_ten xs = take 10 (reverse (sort xs))
 over_length : Nat -> List String -> Nat
 over_length len strs = length (filter (\x => (length x) > len) strs)
 
+describeList : List Int -> String
+describeList [] = "Empty"
+describeList (x :: xs) = "Non-empty, tail = " ++ show xs
+
+allLengths : List String -> List Nat
+allLengths [] = []
+allLengths (word :: words) = length word :: allLengths words
+
+mutual
+  isEven : Nat -> Bool
+  isEven Z = True
+  isEven (S k) = isOdd k
+  isOdd : Nat -> Bool
+  isOdd Z = False
+  isOdd (S k) = isEven k
+
+
+fourInts : Vect 4 Int
+fourInts = [0, 1, 2, 3]
+sixInts : Vect 6 Int
+sixInts = [4, 5, 6, 7, 8, 9]
+tenInts : Vect 10 Int
+tenInts = fourInts ++ sixInts
