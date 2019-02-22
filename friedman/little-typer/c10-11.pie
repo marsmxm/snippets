@@ -44,7 +44,7 @@
   (Π ((E U)
       (l Nat))
     (-> E
-        (Vec E l))))
+      (Vec E l))))
 (define replicate
   (λ (E l)
     (λ (e)
@@ -57,7 +57,7 @@
 (claim length
   (Π ((E U))
     (-> (List E)
-        Nat)))
+      Nat)))
 (define length
   (λ (E)
     (λ (es)
@@ -88,7 +88,7 @@
 
 (claim +
   (-> Nat Nat
-      Nat))
+    Nat))
 (define +
   (λ (m n)
     (iter-Nat m
@@ -115,7 +115,7 @@
       (l Nat)
       (j Nat))
     (-> (Vec E l) (Vec E j)
-        (Vec E (+ l j)))))
+      (Vec E (+ l j)))))
 (define vec-append
   (λ (E l j)
     (λ (start end)
@@ -140,7 +140,7 @@
   (Π ((E U)
       (l Nat))
     (-> (Vec E l)
-        (List E))))
+      (List E))))
 (define vec->list
   (λ (E l)
     (λ (target)
@@ -157,7 +157,7 @@
       (es1 (List E))
       (es2 (List E)))
     (-> (= (List E) es1 es2)
-        (= Nat (length E es1) (length E es2)))))
+      (= Nat (length E es1) (length E es2)))))
 (define list-length=
   (λ (E es1 es2)
     (λ (list=)
@@ -175,7 +175,7 @@
 (claim ::-fun
   (Π ((E U))
     (-> E (List E)
-        (List E))))
+      (List E))))
 (define ::-fun
   (λ (E e es) (:: e es)))
 
