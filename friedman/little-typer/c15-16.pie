@@ -304,6 +304,38 @@
 ;          (λ (n-1!=j) ; (-> (= Nat n-1 j) Absurd)
 ;            TODO))))))
 
+(claim dec-add1-=
+  (Π ((n-1 Nat)
+      (j-1 Nat))
+    (-> (Dec (= Nat n-1 j-1))
+        (Dec (= Nat (add1 n-1) (add1 j-1))))))
+(define dec-add1-=
+  (λ (n-1 j-1 dec-n-1=j-1)
+    (ind-Either dec-n-1=j-1
+      (λ (x)
+        (Dec (= Nat (add1 n-1) (add1 j-1))))
+      (λ (n-1=j-1)
+        (left
+          (cong n-1=j-1 (+ 1))))
+      (λ (n-1!=j-1)
+        (right
+          (λ (n=j)
+            (n-1!=j-1 (sub1= n j n=j))))))))
+      
 (define nat=?
   (λ (n j)
-    TODO))
+    (ind-Nat n
+      (λ (k)
+        (Π ((i Nat))
+          (Dec (= Nat k i))))
+      zero?
+      ; (Dec (= Nat (add1 n-1) i))
+      (λ (n-1 nat=?-n-1 i)
+        (ind-Nat i
+          (λ (k)
+            (Dec (= Nat (add1 n-1) k)))
+          (add1-not-zero n-1)
+          (λ (i-1 nat=?-i-1)
+            (dec-add1= n-1 j-1 (nat=?-n-1 i-1))))))))
+            
+        
