@@ -76,12 +76,13 @@
     (ind-Absurd (zero-not-add1 5 zero=six)
       (= Atom 'powdered 'glazed))))
 
-(claim sub1
+
+(claim sub1=
   (Π ((n Nat)
       (j Nat))
     (-> (= Nat (add1 n) (add1 j))
       (= Nat n j))))
-(define sub1
+(define sub1=
   (λ (n j)
     (use-Nat= (add1 n) (add1 j))))
 
@@ -90,7 +91,7 @@
     Absurd))
 (define one-not-six
   (λ (1=6)
-    (zero-not-add1 4 (sub1 0 5 1=6))))
+    (zero-not-add1 4 (sub1= 0 5 1=6))))
 
 (claim add1-not-n
   (Π ((n Nat))
@@ -105,7 +106,7 @@
       (add1-not-zero 0)
       (λ (n-1 add1-not-n-1)
         (λ (add2=add1) ; (= Nat (add1 (add1 n-1)) (add1 n-1))
-          (add1-not-n-1 (sub1 (add1 n-1) n-1 add2=add1)))))))
+          (add1-not-n-1 (sub1= (add1 n-1) n-1 add2=add1)))))))
 
 (claim front
   (Π ((E U)
@@ -201,7 +202,7 @@
   (λ (E l e es)
     (λ (rest-es)
       (λ (j l+1=j+1) ; (= Nat (add1 l) (add1 j))
-        (replace (sub1 l j l+1=j+1) ; (= Nat l j)
+        (replace (sub1= l j l+1=j+1) ; (= Nat l j)
           (λ (k)
             (Vec E k))
           es)))))
