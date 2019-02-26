@@ -1,0 +1,53 @@
+#lang pie
+
+(claim Pear
+  U)
+(define Pear
+  (Pair Nat Nat))
+
+(claim Pear-maker
+  U)
+(define Pear-maker
+  (-> Nat Nat
+    Pear))
+
+(claim elim-Pear
+  (-> Pear Pear-maker
+    Pear))
+(define elim-Pear
+  (λ (pear maker)
+    (maker (car pear) (cdr pear))))
+
+(claim +
+  (-> Nat Nat
+    Nat))
+(define +
+  (λ (n j)
+    (iter-Nat n
+      j
+      (λ (+n-1)
+        (add1 +n-1)))))
+
+(claim pearwise+
+  (-> Pear Pear
+      Pear))
+(define pearwise+
+  (λ (p1 p2)
+    (elim-Pear p1
+      (λ (a1 d1)
+        (elim-Pear p2
+          (λ (a2 d2)
+            (cons (+ a1 a2)
+              (+ d1 d2))))))))
+
+(claim p1
+  Pear)
+(define p1
+  (cons 1 2))
+
+(claim p2
+  Pear)
+(define p2
+  (cons 3 4))
+
+(pearwise+ p1 p2)

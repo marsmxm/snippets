@@ -1,8 +1,8 @@
 #lang pie
 
 (claim +
-  (-> Nat Nat Nat))
-
+  (-> Nat Nat
+    Nat))
 (define +
   (λ (n j)
     (iter-Nat n
@@ -12,8 +12,8 @@
 
 
 (claim gauss
-  (-> Nat Nat))
-
+  (-> Nat
+    Nat))
 (define gauss
   (λ (n)
     (rec-Nat n
@@ -23,8 +23,8 @@
 
     
 (claim zerop
-  (-> Nat Atom))
-
+  (-> Nat
+    Atom))
 (define zerop
   (λ (n)
     (rec-Nat n
@@ -34,8 +34,8 @@
 
 
 (claim *
-  (-> Nat Nat Nat))
-
+  (-> Nat Nat
+    Nat))
 (define *
   (λ (n j)
     (rec-Nat n
