@@ -10,3 +10,6 @@
 [submodule "idris/TypeDD-Samples"]
 	path = idris/TypeDD-Samples
 	url = https://github.com/edwinb/TypeDD-Samples
+[submodule "friedman/little-prover/j-bob"]
+	path = friedman/little-prover/j-bob
+	url = https://github.com/the-little-prover/j-bob
