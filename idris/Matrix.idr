@@ -4,7 +4,8 @@ addMatrix : Num numType =>
             Vect rows (Vect cols numType) ->
             Vect rows (Vect cols numType) ->
             Vect rows (Vect cols numType)
-addMatrix xs ys = ?addMatrix_rhs
+addMatrix [] [] = ?addMatrix_rhs_1
+addMatrix (x :: xs) (y :: ys) = ?addMatrix_rhs_3
 
 
 multMatrix : Num numType =>
