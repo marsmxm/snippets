@@ -160,9 +160,7 @@ menu
   (Π ((n Nat))
     (-> Nat
         (Fin (add1 n)))))
-(define vec-index
-  (λ (n i)
-    TODO))
+
 
 
 
