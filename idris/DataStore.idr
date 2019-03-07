@@ -21,10 +21,10 @@ addToStore (MkData size items) newitem = MkData _ (addToData items)
 
 
 data Command = Add String
-              | Get Integer
-              | Search String
-              | Size
-              | Quit
+             | Get Integer
+             | Search String
+             | Size
+             | Quit
 
 parseCommand : (cmd : String) -> (args : String) -> Maybe Command
 parseCommand "add" str = Just (Add str)
@@ -49,11 +49,16 @@ getEntry pos store = let store_items = items store in
                           Nothing => Just ("Out of range\n", store)
                           Just id => Just (index id store_items ++ "\n", store)
 
+contains : String -> (Nat, String) -> Bool
+contains str (idx, content) = (isInfixOf str content)
 
 searchEntries : (str : String) -> (store : DataStore) -> Maybe (String, DataStore)
-searchEntries str store = let store_items = items store in
-                          case filter (isInfixOf str) store_items of
-                               (len ** xs) => Just ("Search Result: " ++ show xs ++ "\n", store)
+searchEntries str store@(MkData Z items') = Just ("\n", store)
+searchEntries str store@(MkData (S k) items') =
+  let idx_item_pairs = zip (fromList [0..k]) items' in
+      case filter (contains str) idx_item_pairs of
+           (len ** xs) => Just ("Search Result: " ++ show xs ++ "\n", store)
+
 
 processInput : DataStore -> String -> Maybe (String, DataStore)
 processInput store inp = case parse inp of
