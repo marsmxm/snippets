@@ -1,4 +1,4 @@
- ;; 01 - Continuation and Coroutines
+;; 01 - Continuation and Coroutines
 ;; make-coroutine: (resume -> (value -> z)) -> (value -> z)
 ;; f: resume -> (value -> z)
 
