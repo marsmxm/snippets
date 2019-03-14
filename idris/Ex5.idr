@@ -1,7 +1,7 @@
 module Main
 
 import System
-import Effect.Random
+import Data.Vect
 
 printLonger : IO ()
 printLonger = do
@@ -40,3 +40,53 @@ guess target = do
     else do
       putStrLn "Please input a valid number."
       guess target
+
+readToBlank : IO (List String)
+readToBlank = do
+  x <- getLine
+  if x == ""
+    then pure []
+    else do xs <- readToBlank
+            pure (x :: xs)
+
+saveListHelper : (List String) -> (h :File) -> IO ()
+saveListHelper [] h = pure ()
+saveListHelper (x :: xs) h = do
+  Right _ <- fPutStrLn	h x
+    | Left err => printLn err
+  saveListHelper xs h
+
+saveList : (List String) -> (filename : String) -> IO ()
+saveList xs filename = do
+  Right h <- openFile filename Append
+    | Left err => printLn err
+  saveListHelper xs h
+  closeFile h
+
+readAndSave : IO ()
+readAndSave = do
+  strs <- readToBlank
+  putStrLn ("Input a filename:")
+  filename <- getLine
+  saveList strs filename
+
+readVectFileHelper : (h : File) -> IO (n : Nat ** Vect n String)
+readVectFileHelper h = do
+  eof <- fEOF h
+  if eof
+    then pure (_ ** [])
+    else do
+      Right x <- fGetLine h
+        | Left err => do
+          printLn err
+          pure (_ ** [])
+      (_ ** xs) <- readVectFileHelper h
+      pure (_ ** x :: xs)
+
+readVectFile : (filename : String) -> IO (n ** Vect n String)
+readVectFile filename = do
+  Right h <- openFile filename Read
+    | Left err => do
+      printLn err
+      pure (_ ** [])
+  readVectFileHelper h
