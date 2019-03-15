@@ -18,8 +18,8 @@ plugins {
 mainClassName = 'App'
 
 dependencies {
-    compile group: 'com.hazelcast', name: 'hazelcast', version: '3.10'
-    compile group: 'com.hazelcast', name: 'hazelcast-client', version: '3.10'
+    compile group: 'com.hazelcast', name: 'hazelcast', version: '3.12-BETA-2'
+    compile group: 'com.hazelcast', name: 'hazelcast-client', version: '3.12-BETA-2'
     compile 'com.google.guava:guava:23.0'
 
     testCompile 'junit:junit:4.12'
