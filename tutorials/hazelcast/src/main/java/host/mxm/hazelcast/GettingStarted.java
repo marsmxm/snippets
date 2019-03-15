@@ -10,11 +10,6 @@ import com.hazelcast.core.HazelcastInstance;
 public final class GettingStarted {
     public static void main(String[] args) {
         Config cfg = new Config();
-        cfg.getNetworkConfig().getJoin().getMulticastConfig()
-           .setEnabled(false);
-        cfg.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true).addMember("localhost");
-        cfg.getNetworkConfig().setPublicAddress("localhost");
-        
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
         Map<Integer, String> mapCustomers = instance.getMap("customers");
         mapCustomers.put(1, "Joe");
