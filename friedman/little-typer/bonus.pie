@@ -1,0 +1,32 @@
+#lang pie
+
+(claim cons=
+  (Π ((E U)
+      (l1 (List E))
+      (l2 (List E))
+      (e E))
+    (-> (= (List E) l1 l2)
+      (= (List E) (:: e l1) (:: e l2)))))
+(define cons=
+  (λ (E l1 l2 e l1=l2)
+    (cong l1=l2
+      (the (-> (List E)
+             (List E))
+        (λ (l) (:: e l))))))
+
+
+(claim cons==
+  (Π ((E U)
+      (l1 (List E))
+      (l2 (List E))
+      (e1 E)
+      (e2 E))
+    (-> (= (List E) l1 l2) (= E e1 e2)
+      (= (List E) (:: e1 l1) (:: e2 l2)))))
+(define cons==
+  (λ (E l1 l2 e1 e2 l1=l2 e1=e2)
+    (replace
+      e1=e2
+      (λ (k)
+        (= (List E) (:: e1 l1) (:: k l2)))
+      (cons= E l1 l2 e1 l1=l2))))
