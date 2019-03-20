@@ -21,7 +21,8 @@
       (l2 (List E))
       (e1 E)
       (e2 E))
-    (-> (= (List E) l1 l2) (= E e1 e2)
+    (-> (= (List E) l1 l2)
+        (= E e1 e2)
       (= (List E) (:: e1 l1) (:: e2 l2)))))
 (define cons==
   (λ (E l1 l2 e1 e2 l1=l2 e1=e2)
@@ -30,3 +31,72 @@
       (λ (k)
         (= (List E) (:: e1 l1) (:: k l2)))
       (cons= E l1 l2 e1 l1=l2))))
+
+
+(claim +
+  (-> Nat Nat
+    Nat))
+(define +
+  (λ (m n)
+    (iter-Nat m
+      n
+      (λ (+-m-1)
+        (add1 +-m-1)))))
+
+(claim +1=add1
+  (Π ((n Nat))
+    (= Nat (+ n 1) (add1 n))))
+(define +1=add1
+  (λ (n)
+    (ind-Nat n
+      (λ (k)
+        (= Nat (+ k 1) (add1 k)))
+      (same 1)
+      (λ (n-1 +1=add1-n-1)
+        (cong +1=add1-n-1 (+ 1))))))
+
+(claim vec-append
+  (Π ((E U)
+      (l Nat)
+      (j Nat))
+    (-> (Vec E l) (Vec E j)
+      (Vec E (+ l j)))))
+(define vec-append
+  (λ (E l j)
+    (λ (start end)
+      (ind-Vec l start
+        (λ (k xs)
+          (Vec E (+ k j)))
+        end
+        (λ (l-1 e es)
+          (λ (vec-append-es)
+            (vec:: e vec-append-es)))))))
+
+(claim vec-reverse
+  (Π ((E U)
+      (l Nat))
+    (-> (Vec E l)
+      (Vec E l))))
+(define vec-reverse
+  (λ (E l es)
+    (ind-Vec l es
+      (λ (k xs)
+        (Vec E k))
+      vecnil
+      (λ (l-1 y ys)
+        (λ (vec-reverse-ys)
+          (replace (+1=add1 l-1)
+            (λ (k)
+              (Vec E k))
+            (vec-append E l-1 1
+              vec-reverse-ys
+              (vec:: y vecnil))))))))
+
+(claim treats
+  (Vec Atom 3))
+(define treats
+  (vec:: 'kanelbullar
+    (vec:: 'plattar
+      (vec:: 'prinsesstarta vecnil))))
+
+(vec-reverse Atom 3 treats)
