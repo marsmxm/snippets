@@ -1,5 +1,14 @@
 #lang pie
 
+(claim identity
+  (Π ((T U))
+    (-> T T)))
+(define identity
+  (λ (T)
+    (λ (t)
+      t)))
+
+
 (claim cons=
   (Π ((E U)
       (l1 (List E))
