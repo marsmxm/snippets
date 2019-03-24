@@ -267,14 +267,6 @@
       (-> X
         Absurd))))
 
-(claim identity
-  (Π ((T U))
-    (-> T T)))
-(define identity
-  (λ (T)
-    (λ (t)
-      t)))
-
 
 (claim zero?
   (Π ((n Nat))
