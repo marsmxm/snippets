@@ -109,3 +109,10 @@
       (vec:: 'prinsesstarta vecnil))))
 
 (vec-reverse Atom 3 treats)
+
+
+(claim Elem
+  (Π ((E U)
+      (n Nat))
+    (-> E (Vec E n)
+      U)))
