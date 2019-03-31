@@ -1369,8 +1369,11 @@ Theorem identity_fn_applied_twice :
   (forall (x : bool), f x = x) ->
   forall (b : bool), f (f b) = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros f. intros H. 
+  destruct b eqn:E.
+  - rewrite -> H. rewrite -> H. reflexivity.
+  - rewrite -> H. rewrite -> H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (negation_fn_applied_twice)  
@@ -1397,13 +1400,32 @@ Definition manual_grade_for_negation_fn_applied_twice : option (nat*string) := N
     [destruct] and [rewrite], but destructing everything in sight is
     not the best way.) *)
 
+Lemma true_and_x : forall x : bool, true && x = x.
+Proof. intros x. reflexivity. Qed.
+
+Lemma true_or_x : forall x : bool, true || x = true.
+Proof. intros x. reflexivity. Qed.
+
+Lemma false_and_x : forall x : bool, false && x = false.
+Proof. reflexivity. Qed.
+
+Lemma false_or_x : forall x : bool, false || x = x.
+Proof. reflexivity. Qed.
+
 Theorem andb_eq_orb :
   forall (b c : bool),
   (andb b c = orb b c) ->
   b = c.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros b c H.
+  destruct b eqn:E.
+  - rewrite <- (true_or_x c).
+    rewrite <- true_and_x.
+    rewrite -> H. reflexivity.
+  - rewrite <- (false_and_x c).
+    rewrite <- false_or_x.
+    rewrite -> H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (binary)  
@@ -1441,11 +1463,40 @@ Inductive bin : Type :=
         for binary numbers, and a function [bin_to_nat] to convert
         binary numbers to unary numbers. *)
 
-Fixpoint incr (m:bin) : bin
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint incr (m:bin) : bin :=
+  match m with
+  | Z => B Z
+  | A n' => B n'
+  | B n' => A (incr n')
+  end.
 
-Fixpoint bin_to_nat (m:bin) : nat
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Example incr_z : (incr Z) = B Z.
+Proof. reflexivity. Qed.
+Example incr_a : (incr (A (B Z))) = (B (B Z)).
+Proof. reflexivity. Qed.
+Example incr_b1 : (incr (B (A (B Z)))) = (A (B (B Z))).
+Proof. reflexivity. Qed.
+Example incr_b2 : (incr (B (B (B Z)))) = (A (A (A (B Z)))).
+Proof. reflexivity. Qed.
+
+Fixpoint bin_to_nat (m:bin) : nat :=
+  match m with
+  | Z => O
+  | A n => let ans := (bin_to_nat n) in ans + ans
+  | B n => let ans := (bin_to_nat n) in ans + ans + 1
+  end.
+
+Example bta2 : (bin_to_nat (A (B Z))) = (S (S O)).
+Proof. reflexivity. Qed.
+
+Theorem incr_bta_eq_bta_incr : forall (m : bin),
+    (bin_to_nat (incr m)) = (bin_to_nat m) + 1.
+Proof.
+  intros [|n|n].
+  - reflexivity.
+  - reflexivity.
+Abort.
+  
 
 (**    (b) Write five unit tests [test_bin_incr1], [test_bin_incr2], etc.
         for your increment and binary-to-unary functions.  (A "unit
