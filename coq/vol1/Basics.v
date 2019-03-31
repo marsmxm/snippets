@@ -1003,14 +1003,20 @@ Theorem mult_0_plus : forall n m : nat,
 Proof.
   intros n m.
   rewrite -> plus_O_n.
-  reflexivity.  Qed.
+  reflexivity.
+Qed.
 
 (** **** Exercise: 2 stars, standard (mult_S_1)  *)
 Theorem mult_S_1 : forall n m : nat,
   m = S n ->
   m * (1 + n) = m * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m.
+  intros H.
+  rewrite -> plus_1_l.
+  rewrite <- H.
+  reflexivity.
+Qed.
 
   (* (N.b. This proof can actually be completed with tactics other than
      [rewrite], but please do use [rewrite] for the sake of the exercise.) 
@@ -1238,14 +1244,25 @@ Qed.
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c. intros H.
+  destruct b eqn:Eb.
+  - destruct c eqn:Ec.
+    + reflexivity.
+    + rewrite <- H. reflexivity.
+  - destruct c eqn:Ec.
+    + reflexivity.
+    + rewrite <- H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (zero_nbeq_plus_1)  *)
 Theorem zero_nbeq_plus_1 : forall n : nat,
   0 =? (n + 1) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
