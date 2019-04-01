@@ -280,7 +280,8 @@ Proof.
   intros n m.
   assert (H: 0 + n = n). { reflexivity. }
   rewrite -> H.
-  reflexivity.  Qed.
+  reflexivity.
+Qed.
 
 (** The [assert] tactic introduces two sub-goals.  The first is
     the assertion itself; by prefixing it with [H:] we name the
@@ -485,7 +486,11 @@ Definition manual_grade_for_plus_comm_informal : option (nat*string) := None.
 Theorem plus_swap : forall n m p : nat,
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  rewrite -> (plus_assoc n m p).
+  rewrite -> (plus_assoc m n p).
+  rewrite -> (plus_comm n m).
+  reflexivity. Qed.
 
 (** Now prove commutativity of multiplication.  (You will probably
     need to define and prove a separate subsidiary theorem to be used
