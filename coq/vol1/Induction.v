@@ -500,7 +500,9 @@ Proof.
 Theorem mult_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros m n.
+  induction m as [|m' IHm'].
+  - reflexivity.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, optional (more_exercises)  
