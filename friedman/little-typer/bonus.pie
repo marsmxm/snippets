@@ -101,6 +101,13 @@
               vec-reverse-ys
               (vec:: y vecnil))))))))
 
+(claim test-vec-reverse
+  (= (Vec Atom 2)
+    (vec-reverse Atom 2 (vec:: 'a (vec:: 'b vecnil)))
+    (vec:: 'b (vec:: 'a vecnil))))
+(define test-vec-reverse
+  (same (vec:: 'b (vec:: 'a vecnil))))
+
 (claim treats
   (Vec Atom 3))
 (define treats
