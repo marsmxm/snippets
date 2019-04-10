@@ -384,9 +384,10 @@ Definition bag := natlist.
 Fixpoint count (v:nat) (s:bag) : nat :=
   match s with
   | nil => 0
-  | h :: t => if eqb v h
-            then 1 + (count v t)
-            else (count v t)
+  | h :: t => match eqb v h with
+            | true => 1 + (count v t)
+            | false => (count v t)
+            end
   end.
 (** All these proofs can be done just by [reflexivity]. *)
 
@@ -962,7 +963,15 @@ Qed.
     how you defined [count]!) *)
 Theorem bag_count_sum : forall (n : nat) (s1 s2 : bag),
     count n s1 + count n s2 = count n (sum s1 s2).
-
+Proof.
+  intros n s1 s2.
+  induction s1 as [|x1 s1'].
+  - reflexivity.
+  - destruct (n =? x1) eqn:E.
+    + simpl. rewrite -> E. rewrite <- IHs1'. reflexivity.
+    + simpl. rewrite -> E. rewrite -> IHs1'. reflexivity.
+Qed.
+    
 (** **** Exercise: 4 stars, advanced (rev_injective)  
 
     Prove that the [rev] function is injective -- that is,
@@ -970,8 +979,12 @@ Theorem bag_count_sum : forall (n : nat) (s1 s2 : bag),
     forall (l1 l2 : natlist), rev l1 = rev l2 -> l1 = l2.
 
     (There is a hard way and an easy way to do this.) *)
-
-(* FILL IN HERE *)
+Theorem rev_injective : forall l1 l2 : natlist,
+    rev l1 = rev l2 -> l1 = l2.
+Proof.
+  intros.
+  induction l1 as [|n1 l1' IHl1].
+  - inversion H. rewrite -> H1.
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_rev_injective : option (nat*string) := None.
