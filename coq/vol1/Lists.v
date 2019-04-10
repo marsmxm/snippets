@@ -943,7 +943,7 @@ Proof.
    definition of [remove_one] above. *)
 (** **** Exercise: 3 stars, advanced (remove_does_not_increase_count)  *)
 Theorem remove_does_not_increase_count: forall (s : bag),
-  (count 0 (remove_one 0 s)) <=? (count 0 s) = true.
+    (count 0 (remove_one 0 s)) <=? (count 0 s) = true.
 Proof.
   induction s as [|n s'].
   - reflexivity.
@@ -962,7 +962,11 @@ Qed.
     how you defined [count]!) *)
 Theorem bag_count_sum : forall (n : nat) (s1 s2 : bag),
     count n s1 + count n s2 = count n (sum s1 s2).
-
+Proof.
+  intros n s1 s2.
+  induction s1 as [|x1 s1'].
+  - simpl. reflexivity.
+  - 
 (** **** Exercise: 4 stars, advanced (rev_injective)  
 
     Prove that the [rev] function is injective -- that is,
