@@ -804,11 +804,19 @@ Proof. reflexivity.  Qed.
 
     Show that [map] and [rev] commute.  You may need to define an
     auxiliary lemma. *)
+Lemma map_assoc : forall (X Y : Type) (f : X -> Y) (l1 l2 : list X),
+    map f (l1 ++ l2) = map f l1 ++ map f l2.
+Proof.
+  intros. induction l1 as [| x l1'].
+  - reflexivity.
+  - simpl. rewrite IHl1'. reflexivity. Qed.
 
 Theorem map_rev : forall (X Y : Type) (f : X -> Y) (l : list X),
   map f (rev l) = rev (map f l).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. induction l as [|x l'].
+  - reflexivity.
+  - simpl. rewrite -> map_assoc. rewrite -> IHl'. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, recommended (flat_map)  
@@ -824,13 +832,16 @@ Proof.
 *)
 
 Fixpoint flat_map {X Y: Type} (f: X -> list Y) (l: list X)
-                   : (list Y)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+                   : (list Y) :=
+  match l with
+  | nil => nil
+  | h :: t => (f h) ++ (flat_map f t)
+  end.
 
 Example test_flat_map1:
   flat_map (fun n => [n;n;n]) [1;5;4]
   = [1; 1; 1; 5; 5; 5; 4; 4; 4].
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** Lists are not the only inductive type for which [map] makes sense.
