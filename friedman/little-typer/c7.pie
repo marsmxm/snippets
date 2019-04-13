@@ -7,7 +7,7 @@
     (Vec Atom k)))
 
 (claim step-peas
-  (∏ ((l-1 Nat))
+  (Π ((l-1 Nat))
     (-> (mot-peas l-1)
         (mot-peas (add1 l-1)))))
 (define step-peas
@@ -15,7 +15,7 @@
     (vec:: 'pea peasl-1)))
 
 (claim peas
-  (∏ ((how-many-peas Nat))
+  (Π ((how-many-peas Nat))
     (Vec Atom how-many-peas)))
 ;(define peas
 ;  (λ (l)
@@ -34,7 +34,7 @@
 
 
 (claim also-rec-Nat
-  (∏ ((X U))
+  (Π ((X U))
     (-> Nat X (-> Nat X X)
         X)))
 (define also-rec-Nat
@@ -55,14 +55,14 @@
           E))))
 
 (claim base-last
-  (∏ ((E U))
+  (Π ((E U))
     (mot-last E zero)))
 (define base-last
   (λ (E)
     (λ (es) (head es))))
 
 (claim step-last
-  (∏ ((E U)
+  (Π ((E U)
       (l-1 Nat))
     (-> (mot-last E l-1)
         (mot-last E (add1 l-1)))))
@@ -73,7 +73,7 @@
         (lastl-1 (tail es))))))
 
 (claim last
-  (∏ ((E U)
+  (Π ((E U)
       (l Nat))
     (-> (Vec E (add1 l))
         E)))
@@ -96,14 +96,14 @@
           (Vec E k)))))
 
 (claim base-drop-last
-  (∏ ((E U))
+  (Π ((E U))
     (mot-drop-last E zero)))
 (define base-drop-last
   (λ (E)
     (λ (es) vecnil)))
 
 (claim step-drop-last
-  (∏ ((E U)
+  (Π ((E U)
       (l-1 Nat))
     (-> (mot-drop-last E l-1)
         (mot-drop-last E (add1 l-1)))))
@@ -117,7 +117,7 @@
             (drop-last-l-1 (tail es))))))))
 
 (claim drop-last
-  (∏ ((E U)
+  (Π ((E U)
       (l Nat))
     (-> (Vec E (add1 l))
         (Vec E l))))
@@ -135,21 +135,21 @@
 (claim peas1 TODO)
 
 (claim peas2
-  (∏ ((n Nat))
+  (Π ((n Nat))
     TODO))
 
 (claim peas3
-  (∏ ((n Nat))
+  (Π ((n Nat))
     (Vec Atom n)))
 (define peas3 TODO)
 
 (claim peas4
-  (∏ ((n Nat)) (Vec Atom n)))
+  (Π ((n Nat)) (Vec Atom n)))
 (define peas4
   (λ (n) TODO))
 
 (claim peas5
-  (∏ ((n Nat)) (Vec Atom n)))
+  (Π ((n Nat)) (Vec Atom n)))
 (define peas5
   (λ (x)
     (ind-Nat x
@@ -158,7 +158,7 @@
       TODO)))
 
 (claim peas6
-  (∏ ((n Nat)) (Vec Atom n)))
+  (Π ((n Nat)) (Vec Atom n)))
 (define peas6
   (λ (x)
     (ind-Nat x

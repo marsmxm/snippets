@@ -74,7 +74,7 @@ Theorem silly_ex :
      oddb 3 = true ->
      evenb 4 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. apply H0. Qed.
 (** [] *)
 
 (** To use the [apply] tactic, the (conclusion of the) fact
@@ -104,10 +104,9 @@ Proof.
     your friend.) *)
 
 Theorem rev_exercise1 : forall (l l' : list nat),
-     l = rev l' ->
-     l' = rev l.
+    l = rev l' -> l' = rev l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. rewrite <- (rev_involutive nat l'). rewrite <- H. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (apply_rewrite)  
@@ -127,9 +126,9 @@ Proof.
     get from [[a;b]] to [[e;f]]. *)
 
 Example trans_eq_example : forall (a b c d e f : nat),
-     [a;b] = [c;d] ->
-     [c;d] = [e;f] ->
-     [a;b] = [e;f].
+    [a;b] = [c;d] ->
+    [c;d] = [e;f] ->
+    [a;b] = [e;f].
 Proof.
   intros a b c d e f eq1 eq2.
   rewrite -> eq1. rewrite -> eq2. reflexivity.  Qed.
@@ -172,11 +171,11 @@ Proof.
 
 (** **** Exercise: 3 stars, standard, optional (apply_with_exercise)  *)
 Example trans_eq_exercise : forall (n m o p : nat),
-     m = (minustwo o) ->
-     (n + p) = m ->
-     (n + p) = (minustwo o).
+    m = (minustwo o) ->
+    (n + p) = m ->
+    (n + p) = (minustwo o).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. apply trans_eq with m. apply H0. apply H. Qed.
 (** [] *)
 
 (* ################################################################# *)
