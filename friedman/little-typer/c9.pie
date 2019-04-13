@@ -37,7 +37,7 @@
     (= Nat (add1 (incr n-1)) (add1 k))))
 
 (claim step-incr=add1
-  (∏ ((n-1 Nat))
+  (Π ((n-1 Nat))
     (-> (= Nat (incr n-1) (add1 n-1))
         (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
 (define step-incr=add1
@@ -48,7 +48,7 @@
       (same (add1 (incr n-1))))))
 
 (claim incr=add1
-  (∏ ((n Nat))
+  (Π ((n Nat))
     (= Nat (incr n) (add1 n))))
 (define incr=add1
   (λ (n)
@@ -98,7 +98,7 @@
     (= Nat (add1 (add1 (+ n-1 j))) (add1 k))))
 
 (claim step-add1+=+add1
-  (∏ ((j Nat)
+  (Π ((j Nat)
       (n-1 Nat))
     (-> (= Nat (add1 (+ n-1 j)) (+ n-1 (add1 j)))
         ;; (= Nat (add1 (+ (add1 n-1) j)) (+ (add1 n-1) (add1 j))) =>
@@ -112,7 +112,7 @@
         (same (add1 (add1 (+ n-1 j))))))))
 
 (claim add1+=+add1
-  (∏ ((n Nat)
+  (Π ((n Nat)
       (j Nat))
     (= Nat (add1 (+ n j)) (+ n (add1 j)))))
 (define add1+=+add1
@@ -151,7 +151,7 @@
     (= Nat (add1 k) (add1 (add1 (double n-1))))))
 
 (claim step-twice=double
-  (∏ ((n-1 Nat))
+  (Π ((n-1 Nat))
     (-> (= Nat (twice n-1) (double n-1))
         ;; (= Nat (twice (add1 n-1)) (double (add1 n-1))) =>
         (= Nat (add1 (+ n-1 (add1 n-1))) (add1 (add1 (double n-1)))))))
@@ -166,7 +166,7 @@
         (cong twice=double-n-1 (+ 2))))))
 
 (claim twice=double
-  (∏ ((n Nat))
+  (Π ((n Nat))
     (= Nat (twice n) (double n))))
 (define twice=double
   (λ (n)
@@ -178,13 +178,13 @@
 
 ;; double-Vec
 (claim double-Vec
-  (∏ ((E U)
+  (Π ((E U)
       (l Nat))
     (-> (Vec E l)
         (Vec E (double l)))))
 
 (claim base-double-Vec
-  (∏ ((E U))
+  (Π ((E U))
     (-> (Vec E 0)
         (Vec E (double 0)))))
 (define base-double-Vec
@@ -200,7 +200,7 @@
         (Vec E (double k)))))
 
 (claim step-double-Vec
-  (∏ ((E U)
+  (Π ((E U)
       (l-1 Nat))
     (-> (-> (Vec E l-1)
             (Vec E (double l-1)))
@@ -223,7 +223,7 @@
 
 ;; twice-Vec
 (claim twice-Vec
-  (∏ ((E U)
+  (Π ((E U)
       (l Nat))
     (-> (Vec E l)
         (Vec E (twice l)))))

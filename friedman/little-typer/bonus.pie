@@ -118,8 +118,19 @@
 (vec-reverse Atom 3 treats)
 
 
-(claim Elem
+(claim my-trans
   (Π ((E U)
-      (n Nat))
-    (-> E (Vec E n)
-      U)))
+      (e1 E)
+      (e2 E)
+      (e3 E))
+    (-> (= E e1 e2)
+      (-> (= E e2 e3)
+        (= E e1 e3)))))
+(define my-trans
+  (λ (E e1 e2 e3)
+    (λ (e1=e2 e2=e3)
+      (replace e2=e3
+        (λ (eq)
+          (= E e1 eq))
+        e1=e2))))
+      

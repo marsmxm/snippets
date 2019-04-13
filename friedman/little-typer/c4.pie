@@ -1,9 +1,9 @@
 #lang pie
 
 (claim elim-Pair
-  (∏ ((A U) (D U) (X U))
+  (Π ((A U) (D U) (X U))
     (-> (Pair A D) (-> A D X)
-        X)))
+      X)))
 
 (define elim-Pair
   (λ (A D X)
@@ -13,7 +13,7 @@
 
 (claim kar
   (-> (Pair Nat Nat)
-      Nat))
+    Nat))
 
 (define kar
   (λ (p)
@@ -26,7 +26,7 @@
 
 (claim kdr
   (-> (Pair Nat Nat)
-      Nat))
+    Nat))
 
 (define kdr
   (λ (p)
@@ -38,9 +38,9 @@
 
 
 (claim twin
-  (∏ ((Y U))
+  (Π ((Y U))
     (-> Y
-        (Pair Y Y))))
+      (Pair Y Y))))
 
 (define twin
   (λ (Y)

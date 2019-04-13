@@ -21,7 +21,7 @@
 
 ;; +1=add1
 (claim +1=add1
-  (∏ ((n Nat))
+  (Π ((n Nat))
     (= Nat (+ 1 n) (add1 n))))
 (define +1=add1
   (λ (n)
@@ -40,7 +40,7 @@
   (same (add1 0)))
 
 (claim step-incr=add1
-  (∏ ((n-1 Nat))
+  (Π ((n-1 Nat))
     (-> (= Nat (incr n-1) (add1 n-1))
         (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
 (define step-incr=add1
@@ -48,7 +48,7 @@
     (cong incr=add1-n-1 (+ 1))))
 
 (claim incr=add1
-  (∏ ((n Nat))
+  (Π ((n Nat))
     (= Nat (incr n) (add1 n))))
 (define incr=add1
   (λ (n)
