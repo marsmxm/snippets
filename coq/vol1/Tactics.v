@@ -212,8 +212,8 @@ Proof.
     [pred] function defined in [Basics.v]. *)
 
 Theorem S_injective : forall (n m : nat),
-  S n = S m ->
-  n = m.
+    S n = S m ->
+    n = m.
 Proof.
   intros n m H1.
   assert (H2: n = pred (S n)). { reflexivity. }
@@ -272,7 +272,7 @@ Example injection_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   y :: l = x :: j ->
   x = y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. injection H0 as Hyx Hlj. symmetry. apply Hyx. Qed.
 (** [] *)
 
 (** So much for injectivity of constructors.  What about disjointness?
