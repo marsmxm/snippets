@@ -220,6 +220,8 @@ Proof.
   rewrite H2. rewrite H1. reflexivity.
 Qed.
 
+
+
 (** This technique can be generalized to any constructor by
     writing the equivalent of [pred] for that constructor -- i.e.,
     writing a function that "undoes" one application of the

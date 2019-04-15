@@ -133,4 +133,33 @@
         (λ (eq)
           (= E e1 eq))
         e1=e2))))
-      
+
+(claim sub1
+  (-> Nat
+    Nat))
+(define sub1
+  (λ (n)
+    (which-Nat n
+      zero
+      (λ (n-1)
+        n-1))))
+
+(claim add1-sub1=
+  (Π ((n Nat))
+    (= Nat n (sub1 (add1 n)))))
+(define add1-sub1=
+  (λ (n)
+    (same n)))
+
+(claim add1-injective
+  (Π ((n Nat)
+      (m Nat))
+    (-> (= Nat (add1 n) (add1 m))
+      (= Nat n m))))
+(define add1-injective
+  (λ (n m n+1=m+1)
+    (replace n+1=m+1
+      (λ (x)
+        (= Nat n (sub1 x)))
+      (add1-sub1= n))))
+    
