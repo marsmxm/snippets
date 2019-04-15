@@ -103,12 +103,12 @@
 (assert
  (equal?
   (swapper 'a 'd '(a d () c d))
-  '(d a () c a))
+  '(d a () c a)))
 
- (assert
-  (equal?
-   (swapper 'x 'y '((x) y (z (x))))
-   '((y) x (z (y)))))
+(assert
+ (equal?
+  (swapper 'x 'y '((x) y (z (x))))
+  '((y) x (z (y)))))
 
 
 ;; 1.19
@@ -237,3 +237,179 @@
  (equal?
   (list-index symbol? '(1 2 (a b) 3))
   #f))
+
+
+;; 1.24
+;; every : (SchemeVal -> Bool) * List(SchemeVal) -> Bool
+;; usage : (every pred lst) returns #f if any element of lst fails to satisfy pred, and returns #t otherwise.
+(define every?
+  (lambda (pred lst)
+    (if (null? lst)
+	#t
+	(and (pred (car lst))
+	     (every pred (cdr lst))))))
+
+(assert
+ (equal?
+  (every? number? '(a b c 3 e))
+  #f))
+
+(assert
+ (equal?
+  (every? number? '(1 2 3 5 4))
+  #t))
+
+
+;; 1.25
+;; exists? : (SchemeVal -> Bool) * List(SchemeVal) -> Bool
+;; usage : (exists? pred lst) returns #t if any element of lst satisfies pred, and returns #f otherwise.
+(define exists?
+  (lambda (pred lst)
+    (if (null? lst)
+	#f
+	(or (pred (car lst))
+	    (exists? pred (cdr lst))))))
+
+(assert
+ (equal?
+  (exists? number? '(a b c 3 e))
+  #t))
+
+(assert
+ (equal?
+  (exists? number? '(a b c d e))
+  #f))
+
+
+;; 1.26
+;; up : List(SchemeVal) -> List(SchemeVal)
+;; usage : (up lst) removes a pair of parentheses from each top-level element of lst.
+;; If a top-level element is not a list, it is included in the result, as is.
+(define up
+  (lambda (lst)
+    (if (null? lst)
+	'()
+	(if (atom? (car lst))
+	    (cons (car lst)
+		  (up (cdr lst)))
+	    (append (car lst)
+		    (up (cdr lst)))))))
+
+(assert
+ (equal?
+  (up '((1 2) (3 4)))
+  '(1 2 3 4)))
+
+(assert
+ (equal?
+  (up '((x (y)) z))
+  '(x (y) z)))
+
+
+;; 1.27
+(define flatten
+  (lambda (lst)
+    (if (null? lst)
+	'()
+	(cond
+	 [(null? (car lst)) (flatten (cdr lst))]
+	 [(atom? (car lst))
+	  (cons (car lst)
+		(flatten (cdr lst)))]
+	 [else (append (flatten (car lst))
+		       (flatten (cdr lst)))]))))
+
+(assert
+ (equal?
+  (flatten '(a b c))
+  '(a b c)))
+
+(assert
+ (equal?
+  (flatten '((a) () (b ()) () (c)))
+  '(a b c)))
+
+(assert
+ (equal?
+  (flatten '((a b) c (((d)) e)))
+  '(a b c d e)))
+
+(assert
+ (equal?
+  (flatten '(a b (() (c))))
+  '(a b c)))
+
+
+;; 1.28
+(define merge
+  (lambda (loi1 loi2)
+    (cond
+     [(null? loi1) loi2]
+     [(null? loi2) loi1]
+     [else (let ((h1 (car loi1))
+		 (h2 (car loi2)))
+	     (if (<= h1 h2)
+		 (cons h1
+		       (merge (cdr loi1) loi2))
+		 (cons h2
+		       (merge loi1 (cdr loi2)))))])))
+
+(assert
+ (equal?
+  (merge '(1 4) '(1 2 8))
+  '(1 1 2 4 8)))
+
+(assert
+ (equal?
+  (merge '(35 62 81 90 91) '(3 83 85 90))
+  '(3 35 62 81 83 85 90 90 91)))
+
+
+;; 1.29
+(define my-sort
+  (lambda (loi)
+    (if (null? loi)
+	'()
+	(let ([hd (car loi)]
+	      [tl (cdr loi)])
+	  (let-values ([(smallers largers)
+			(partition
+			 (lambda (x) (<= x hd))
+			 tl)])
+	    (append
+	     (my-sort smallers)
+	     (cons hd
+		   (my-sort largers))))))))
+
+(assert
+ (equal?
+  (my-sort '(8 2 5 2 3))
+  '(2 2 3 5 8)))
+
+
+;; 1.30
+(define sort/predicate
+  (lambda (pred loi)
+    (if (null? loi)
+	'()
+	(let ([hd (car loi)]
+	      [tl (cdr loi)])
+	  (let-values ([(smallers largers)
+			(partition
+			 (lambda (x) (pred x hd))
+			 tl)])
+	    (append
+	     (sort/predicate pred smallers)
+	     (cons hd
+		   (sort/predicate pred largers))))))))
+
+(assert
+ (equal?
+  (sort/predicate < '(8 2 5 2 3))
+  '(2 2 3 5 8)))
+
+(assert
+ (equal?
+  (sort/predicate > '(8 2 5 2 3))
+  '(8 5 3 2 2)))
+
