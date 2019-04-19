@@ -346,7 +346,7 @@ Example discriminate_ex3 :
     x :: y :: l = [] ->
     x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. discriminate H. Qed.
 (** [] *)
 
 (** The injectivity of constructors allows us to reason that
@@ -421,7 +421,13 @@ Theorem plus_n_n_injective : forall n m,
      n = m.
 Proof.
   intros n. induction n as [| n'].
-  (* FILL IN HERE *) Admitted.
+  - intros. induction m as [| m'].
+    + reflexivity.
+    + discriminate H.
+  - intros. induction m as [| m'].
+    + discriminate H.
+    + injection H as H. rewrite <- plus_n_Sm in H. rewrite <- plus_n_Sm in H. injection H as H.
+      apply IHn' in H. rewrite -> H. reflexivity. Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -578,7 +584,13 @@ Proof.
 Theorem eqb_true : forall n m,
     n =? m = true -> n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n'].
+  - intros. destruct m as [| m'].
+    + reflexivity.
+    + discriminate.
+  - intros. destruct m as [| m'].
+    + discriminate.
+    + simpl in H. apply IHn' in H. apply f_equal. apply H. Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (eqb_true_informal)  
@@ -708,7 +720,13 @@ Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
      length l = n ->
      nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. generalize dependent n.
+  induction l as [| x l'].
+  - reflexivity.
+  - induction n as [| n'].
+    + discriminate.
+    + intros. simpl in H. injection H as H. apply IHl' in H.
+      simpl. apply H. Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -893,7 +911,14 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. generalize dependent l1. generalize dependent l2.
+  induction l as [| x l'].
+  - intros. simpl in H. symmetry in H. injection H as H. rewrite H. rewrite H0. reflexivity.
+  - intros. destruct x as [lx rx]. destruct (split l') as [lsl' rsl'] eqn:E.
+    simpl in H. rewrite E in H. symmetry in H. injection H as H1 H2.
+    rewrite H1. rewrite H2. simpl. apply f_equal. apply IHl'. reflexivity.
+Qed.
+
 (** [] *)
 
 (** The [eqn:] part of the [destruct] tactic is optional: We've chosen
@@ -969,7 +994,18 @@ Theorem bool_fn_applied_thrice :
   forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b. destruct b.
+  - destruct (f true) eqn:E.
+    + rewrite E. apply E.
+    + destruct (f false) eqn:E1.
+      * apply E.
+      * apply E1.
+  - destruct (f false) eqn:E.
+    + destruct (f true) eqn:E1.
+      * apply E1.
+      * apply E.
+    + rewrite E. apply E.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -1045,7 +1081,15 @@ Proof.
 Theorem eqb_sym : forall (n m : nat),
   (n =? m) = (m =? n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n'].
+  - destruct m as [| m'].
+    + reflexivity.
+    + reflexivity.
+  - induction m as [| m'].
+    + reflexivity.
+    + simpl. apply IHn'.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, optional (eqb_sym_informal)  
@@ -1066,7 +1110,8 @@ Theorem eqb_trans : forall n m p,
   m =? p = true ->
   n =? p = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. apply eqb_true in H. apply eqb_true in H0.
+  rewrite -> H. rewrite <- H0. rewrite <- eqb_refl. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (split_combine)  
@@ -1083,10 +1128,11 @@ Proof.
     things than necessary.  Hint: what property do you need of [l1]
     and [l2] for [split (combine l1 l2) = (l1,l2)] to be true?) *)
 
-Definition split_combine_statement : Prop
+Definition split_combine_statement : Prop :=
   (* ("[: Prop]" means that we are giving a name to a
      logical proposition here.) *)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  forall X Y (l : list (X * Y)) l1 l2,
+    combine l1 l2 = l -> split l = (l1 ,l2).
 
 Theorem split_combine : split_combine_statement.
 Proof.

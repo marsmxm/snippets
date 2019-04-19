@@ -2,7 +2,7 @@
 
 (claim +
   (-> Nat Nat
-      Nat))
+    Nat))
 (define +
   (λ (m n)
     (iter-Nat m
@@ -42,7 +42,7 @@
 (claim step-incr=add1
   (Π ((n-1 Nat))
     (-> (= Nat (incr n-1) (add1 n-1))
-        (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
+      (= Nat (add1 (incr n-1)) (add1 (add1 n-1))))))
 (define step-incr=add1
   (λ (n-1 incr=add1-n-1)
     (cong incr=add1-n-1 (+ 1))))
