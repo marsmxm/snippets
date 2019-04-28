@@ -162,4 +162,23 @@
       (λ (x)
         (= Nat n (sub1 x)))
       (add1-sub1= n))))
-    
+
+(claim add1=
+  (Π ((n Nat)
+      (m Nat))
+    (-> (= Nat n m)
+      (= Nat (add1 n) (add1 m)))))
+(define add1=
+  (λ (n m n=m)
+    (cong n=m (+ 1))))
+
+(claim vec-length
+  (Π ((E U)
+      (n Nat))
+    (-> (Vec E n)
+      Nat)))
+(define vec-length
+  (λ (E n es)
+    n))
+
+(vec-length Atom 3 treats)

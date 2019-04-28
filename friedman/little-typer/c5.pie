@@ -16,7 +16,7 @@
 (claim length
   (Π ((E U))
     (-> (List E)
-        Nat)))
+      Nat)))
 (define length
   (λ (E)
     (λ (xs)
@@ -28,8 +28,9 @@
 
 (claim append
   (Π ((E U))
-    (-> (List E) (List E)
-        (List E))))
+    (-> (List E)
+        (List E)
+      (List E))))
 (define append
   (λ (E)
     (λ (start end)
@@ -41,8 +42,9 @@
 
 (claim snoc
   (Π ((E U))
-    (-> (List E) E
-        (List E))))
+    (-> (List E)
+        E
+      (List E))))
 (define snoc
   (λ (E)
     (λ (start e)
@@ -54,8 +56,9 @@
 
 (claim concat
   (Π ((E U))
-    (-> (List E) (List E)
-        (List E))))
+    (-> (List E)
+        (List E)
+      (List E))))
 ;; wrong
 (define concat
   (λ (E)
@@ -67,7 +70,8 @@
 
 (claim reverse
   (Π ((E U))
-    (-> (List E) (List E))))
+    (-> (List E)
+      (List E))))
 (define reverse
   (λ (E)
     (λ (es)

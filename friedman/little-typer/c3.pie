@@ -4,13 +4,18 @@
   (-> Nat Nat
     Nat))
 (define +
-  (λ (n j)
-    (iter-Nat n
-      j
-      (λ (+n-1)
-        (add1 +n-1)))))
+  (λ (n m)
+    (rec-Nat n
+      m
+      (λ (n-1 n-1+m)
+        (add1 n-1+m)))))
 
-
+(claim plus-one
+  (-> Nat
+    Nat))
+(define plus-one
+  (+ 1))
+  
 (claim gauss
   (-> Nat
     Nat))
