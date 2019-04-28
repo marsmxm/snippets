@@ -66,3 +66,11 @@ sixInts : Vect 6 Int
 sixInts = [4, 5, 6, 7, 8, 9]
 tenInts : Vect 10 Int
 tenInts = fourInts ++ sixInts
+
+pred : Nat -> Nat
+pred Z = Z
+pred (S k) = k
+
+myPlus : Nat -> Nat -> Nat
+myPlus Z m = m
+myPlus (S k) m = S (myPlus k m)
