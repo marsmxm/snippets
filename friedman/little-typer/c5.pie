@@ -36,8 +36,8 @@
     (λ (start end)
       (rec-List start
         end
-        (λ (e es aes)
-          (:: e aes))))))
+        (λ (e es append-es)
+          (:: e append-es))))))
 
 
 (claim snoc

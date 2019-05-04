@@ -182,3 +182,20 @@
     n))
 
 (vec-length Atom 3 treats)
+
+
+(claim repeat
+  (Π ((E U)
+      (n Nat))
+    (-> E
+      (Vec E n))))
+(define repeat
+  (λ (E n)
+    (λ (e)
+      (ind-Nat n
+        (λ (k)
+          (Vec E k))
+        vecnil
+        (λ (n-1 repeat-n-1)
+          (vec:: e repeat-n-1))))))
+      
