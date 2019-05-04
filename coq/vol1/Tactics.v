@@ -1132,11 +1132,22 @@ Definition split_combine_statement : Prop :=
   (* ("[: Prop]" means that we are giving a name to a
      logical proposition here.) *)
   forall X Y (l : list (X * Y)) l1 l2,
-    combine l1 l2 = l -> split l = (l1 ,l2).
+    length l1 = length l2 -> combine l1 l2 = l -> split l = (l1 ,l2).
 
 Theorem split_combine : split_combine_statement.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros X Y l l1 l2 H1 H2. generalize dependent l. generalize dependent l2.
+  induction l1 as [| x l1'].
+  - intros. simpl in H2. rewrite <- H2. simpl in H1.
+    assert (H': l2 = []).
+    { destruct l2. reflexivity. discriminate H1. } rewrite H'. reflexivity.
+  - intros. destruct l2 as [| y l2'] eqn:E.
+    + discriminate H1.
+    + simpl in H1. injection H1 as H1. simpl in H2.
+      destruct l as [| p l'] eqn:E'.
+      * discriminate H2.
+      * injection H2 as H2 H2'. apply IHl1' in H2'.
+        simpl. rewrite H2'. rewrite <- H2. reflexivity. apply H1. Qed.
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_split_combine : option (nat*string) := None.
