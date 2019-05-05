@@ -198,4 +198,11 @@
         vecnil
         (λ (n-1 repeat-n-1)
           (vec:: e repeat-n-1))))))
+(define repeat
+  (λ (E n)
+    (λ (e)
+      (rec-Nat n
+        vecnil
+        (λ (n-1 repeat-n-1)
+          (vec:: e repeat-n-1))))))
       
