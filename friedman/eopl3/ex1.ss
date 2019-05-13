@@ -413,3 +413,6 @@
   (sort/predicate > '(8 2 5 2 3))
   '(8 5 3 2 2)))
 
+
+;; 1.31
+;; Bintree ::= Int | (Symbol Bintree Bintree)
