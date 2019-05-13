@@ -9,7 +9,7 @@
 (claim step-peas
   (Π ((l-1 Nat))
     (-> (mot-peas l-1)
-        (mot-peas (add1 l-1)))))
+      (mot-peas (add1 l-1)))))
 (define step-peas
   (λ (l-1 peasl-1)
     (vec:: 'pea peasl-1)))
@@ -35,8 +35,10 @@
 
 (claim also-rec-Nat
   (Π ((X U))
-    (-> Nat X (-> Nat X X)
-        X)))
+    (-> Nat
+        X
+        (-> Nat X X)
+      X)))
 (define also-rec-Nat
   (λ (X)
     (λ (n base step)
@@ -52,7 +54,7 @@
   (λ (E)
     (λ (k)
       (-> (Vec E (add1 k))
-          E))))
+        E))))
 
 (claim base-last
   (Π ((E U))
@@ -65,7 +67,7 @@
   (Π ((E U)
       (l-1 Nat))
     (-> (mot-last E l-1)
-        (mot-last E (add1 l-1)))))
+      (mot-last E (add1 l-1)))))
 (define step-last
   (λ (E)
     (λ (l-1 lastl-1)
@@ -76,7 +78,7 @@
   (Π ((E U)
       (l Nat))
     (-> (Vec E (add1 l))
-        E)))
+      E)))
 (define last
   (λ (E l)
     (ind-Nat l
@@ -93,7 +95,7 @@
   (λ (E)
     (λ (k)
       (-> (Vec E (add1 k))
-          (Vec E k)))))
+        (Vec E k)))))
 
 (claim base-drop-last
   (Π ((E U))
@@ -106,7 +108,7 @@
   (Π ((E U)
       (l-1 Nat))
     (-> (mot-drop-last E l-1)
-        (mot-drop-last E (add1 l-1)))))
+      (mot-drop-last E (add1 l-1)))))
 (define step-drop-last
   (λ (E)
     (λ (l-1)
@@ -120,7 +122,7 @@
   (Π ((E U)
       (l Nat))
     (-> (Vec E (add1 l))
-        (Vec E l))))
+      (Vec E l))))
 (define drop-last
   (λ (E l)
     (ind-Nat l
