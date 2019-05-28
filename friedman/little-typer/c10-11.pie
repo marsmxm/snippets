@@ -143,8 +143,8 @@
       (List E))))
 (define vec->list
   (λ (E l)
-    (λ (target)
-      (ind-Vec l target
+    (λ (vec)
+      (ind-Vec l vec
         (λ (k xs)
           (List E))
         nil
