@@ -68,16 +68,16 @@
 
 (claim list->vec
   (Π ((E U)
-      (es (List E)))
-    (Vec E (length E es))))
+      (lst (List E)))
+    (Vec E (length E lst))))
 (define list->vec
-  (λ (E es)
-    (ind-List es
-      (λ (k)
-        (Vec E (length E k)))
+  (λ (E lst)
+    (ind-List lst
+      (λ (xs)
+        (Vec E (length E xs)))
       vecnil
-      (λ (x xs list->vec-xs)
-        (vec:: x list->vec-xs)))))
+      (λ (e es list->vec-es)
+        (vec:: e list->vec-es)))))
 ;(define list->vec
 ;  (λ (E es)
 ;    (ind-List es
@@ -143,8 +143,8 @@
       (List E))))
 (define vec->list
   (λ (E l)
-    (λ (target)
-      (ind-Vec l target
+    (λ (vec)
+      (ind-Vec l vec
         (λ (k xs)
           (List E))
         nil
