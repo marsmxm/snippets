@@ -101,6 +101,7 @@ Qed.
     elements of any type, it is also polymorphic: *)
 
 Check @eq.
+Check eq.
 (* ===> forall A : Type, A -> A -> Prop *)
 
 (** (Notice that we wrote [@eq] instead of [eq]: The type
@@ -155,7 +156,8 @@ Qed.
 Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. split.
+  - 
 (** [] *)
 
 (** So much for proving conjunctive statements.  To go in the other
