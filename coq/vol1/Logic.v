@@ -157,7 +157,12 @@ Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
   intros. split.
-  - 
+  - destruct n eqn:E.
+    + reflexivity.
+    + discriminate.
+  - destruct n eqn:E.
+    + simpl in H. apply H.
+    + discriminate. Qed.
 (** [] *)
 
 (** So much for proving conjunctive statements.  To go in the other
@@ -232,7 +237,8 @@ Proof.
 Lemma proj2 : forall P Q : Prop,
   P /\ Q -> Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q [HP HQ].
+  apply HQ. Qed.
 (** [] *)
 
 (** Finally, we sometimes need to rearrange the order of conjunctions
