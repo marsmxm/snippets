@@ -165,12 +165,12 @@
 
 (claim list->vec->list=
   (Π ((E U)
-      (es (List E)))
+      (lst (List E)))
     (= (List E)
-       es
+       lst
        (vec->list E
-         (length E es)
-         (list->vec E es)))))
+         (length E lst)
+         (list->vec E lst)))))
 
 (claim ::-fun
   (Π ((E U))
@@ -180,8 +180,8 @@
   (λ (E e es) (:: e es)))
 
 (define list->vec->list=
-  (λ (E es)
-    (ind-List es
+  (λ (E lst)
+    (ind-List lst
       (λ (xs)
         (= (List E)
           xs
@@ -189,5 +189,5 @@
             (length E xs)
             (list->vec E xs))))
       (same nil)
-      (λ (y ys =-ys)
-        (cong =-ys (::-fun E y))))))
+      (λ (e es =-es)
+        (cong =-es (::-fun E e))))))
