@@ -163,6 +163,19 @@
     (λ (list=)
       (cong list= (length E)))))
 
+(claim list->vec-wrong
+  (Π ((E U)
+      (lst (List E)))
+    (Vec E (length E lst))))
+(define list->vec-wrong
+  (λ (E lst)
+    (ind-List lst
+      (λ (xs)
+        (Vec E (length E xs)))
+      vecnil
+      (λ (e es list->vec-es)
+        (repeat E (length E (:: e es)) e)))))
+
 (claim list->vec->list=
   (Π ((E U)
       (es (List E)))
@@ -179,6 +192,28 @@
 (define ::-fun
   (λ (E e es) (:: e es)))
 
+(claim step-list->vec->list=
+  (Π ((E U)
+      (e E)
+      (es (List E)))
+    (-> (= (List E)
+          es
+          (vec->list E
+            (length E es)
+            (list->vec E es)))
+      (= (List E)
+        (:: e es)
+        (:: e
+          (vec->list E
+            (length E es)
+            (list->vec E es)))))))
+(define step-list->vec->list=
+  (λ (E e es =-es)
+    (cong =-es
+      (the (-> (List E)
+             (List E))
+        (λ (xs) (:: e xs))))))
+
 (define list->vec->list=
   (λ (E lst)
     (ind-List lst
@@ -190,4 +225,7 @@
             (list->vec E xs))))
       (same nil)
       (λ (e es =-es)
-        (cong =-es (::-fun E e))))))
+        (cong =-es
+          (the (-> (List E) (List E))
+            (λ (xs) (:: e xs))))))))
+
