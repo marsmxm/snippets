@@ -52,6 +52,44 @@
       (λ (+-m-1)
         (add1 +-m-1)))))
 
+(claim n+0=n
+  (Π ((n Nat))
+    (= Nat (+ n 0) n)))
+(define n+0=n
+  (λ (n)
+    (ind-Nat n
+      (λ (k) (= Nat (+ k 0) k))
+      (same 0)
+      (λ (n-1 n-1+0=n-1) ; (= Nat (+ n-1 0) n-1)
+        (cong n-1+0=n-1 (+ 1))))))
+
+(claim lift-right-add1
+  (Π ((n Nat)
+      (m Nat))
+    (= Nat (+ n (add1 m)) (add1 (+ n m)))))
+(define lift-right-add1
+  (λ (n m)
+    (ind-Nat n
+      (λ (k) (= Nat (+ k (add1 m)) (add1 (+ k m))))
+      (same (add1 m))
+      (λ (n-1 era-n-1) ; (= Nat (+ n-1 (add1 m)) (add1 (+ n-1 m)))
+        (cong era-n-1 (+ 1))))))
+
+(claim +-commutative
+  (Π ((n Nat)
+      (m Nat))
+    (= Nat (+ n m) (+ m n))))
+(define +-commutative
+  (λ (n m)
+    (ind-Nat n
+      (λ (k) (= Nat (+ k m) (+ m k)))
+      (symm (n+0=n m))
+      (λ (n-1 comm-n-1) ; (= Nat (+ n-1 m) (+ m n-1))
+        (replace (symm (lift-right-add1 m n-1))
+          (λ (k)
+            (= Nat (add1 (+ n-1 m)) k))
+          (cong comm-n-1 (+ 1)))))))
+
 (claim +1=add1
   (Π ((n Nat))
     (= Nat (+ n 1) (add1 n))))
@@ -199,4 +237,3 @@
         (λ (n-1 repeat-n-1)
           (vec:: e repeat-n-1))))))
 
-      
