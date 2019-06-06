@@ -63,33 +63,6 @@
       (λ (n-1 n-1+0=n-1) ; (= Nat (+ n-1 0) n-1)
         (cong n-1+0=n-1 (+ 1))))))
 
-(claim lift-right-add1
-  (Π ((n Nat)
-      (m Nat))
-    (= Nat (+ n (add1 m)) (add1 (+ n m)))))
-(define lift-right-add1
-  (λ (n m)
-    (ind-Nat n
-      (λ (k) (= Nat (+ k (add1 m)) (add1 (+ k m))))
-      (same (add1 m))
-      (λ (n-1 era-n-1) ; (= Nat (+ n-1 (add1 m)) (add1 (+ n-1 m)))
-        (cong era-n-1 (+ 1))))))
-
-(claim +-commutative
-  (Π ((n Nat)
-      (m Nat))
-    (= Nat (+ n m) (+ m n))))
-(define +-commutative
-  (λ (n m)
-    (ind-Nat n
-      (λ (k) (= Nat (+ k m) (+ m k)))
-      (symm (n+0=n m))
-      (λ (n-1 comm-n-1) ; (= Nat (+ n-1 m) (+ m n-1))
-        (replace (symm (lift-right-add1 m n-1))
-          (λ (k)
-            (= Nat (add1 (+ n-1 m)) k))
-          (cong comm-n-1 (+ 1)))))))
-
 (claim +1=add1
   (Π ((n Nat))
     (= Nat (+ n 1) (add1 n))))
@@ -236,4 +209,63 @@
         vecnil
         (λ (n-1 repeat-n-1)
           (vec:: e repeat-n-1))))))
+
+(claim lift-right-add1
+  (Π ((n Nat)
+      (m Nat))
+    (= Nat (add1 (+ n m)) (+ n (add1 m)))))
+(define lift-right-add1
+  (λ (n m)
+    (ind-Nat n
+      (λ (k) (= Nat (add1 (+ k m)) (+ k (add1 m))))
+      (same (add1 m))
+      (λ (n-1 lra-n-1) ; (= Nat (add1 (+ n-1 m)) (+ n-1 (add1 m)))
+        (cong lra-n-1 (+ 1))))))
+
+(claim +-commutative
+  (Π ((n Nat)
+      (m Nat))
+    (= Nat (+ n m) (+ m n))))
+(define +-commutative
+  (λ (n m)
+    (ind-Nat n
+      (λ (k) (= Nat (+ k m) (+ m k)))
+      (symm (n+0=n m))
+      (λ (n-1 comm-n-1) ; (= Nat (+ n-1 m) (+ m n-1))
+        (replace (lift-right-add1 m n-1)
+          (λ (k)
+            (= Nat (add1 (+ n-1 m)) k))
+          (cong comm-n-1 (+ 1)))))))
+
+(claim Even
+  (-> Nat U))
+(define Even
+  (λ (n)
+    (Σ ((half Nat))
+      (= Nat n (+ half half)))))
+
+(claim zero-is-even
+  (Even 0))
+(define zero-is-even
+  (cons 0 (same 0)))
+
+(claim ten-is-even
+  (Even 10))
+(define ten-is-even
+  (cons 5 (same 10)))
+
+(claim +two-even
+  (Π ((n Nat))
+    (-> (Even n)
+      (Even (+ 2 n)))))
+(define +two-even
+  (λ (n)
+    (λ (even-n) ; (Σ ((half Nat)) (= Nat n (+ half half)))
+      (cons (add1 (car even-n))
+        (replace (lift-right-add1 (add1 (car even-n)) (car even-n))  ;(= Nat
+                                                                     ;  (add1 (+ (add1 (car even-n)) (car even-n)))
+                                                                     ;  (+ (add1 (car even-n)) (add1 (car even-n))))
+          (λ (k)
+            (= Nat (+ 2 n) k))
+          (cong (cdr even-n) (+ 2)))))))
 
