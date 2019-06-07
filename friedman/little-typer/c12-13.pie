@@ -2,7 +2,7 @@
 
 (claim +
   (-> Nat Nat
-      Nat))
+    Nat))
 (define +
   (λ (m n)
     (iter-Nat m
@@ -40,7 +40,7 @@
 (claim +two-even
   (Π ((n Nat))
     (-> (Even n)
-        (Even (+ 2 n)))))
+      (Even (+ 2 n)))))
 (define +two-even
   (λ (n)
     (λ (even-n)
@@ -74,7 +74,7 @@
 (claim add1-even->odd
   (Π ((n Nat))
     (-> (Even n)
-        (Odd (add1 n)))))
+      (Odd (add1 n)))))
 (define add1-even->odd
   (λ (n)
     (λ (e-n)
@@ -85,7 +85,7 @@
 (claim add1-odd->even
   (Π ((n Nat))
     (-> (Odd n)
-        (Even (add1 n)))))
+      (Even (add1 n)))))
 (define add1-odd->even
   (λ (n)
     (λ (o-n)
@@ -95,9 +95,9 @@
 
 (claim repeat
   (-> (-> Nat
-          Nat)
+        Nat)
       Nat
-      Nat))
+    Nat))
 (define repeat
   (λ (f n)
     (iter-Nat n
@@ -107,7 +107,7 @@
 
 (claim ackermann
   (-> Nat Nat
-      Nat))
+    Nat))
 (define ackermann
   (λ (n)
     (iter-Nat n
@@ -129,7 +129,7 @@
 (claim step-even-or-odd
   (Π ((n-1 Nat))
     (-> (mot-even-or-odd n-1)
-        (mot-even-or-odd (add1 n-1)))))
+      (mot-even-or-odd (add1 n-1)))))
 (define step-even-or-odd
   (λ (n-1)
     (λ (e-or-o-n-1)
