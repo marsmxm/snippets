@@ -47,9 +47,9 @@
     Nat))
 (define +
   (λ (m n)
-    (iter-Nat m
+    (rec-Nat m
       n
-      (λ (+-m-1)
+      (λ (m-1 +-m-1)
         (add1 +-m-1)))))
 
 (claim n+0=n
@@ -262,9 +262,9 @@
   (λ (n)
     (λ (even-n) ; (Σ ((half Nat)) (= Nat n (+ half half)))
       (cons (add1 (car even-n))
-        (replace (lift-right-add1 (add1 (car even-n)) (car even-n))  ;(= Nat
-                                                                     ;  (add1 (+ (add1 (car even-n)) (car even-n)))
-                                                                     ;  (+ (add1 (car even-n)) (add1 (car even-n))))
+        (replace (lift-right-add1
+                   (add1 (car even-n))
+                   (car even-n))
           (λ (k)
             (= Nat (+ 2 n) k))
           (cong (cdr even-n) (+ 2)))))))
