@@ -14,9 +14,10 @@
   (-> Nat Nat))
 (define double
   (λ (n)
-    (iter-Nat n
+    (rec-Nat n
       0
-      (+ 2))))
+      (λ (n-1 double-n-1)
+        (+ 2 double-n-1)))))
 
 
 (claim Even
