@@ -582,7 +582,7 @@ Proof.
   intros b. split.
   - (* -> *) apply not_true_is_false.
   - (* <- *)
-    intros H. rewrite H. intros H'. discriminate H'.
+    intros H. rewrite H. unfold not. intros H'. discriminate H'.
 Qed.
 
 (** **** Exercise: 1 star, standard, optional (iff_properties)  
@@ -593,19 +593,38 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. split.
+  - intros. apply H.
+  - intros. apply H. Qed.
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R [HPQ HQP] [HQR HRQ]. split.
+  - intros. apply HQR. apply HPQ. apply H.
+  - intros. apply HQP. apply HRQ. apply H. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (or_distributes_over_and)  *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. split.
+  - intros [HP | [HQ HR]].
+    + split.
+      * left. apply HP.
+      * left. apply HP.
+    + split.
+      * right. apply HQ.
+      * right. apply HR.
+  - intros [[HP | HQ] [HP' | HR]].
+    + left. apply HP.
+    + left. apply HP.
+    + left. apply HP'.
+    + right. split.
+      * apply HQ.
+      * apply HR. 
+Qed.        
 (** [] *)
 
 (** Some of Coq's tactics treat [iff] statements specially, avoiding
