@@ -52,9 +52,24 @@
 (define λ-sub1
   (λ (n)
     (λ (f x)
-      (n
-       (λ (p)
+      (λ-fst
+       (n
+        (λ (p)
+          (λ-if (λ-snd p)
+                (λ-mkpair (λ-fst p) λ-false)
+                (λ-mkpair (f (λ-fst p)) λ-false)))
+        (λ-mkpair x λ-true))))))
 
 (define λ-one (λ-add1 λ-zero))
 (define λ-two (λ-add1 λ-one))
 (define λ-three (λ-add1 λ-two))
+
+;; Recursion
+(define mk-mult
+  (λ (t)
+    (λ (n m)
+      (λ-if (λ-is-zero n)
+            λ-zero
+            (λ-add m ((t t) (λ-sub1 n) m))))))
+(define mult
+  (mk-mult mk-mult))
