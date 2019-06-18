@@ -64,6 +64,24 @@
 (define λ-two (λ-add1 λ-one))
 (define λ-three (λ-add1 λ-two))
 
+;; cons
+(define λ-cons
+  (λ (a d)
+    (λ (v)
+      (v a d))))
+(define λ-car
+  (λ (c)
+    (c λ-true)))
+(define λ-cdr
+  (λ (c)
+    (c λ-false)))
+(define λ-null?
+  (λ (c)
+    (c
+     (λ (a d) λ-false))))
+(define λ-null
+  (λ (f) λ-true))
+
 ;; Recursion
 (define mk-mult
   (λ (t)
@@ -99,28 +117,30 @@
 ;; mkmk = λk.λt.t ((k k) t)
 ;; mk = (mkmk mkmk)
 
-(((λ (t)
-  ((λ (u) (u u))
-   (λ (k)
-     (t (lambda (v1 v2)
-          (((k k) t) v1 v2))))))
- (λ (sum)
-    (λ (n m)
-      (if (zero? n)
-          m
-          (add1 (sum (sub1 n) m))))))
- 2 3)
+((λ (u) (u u))
+ (λ (k)
+   (λ (t)
+     ((k k) t))))
+
+;; Theorem 3.1: M (mk M) = (mk M)
   
 
 ;; Y = λf.(λx.f (x x)) (λx.f (x x))
 
-(((lambda (f)
-  ((lambda (u) (u u))
-   (lambda (x)
-     (f (lambda (v1 v2) ((x x) v1 v2))))))
- (λ (sum)
-    (λ (n m)
-      (if (zero? n)
-          m
-          (add1 (sum (sub1 n) m))))))
- 2 3)
+;; Exercise 3.15
+;; (Y M) = (λx.M (x x)) (λx.M (x x))
+;;       = M ((λx.M (x x)) (λx.M (x x)))
+;;       = M (Y M)
+
+((((lambda (f)
+     ((lambda (u) (u u))
+      (lambda (x)
+        (f (lambda (v) ((x x) v))))))
+   (λ (sum)
+     (λ (n)
+       (λ (m)
+         (if (zero? n)
+             m
+             (add1 ((sum (sub1 n)) m)))))))
+  2)
+ 3)
