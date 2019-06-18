@@ -1,7 +1,7 @@
-package host.mxm.reactor;
+package host.mxm.reactor.spring;
 
 
-class Sir {
+public class Sir {
     private String firstName;
     private String lastName;
 
