@@ -837,14 +837,31 @@ Proof.
       * apply IHl' in H as [x'' [H1 H2]]. exists x''. split.
         { apply H1. }
         { right. apply H2. }
-  -
+  - induction l as [|x' l'].
+    + simpl. intros [x [E1 E2]]. destruct E2.
+    + simpl. intros [x [E1 [E2 | E2]]].
+      * left. rewrite E2. apply E1.
+      * right. apply IHl'. exists x. split. apply E1. apply E2. Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (In_app_iff)  *)
 Lemma In_app_iff : forall A l l' (a:A),
   In a (l++l') <-> In a l \/ In a l'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. split.
+  - induction l as [|x xs].
+    + simpl. intros. right. apply H.
+    + simpl. intros [H | H].
+      * left. left. apply H.
+      * apply or_assoc. right. apply IHxs. apply H.
+  - induction l as [|x xs].
+    + simpl. intros [H | H].
+      * destruct H.
+      * apply H.
+    + simpl. intros [[H | H] | H'].
+      * left. apply H.
+      * right. apply IHxs. left. apply H.
+      * right. apply IHxs. right. apply H'. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, recommended (All)  
