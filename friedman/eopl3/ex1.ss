@@ -247,7 +247,7 @@
     (if (null? lst)
 	#t
 	(and (pred (car lst))
-	     (every pred (cdr lst))))))
+	     (every? pred (cdr lst))))))
 
 (assert
  (equal?
@@ -416,3 +416,101 @@
 
 ;; 1.31
 ;; Bintree ::= Int | (Symbol Bintree Bintree)
+(define leaf
+  (lambda (n) n))
+(define interior-node
+  (lambda (s t1 t2)
+    (list s t1 t2)))
+(define leaf?
+  (lambda (t) (number? t)))
+(define lson
+  (lambda (node)
+    (cadr node)))
+(define rson
+  (lambda (node)
+    (caddr node)))
+(define contents-of
+  (lambda (t)
+    (if (leaf? t)
+        t
+        (car t))))
+
+;; 1.32 double tree
+(define double-tree
+  (lambda (t)
+    (if (leaf? t)
+        (leaf (* 2 (contents-of t)))
+        (interior-node
+         (contents-of t)
+         (double-tree (lson t))
+         (double-tree (rson t))))))
+
+;; 1.33
+(define mark-leaves-with-red-depth
+  (lambda (t)
+    (let f ((target t)
+            (red-count 0))
+      (if (leaf? target)
+          (leaf red-count)
+          (let ([new-count (if (eq? 'red (contents-of target))
+                               (add1 red-count)
+                               red-count)])
+            (interior-node (contents-of target)
+             (f (lson target) new-count)
+             (f (rson target) new-count)))))))
+
+;; 1.34
+(define path
+  (lambda (target bin-tree)
+    (call/cc
+     (lambda (k)
+       (let f ([n target]
+               [bint bin-tree])
+         (if (null? bint)
+             (k #f)
+             (cond
+              [(eq? n (car bint)) '()]
+              [(< n (car bint))
+               (cons 'left (f n (cadr bint)))]
+              [else (cons 'right (f n (caddr bint)))])))))))
+
+;; 1.35
+(define number-leaves
+  (lambda (bintree)
+    (let ([count -1])
+      (let f ([bt bintree])
+        (if (leaf? bt)
+            (begin (set! count (add1 count))
+                   (leaf count))
+            (let* ([ltree (f (lson bt))]
+                   [rtree (f (rson bt))])
+              (interior-node
+               (contents-of bt)
+               ltree
+               rtree)))))))
+
+
+;; 1.36
+(define number-elements-from
+    (lambda (lst n)
+      (if (null? lst) '()
+        (cons
+         (list n (car lst))
+         (number-elements-from (cdr lst) (+ n 1))))))
+(define number-elements
+  (lambda (lst) (number-elements-from lst 0)))
+
+
+(define g
+  (lambda (l1 l2)
+    (if (null? l2)
+        (cons l1 '())
+        (cons l1
+              (g
+               (cons (add1 (caar l2))
+                     (cdar l2))
+               (cdr l2))))))
+(define number-elements1
+  (lambda (lst)
+    (if (null? lst) '()
+        (g (list 0 (car lst)) (number-elements (cdr lst))))))
