@@ -27,19 +27,11 @@ public class RequestContextCoreSubscriber<T> implements CoreSubscriber<T> {
 
     @Override
     public void onSubscribe(Subscription subscription) {
-        System.err.println("onSubscribe thread: " + Thread.currentThread().getName());
-        System.err.println("onSubscribe subscriber: " + subscriber);
-        System.err.println(context);
-        System.err.println("---");
         withMDC(subscriber -> subscriber.onSubscribe(subscription));
     }
 
     @Override
     public void onNext(T o) {
-        System.err.println("onNext thread: " + Thread.currentThread().getName());
-        System.err.println("onNext subscriber: " + subscriber);
-        System.err.println(context);
-        System.err.println("---");
         withMDC(subscriber -> subscriber.onNext(o));
     }
 

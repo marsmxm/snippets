@@ -35,14 +35,11 @@ public class Application {
         }
     }
 
-    @GetMapping("hello/{who}")
-    public Mono<String> hello(@PathVariable String who) {
-        System.err.println("hello() thread: " + Thread.currentThread().getName());
-        System.err.println("hello() context: " + CONTEXT_THREAD_LOCAL.get());
+    @GetMapping("hello/v{version:\\d+}/{who}")
+    public Mono<String> hello(@PathVariable String who, @PathVariable String version) {
+        System.err.println("version: " + version);
         return Mono.just(who)
                    .map(w -> {
-                       System.err.println("hello().map thread: " + Thread.currentThread().getName());
-                       System.err.println("hello().map context: " + CONTEXT_THREAD_LOCAL.get());
                        return "Hello " + w + '!';
                    });
     }
