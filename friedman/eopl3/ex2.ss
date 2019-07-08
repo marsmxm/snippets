@@ -1,7 +1,7 @@
 ;; 2.1
 ;;⌈n⌉ = ()        if n = 0
 ;;⌈n⌉ = (r . ⌈q⌉) if n = qN + r, 0 <= r < N  
-(define N 16)
+(define N 20)
 (define zero (lambda () '()))
 (define is-zero? (lambda (n) (null? n)))
 (define successor
@@ -37,5 +37,29 @@
 (define factorial
   (lambda (n)
     (if (is-zero? n)
-	'(1)
+	(successor (zero))
 	(times n (factorial (predecessor n))))))
+
+;; 2.3
+(define diff-zero
+  (lambda () '(diff (one) (one))))
+(define count-ones
+  (lambda (t)
+    (let ([left-ones
+           (if (eqv? 'one (cadr t))
+               (cons 1 0)
+               (count-ones (cadr t)))]
+          [right-ones
+           (if (eqv? 'one (caddr t))
+               (cons 0 1)
+               (count-ones (caddr t)))])
+      (cons
+       (+ (car left-ones)
+          (car right-ones))
+       (+ (cdr left-ones)
+          (cdr (right-ones)))))))
+(define diff-is-zero?
+  (lambda (tree)
+    (if (eqv? (car tree) 'one)
+        #f
+        )))
