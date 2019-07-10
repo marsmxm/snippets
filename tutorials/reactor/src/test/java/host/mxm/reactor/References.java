@@ -1,5 +1,7 @@
 package host.mxm.reactor;
 
+import static reactor.core.scheduler.Schedulers.elastic;
+
 import com.google.common.collect.Lists;
 
 import org.junit.Test;
@@ -402,6 +404,17 @@ public class References {
             .parallel(2)
             .runOn(Schedulers.parallel())
             .subscribe(i -> System.out.println(Thread.currentThread().getName() + " -> " + i));
+    }
+
+    @Test
+    public void toFuture() throws InterruptedException {
+        Mono.just(0)
+            .publishOn(elastic())
+            .doOnNext(i -> System.err.println(i + " " + Thread.currentThread().getName()))
+            .toFuture();
+
+        System.err.println("end");
+        Thread.sleep(2000);
     }
 
 }
