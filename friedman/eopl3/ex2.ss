@@ -73,3 +73,40 @@
 (define diff-predecessor
   (lambda (tree)
     `(diff ,tree (one))))
+
+;; 2.5
+(define empty-env
+  (lambda () '()))
+(define empty-env?
+  (lambda (e) (null? e)))
+(define extend-env
+  (lambda (var val env)
+    (cons
+     (cons var val)
+     env)))
+(define has-binding?
+  (lambda (env s)
+    (if (empty-env? env)
+        #f
+        (or (eqv? s (caar env))
+            (has-binding? (cdr env) s)))))
+(define apply-env
+  (lambda (env search-var)
+    (cond
+     ((empty-env? env) (report-no-binding-found search-var))
+     ((pair? (car env))
+      (let ((saved-var (caar env))
+            (saved-val (cdar env))
+            (saved-env (cdr env)))
+        (if (eqv? search-var saved-var)
+            saved-val
+            (apply-env saved-env search-var))))
+     (else
+      (report-invalid-env env)))))
+
+(define report-no-binding-found
+  (lambda (search-var)
+    (error 'apply-env "No binding for the variable" search-var)))
+(define report-invalid-env
+  (lambda (env)
+    (error 'apply-env "Bad environment: ~s" env)))
