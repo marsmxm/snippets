@@ -46,20 +46,30 @@
 (define count-ones
   (lambda (t)
     (let ([left-ones
-           (if (eqv? 'one (cadr t))
+           (if (eqv? 'one (caadr t))
                (cons 1 0)
                (count-ones (cadr t)))]
           [right-ones
-           (if (eqv? 'one (caddr t))
+           (if (eqv? 'one (caaddr t))
                (cons 0 1)
                (count-ones (caddr t)))])
       (cons
        (+ (car left-ones)
           (car right-ones))
        (+ (cdr left-ones)
-          (cdr (right-ones)))))))
+          (cdr right-ones))))))
 (define diff-is-zero?
   (lambda (tree)
     (if (eqv? (car tree) 'one)
         #f
-        )))
+        (let ([ones (count-ones tree)])
+	  (eqv? (car ones) (cdr ones))))))
+(define diff-successor
+  (lambda (tree)
+    (if (diff-is-zero? tree)
+	'(one)
+	`(diff ,tree
+	       (diff ,(diff-zero) (one))))))
+(define diff-predecessor
+  (lambda (tree)
+    `(diff ,tree (one))))
