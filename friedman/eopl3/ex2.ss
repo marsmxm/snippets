@@ -84,6 +84,13 @@
     (cons
      (cons var val)
      env)))
+(define extend-env*
+  (lambda (vars vals env)
+    (if (null? vars)
+	env
+	(cons
+	 (cons (car vars) (car vals))
+	 (extend-env* (cdr vars) (cdr vals) env)))))
 (define has-binding?
   (lambda (env s)
     (if (empty-env? env)
@@ -110,3 +117,14 @@
 (define report-invalid-env
   (lambda (env)
     (error 'apply-env "Bad environment: ~s" env)))
+
+;; 2.12
+;; empty-stack, push, pop, top, and empty-stack?
+(define empty-stack
+  (lambda ()
+    (lambda ()
+      (error 'pop "Empty stack"))))
+(define push
+  (lambda (value)
+    ))
+
