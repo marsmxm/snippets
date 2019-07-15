@@ -122,9 +122,20 @@
 ;; empty-stack, push, pop, top, and empty-stack?
 (define empty-stack
   (lambda ()
-    (lambda ()
-      (error 'pop "Empty stack"))))
+    (lambda () '())))
 (define push
-  (lambda (value)
-    ))
+  (lambda (value stack)
+    (lambda ()
+      (cons value stack))))
+(define top
+  (lambda (stack)
+    (car (stack))))
+(define pop
+  (lambda (stack)
+    (stack)))
+(define empty-stack?
+  (lambda (stack)
+    (null? (stack))))
+
+
 
