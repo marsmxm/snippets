@@ -137,5 +137,48 @@
   (lambda (stack)
     (null? (stack))))
 
+;; 2.18
+(define number->sequence
+  (lambda (n)
+    (list n '() '())))
+(define current-element
+  (lambda (node)
+    (car node)))
+(define at-left-end?
+  (lambda (node)
+    (null? (cadr node))))
+(define move-to-left
+  (lambda (node)
+    (if (at-left-end? node)
+        (error 'move-to-left "Left end" node)
+        (list (car (cadr node))
+              (cdr (cadr node))
+              (cons (car node) (caddr node))))))
+(define at-right-end?
+  (lambda (node)
+    (null? (caddr node))))
+(define move-to-right
+  (lambda (node)
+    (if (at-right-end? node)
+        (error 'move-to-right "Right end" node)
+        (list (car (caddr node))
+              (cons (car node) (cadr node))
+              (cdr (caddr node))))))
+(define insert-to-left
+  (lambda (n node)
+    (list (car node)
+          (cons n (cadr node))
+          (caddr node))))
+(define insert-to-right
+  (lambda (n node)
+    (list (car node)
+          (cadr node)
+          (cons n (caddr node)))))
+
+;; 2.19
+(define number->bintree
+  (lambda (n)
+    (list n '() '())))
+
 
 
