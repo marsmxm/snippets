@@ -128,3 +128,49 @@
   (lambda (value)
     ))
 
+
+;; 2.15
+;; (define occurs-free?
+;;   (lambda (var exp)
+;;     (cond
+;;      ((symbol? exp) (eqv? var exp))
+;;      ((eqv? (car exp) 'lambda)
+;;       (and
+;;        (not (eqv? var (car (cadr exp)))) (occurs-free? var (caddr exp))))
+;;      (else (or
+;; 	    (occurs-free? var (car exp)) (occurs-free? var (cadr exp)))))))
+(define var-exp
+  (lambda (var) var))
+(define lambda-exp
+  (lambda (var exp)
+    `(lambda (,var) ,exp)))
+(define app-exp?
+  (lambda (e1 e2)
+    `(,e1 ,e2)))
+
+(define var-exp?
+  (lambda (exp)
+    (symbol? exp)))
+(define lambda-exp?
+  (lambda (exp)
+    (eqv? (car exp) 'lambda)))
+(define app-exp?
+  (lambda (exp)
+    (not
+     (or (var-exp? exp) (lambda-exp? exp)))))
+
+(define var-exp->var
+  (lambda (exp)
+    exp))
+(define lambda-exp->bound-var
+  (lambda (exp)
+    (car (cadr exp))))
+(define lambda-exp->body
+  (lambda (exp)
+    (caddr exp)))
+(define app-exp->rator
+  (lambda (exp)
+    (car exp)))
+(define app-exp->rand
+  (lambda (exp)
+    (cadr exp)))
