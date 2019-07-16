@@ -137,52 +137,6 @@
   (lambda (stack)
     (null? (stack))))
 
-;; 2.18
-(define number->sequence
-  (lambda (n)
-    (list n '() '())))
-(define current-element
-  (lambda (node)
-    (car node)))
-(define at-left-end?
-  (lambda (node)
-    (null? (cadr node))))
-(define move-to-left
-  (lambda (node)
-    (if (at-left-end? node)
-        (error 'move-to-left "Left end" node)
-        (list (car (cadr node))
-              (cdr (cadr node))
-              (cons (car node) (caddr node))))))
-(define at-right-end?
-  (lambda (node)
-    (null? (caddr node))))
-(define move-to-right
-  (lambda (node)
-    (if (at-right-end? node)
-        (error 'move-to-right "Right end" node)
-        (list (car (caddr node))
-              (cons (car node) (cadr node))
-              (cdr (caddr node))))))
-(define insert-to-left
-  (lambda (n node)
-    (list (car node)
-          (cons n (cadr node))
-          (caddr node))))
-(define insert-to-right
-  (lambda (n node)
-    (list (car node)
-          (cadr node)
-          (cons n (caddr node)))))
-
-;; 2.19
-(define number->bintree
-  (lambda (n)
-    (list n '() '())))
-
-
-
-
 ;; 2.15
 ;; (define occurs-free?
 ;;   (lambda (var exp)
@@ -228,3 +182,150 @@
 (define app-exp->rand
   (lambda (exp)
     (cadr exp)))
+
+;; 2.18
+(define number->sequence
+  (lambda (n)
+    (list n '() '())))
+(define current-element
+  (lambda (node)
+    (car node)))
+(define at-left-end?
+  (lambda (node)
+    (null? (cadr node))))
+(define move-to-left
+  (lambda (node)
+    (if (at-left-end? node)
+        (error 'move-to-left "Left end" node)
+        (list (car (cadr node))
+              (cdr (cadr node))
+              (cons (car node) (caddr node))))))
+(define at-right-end?
+  (lambda (node)
+    (null? (caddr node))))
+(define move-to-right
+  (lambda (node)
+    (if (at-right-end? node)
+        (error 'move-to-right "Right end" node)
+        (list (car (caddr node))
+              (cons (car node) (cadr node))
+              (cdr (caddr node))))))
+(define insert-to-left
+  (lambda (n node)
+    (list (car node)
+          (cons n (cadr node))
+          (caddr node))))
+(define insert-to-right
+  (lambda (n node)
+    (list (car node)
+          (cadr node)
+          (cons n (caddr node)))))
+
+;; 2.19
+(let ()
+  (define number->bintree
+    (lambda (n)
+      (list n '() '())))
+  (define current-element
+    (lambda (tree)
+      (car tree)))
+  (define at-leaf?
+    (lambda (tree)
+      (null? tree)))
+  (define move-to-left-son
+    (lambda (tree)
+      (if (at-leaf? tree)
+	  (error 'move-to-left-son "At leaf" tree)
+	  (cadr tree))))
+  (define move-to-right-son
+    (lambda (tree)
+      (if (at-leaf? tree)
+	  (error 'move-to-right-son "At leaf" tree)
+	  (caddr tree))))
+  (define insert-to-left
+    (lambda (n tree)
+      (if (at-leaf? tree)
+	  (error 'insert-to-left "At leaf" n tree)
+	  (list (current-element tree)
+		(list n (cadr tree) '())
+		(caddr tree)))))
+  (define insert-to-right
+    (lambda (n tree)
+      (if (at-leaf? tree)
+	  (error 'insert-to-right "At leaf" n tree)
+	  (list (current-element tree)
+		(cadr tree)
+		(list n '() (caddr tree))))))
+  (assert #t))
+
+;; 2.20
+(let ()
+  (define bintree-leaf
+    (lambda (top)
+      (list '() top)))
+  (define bintree-node
+    (lambda (n left right top)
+      (list n left right top)))
+  (define number->bintree
+    (lambda (n)
+      (bintree-node n '() '() '())))
+  (define at-leaf?
+    (lambda (tree)
+      (null? (car tree))))
+  (define current-element
+    (lambda (tree) (car tree)))
+  (define move-to-left-son
+    (lambda (tree)
+      (if (at-leaf? tree)
+	  (error 'move-to-left-son "At leaf" tree)
+	  (append (cadr tree)
+		  (list (cons (list (car tree) (cadr tree) (caddr tree))
+			      (cadddr tree)))))))
+  (define move-to-right-son
+    (lambda (tree)
+      (if (at-leaf? tree)
+	  (error 'move-to-right-son "At leaf" tree)
+	  (append (caddr tree)
+		  (list (cons (list (car tree) (cadr tree) (caddr tree))
+			      (cadddr tree)))))))
+  (define insert-to-left
+    (lambda (n tree)
+      (if (at-leaf? tree)
+	  (error 'insert-to-left "At leaf" n tree)
+	  (list (current-element tree)
+		(list n (cadr tree) '())
+		(caddr tree)
+		(cadddr tree)))))
+   (define insert-to-right
+    (lambda (n tree)
+      (if (at-leaf? tree)
+	  (error 'insert-to-left "At leaf" n tree)
+	  (list (current-element tree)
+		(cadr tree)
+		(list n '() (caddr tree))
+		(cadddr tree)))))
+   (define at-root?
+     (lambda (tree)
+       (null? (cadddr tree))))
+   (define move-up
+     (lambda (tree)
+       (if (at-root? tree)
+	   (error 'move-up "At root" tree)
+	   (append (car (cadddr tree))
+		   (list (cdr (cadddr tree)))))))
+   (define t1 (insert-to-right
+	       14
+	       (insert-to-left
+		12
+		(number->bintree 13))))
+   (display t1)
+   (newline)
+   (display (move-to-left-son t1))
+   (newline)
+   (display (move-up (move-to-left-son t1)))
+   (newline)
+   (display (move-up
+	     (move-to-left-son
+	      (move-to-left-son
+	       (insert-to-left 15 t1))))))
+   
