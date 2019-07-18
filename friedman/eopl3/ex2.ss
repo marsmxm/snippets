@@ -1,3 +1,6 @@
+(cd "EOPL-Scheme")
+(load "chez-init.scm")
+(cd "..")
 ;; 2.1
 ;;⌈n⌉ = ()        if n = 0
 ;;⌈n⌉ = (r . ⌈q⌉) if n = qN + r, 0 <= r < N  
@@ -137,51 +140,6 @@
   (lambda (stack)
     (null? (stack))))
 
-;; 2.15
-;; (define occurs-free?
-;;   (lambda (var exp)
-;;     (cond
-;;      ((symbol? exp) (eqv? var exp))
-;;      ((eqv? (car exp) 'lambda)
-;;       (and
-;;        (not (eqv? var (car (cadr exp)))) (occurs-free? var (caddr exp))))
-;;      (else (or
-;; 	    (occurs-free? var (car exp)) (occurs-free? var (cadr exp)))))))
-(define var-exp
-  (lambda (var) var))
-(define lambda-exp
-  (lambda (var exp)
-    `(lambda (,var) ,exp)))
-(define app-exp?
-  (lambda (e1 e2)
-    `(,e1 ,e2)))
-
-(define var-exp?
-  (lambda (exp)
-    (symbol? exp)))
-(define lambda-exp?
-  (lambda (exp)
-    (eqv? (car exp) 'lambda)))
-(define app-exp?
-  (lambda (exp)
-    (not
-     (or (var-exp? exp) (lambda-exp? exp)))))
-
-(define var-exp->var
-  (lambda (exp)
-    exp))
-(define lambda-exp->bound-var
-  (lambda (exp)
-    (car (cadr exp))))
-(define lambda-exp->body
-  (lambda (exp)
-    (caddr exp)))
-(define app-exp->rator
-  (lambda (exp)
-    (car exp)))
-(define app-exp->rand
-  (lambda (exp)
-    (cadr exp)))
 
 ;; 2.18
 (define number->sequence
@@ -327,5 +285,36 @@
    (display (move-up
 	     (move-to-left-son
 	      (move-to-left-son
-	       (insert-to-left 15 t1))))))
+	       (insert-to-left 15 t1)))))
+   (newline))
    
+;; 2.21
+;; (define-datatype type-name type-predicate-name
+;;   {(variant-name {(field-name predicate)}*)}+)
+
+;; (cases type-name expression
+;;        {(variant-name ({field-name}∗) consequent)}* (else default))
+(let ()
+  (define-datatype enviroment enviroment?
+    (empty-env)
+    (extend-env (var symbol?)
+		(val (lambda (v) #t))
+		(env enviroment?)))
+  (define apply-env
+    (lambda (e search-var)
+      (cases enviroment e
+	     (empty-env () (error 'apply-env "No binding" search-var))
+	     (extend-env (var val env)
+			 (if (eqv? search-var var)
+			     val
+			     (apply-env evn search-var))))))
+  (define has-binding?
+    (lambda (e search-var)
+      (cases enviroment e
+	     (empty-env () #f)
+	     (extend-env (var val env)
+			 (or (eqv? search-var var)
+			     (has-binding? env search-var))))))
+  (display (apply-env
+	    (extend-env 'hello "world" (empty-env))
+	    'hello)))
