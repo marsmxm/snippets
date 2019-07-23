@@ -109,10 +109,29 @@
               (value-of exp3 env))))
 
         ;\commentbox{\ma{\theletspecsplit}}
-        (let-exp (var exp1 body)       
-          (let ((val1 (value-of exp1 env)))
-            (value-of body
-		      (extend-env var val1 env))))
+        ;; (let-exp (var exp1 body)       
+        ;;   (let ((val1 (value-of exp1 env)))
+        ;;     (value-of body
+	;; 	      (extend-env var val1 env))))
+	(let-exp
+	 (ids exps body)
+	 (let f ([ids ids]
+		 [exps exps]
+		 [body-env env])
+	   (if (null? ids)
+	       (value-of body body-env)
+	       (f (cdr ids) (cdr exps)
+		  (extend-env (car ids)
+			      (value-of (car exps) env)
+			      body-env)))))
+
+	(let*-exp
+	 (ids exps body)
+	 (if (null? ids)
+	     (value-of body env)
+	     (value-of
+	      (let-exp (cdr ids) (cdr exps) body)
+	      (extend-env (car ids) (value-of (car exps) env) env))))
 
 	;; Ex 3.9
 	(emptylist-exp () (list-val (empty-list)))
@@ -150,6 +169,32 @@
 			     (empty-list () (bool-val #t))
 			     (non-empty-list (head tail) (bool-val #f))))
 	    (else (bool-val #f)))))
+
+	(list-exp
+	 (exps)
+	 (if (null? exps)
+	     (list-val (empty-list))
+	     (list-val
+	      (non-empty-list
+	       (value-of (car exps) env)
+	       (value-of (list-exp (cdr exps)) env)))))
+
+	(cond-exp
+	 (exps1 exps2)
+	 (if (null? exps1)
+	     (eopl:error 'cond "Braches exhausted")
+	     (let ([first-cond
+		    (expval->bool
+		     (value-of (car exps1) env))])
+	       (if first-cond
+		   (value-of (car exps2) env)
+		   (value-of (cond-exp (cdr exps1) (cdr exps2)) env)))))
+
+	(print-exp
+	 (exp)
+	 (display (value-of exp env))
+	 (newline)
+	 (num-val 1))
 
         )))
 

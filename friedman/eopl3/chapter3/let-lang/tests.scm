@@ -73,5 +73,17 @@
       (list-cdr "cdr(cons(1,cons(2, emptylist)))" (2))
       (list-cdr-empty "cdr(emptylist)" error)
       (list-1 "let x = 4 in cons(x,cons(cons(-(x,1),emptylist),emptylist))" (4 (3)))
+
+      ;; Ex 3.10
+      (list-list "let x=4 in list(x, -(x,1), -(x,3))" (4 3 1))
+
+      ;; Ex 3.12
+      (cond-test-1 "cond equal?(2,3) ==> 1 equal?(2,2) ==> 3 end" 3)
+      (cond-test-2 "cond equal?(2,3) ==> 1 equal?(2,3) ==> 3 end" error)
+
+      ;; Ex 3.16
+      (let-test "let x=30 in let x=-(x,1) y=-(x,2) in -(x,y)" 1)
+      (let*-test "let* x=30 in let x=-(x,1) y=-(x,2) in -(x,y)" 2)
+      
       ))
   )
