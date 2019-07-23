@@ -12,7 +12,7 @@
   ;; since this is the top-level module, we don't really need to
   ;; provide anything, but we do so just in case.  
 
-  (provide run run-all)
+  (provide run run-all sloppy->expval)
 
   (provide test-all)
 
@@ -50,6 +50,12 @@
       (cond
         ((number? sloppy-val) (num-val sloppy-val))
         ((boolean? sloppy-val) (bool-val sloppy-val))
+        ;; Ex 3.9
+        ((null? sloppy-val) (list-val (empty-list)))
+        ((pair? sloppy-val) (list-val
+                             (non-empty-list
+                              (sloppy->expval (car sloppy-val))
+                              (sloppy->expval (cdr sloppy-val)))))
         (else
          (eopl:error 'sloppy->expval 
                      "Can't convert sloppy value to expval: ~s"

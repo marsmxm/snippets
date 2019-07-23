@@ -10,9 +10,18 @@
 
   (define-datatype expval expval?
     (num-val
-      (value number?))
+     (value number?))
     (bool-val
-      (boolean boolean?)))
+     (boolean boolean?))
+    (list-val ; Ex 3.9
+     (list listval?)))
+
+  ;; Ex 3.9
+  (define-datatype listval listval?
+    (empty-list)
+    (non-empty-list
+     (head expval?)
+     (tail expval?)))
 
 ;;; extractors:
 
@@ -31,6 +40,13 @@
       (cases expval v
 	(bool-val (bool) bool)
 	(else (expval-extractor-error 'bool v)))))
+
+  ;; Ex 3.9
+  (define expval->list
+    (lambda (v)
+      (cases expval v
+	     (list-val (list) list)
+	     (else (expval-extractor-error 'list v)))))
 
   (define expval-extractor-error
     (lambda (variant value)

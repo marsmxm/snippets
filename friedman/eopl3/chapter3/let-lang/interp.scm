@@ -34,6 +34,33 @@
         ;\commentbox{ (value-of (var-exp \x{}) \r) = (apply-env \r \x{})}
         (var-exp (var) (apply-env env var))
 
+        ;; Ex 3.6
+        (minus-exp (exp1)
+          (let ((val1 (value-of exp1 env)))
+            (num-val (- (expval->num val1)))))
+
+        ;; Ex 3.7
+        (add-exp (exp1 exp2)
+          (let ([val1 (value-of exp1 env)]
+                [val2 (value-of exp2 env)])
+            (let ([num1 (expval->num val1)]
+                  [num2 (expval->num val2)])
+              (num-val (+ num1 num2)))))
+
+        (mult-exp (exp1 exp2)
+          (let ([val1 (value-of exp1 env)]
+                [val2 (value-of exp2 env)])
+            (let ([num1 (expval->num val1)]
+                  [num2 (expval->num val2)])
+              (num-val (* num1 num2)))))
+
+        (quotient-exp (exp1 exp2)
+          (let ([val1 (value-of exp1 env)]
+                [val2 (value-of exp2 env)])
+            (let ([num1 (expval->num val1)]
+                  [num2 (expval->num val2)])
+              (num-val (quotient num1 num2)))))
+
         ;\commentbox{\diffspec}
         (diff-exp (exp1 exp2)
           (let ((val1 (value-of exp1 env))
@@ -50,6 +77,29 @@
               (if (zero? num1)
                 (bool-val #t)
                 (bool-val #f)))))
+
+        ;; Ex 3.8
+        (equal?-exp (exp1 exp2)
+          (let ((val1 (value-of exp1 env))
+                (val2 (value-of exp2 env)))
+            (let ((num1 (expval->num val1))
+                  (num2 (expval->num val2)))
+              (bool-val
+                (eqv? num1 num2)))))
+        (greater?-exp (exp1 exp2)
+          (let ((val1 (value-of exp1 env))
+                (val2 (value-of exp2 env)))
+            (let ((num1 (expval->num val1))
+                  (num2 (expval->num val2)))
+              (bool-val
+                (> num1 num2)))))
+        (lesser?-exp (exp1 exp2)
+          (let ((val1 (value-of exp1 env))
+                (val2 (value-of exp2 env)))
+            (let ((num1 (expval->num val1))
+                  (num2 (expval->num val2)))
+              (bool-val
+                (< num1 num2)))))
               
         ;\commentbox{\ma{\theifspec}}
         (if-exp (exp1 exp2 exp3)
@@ -62,7 +112,44 @@
         (let-exp (var exp1 body)       
           (let ((val1 (value-of exp1 env)))
             (value-of body
-              (extend-env var val1 env))))
+		      (extend-env var val1 env))))
+
+	;; Ex 3.9
+	(emptylist-exp () (list-val (empty-list)))
+
+	(cons-exp
+	 (exp1 exp2)
+	 (let ([val1 (value-of exp1 env)]
+	       [val2 (value-of exp2 env)])
+	   (let ([tail-list (expval->list val2)])
+	     (list-val
+	      (non-empty-list val1 val2)))))
+
+	(car-exp
+	 (exp1)
+	 (let ([val1 (value-of exp1 env)])
+	   (let ([list1 (expval->list val1)])
+	     (cases listval list1
+	       (non-empty-list (head tail) head)
+	       (else (eopl:error 'car "empty list"))))))
+
+	(cdr-exp
+	 (exp1)
+	 (let ([val1 (value-of exp1 env)])
+	   (let ([list1 (expval->list val1)])
+	     (cases listval list1
+	       (non-empty-list (head tail) tail)
+	       (else (eopl:error 'cdr "empty list"))))))
+
+	(null?-exp
+	 (exp1)
+	 (let ([val1 (value-of exp1 env)])
+	   (cases expval val1
+	    (list-val (list)
+		      (cases listval list
+			     (empty-list () (bool-val #t))
+			     (non-empty-list (head tail) (bool-val #f))))
+	    (else (bool-val #f)))))
 
         )))
 
