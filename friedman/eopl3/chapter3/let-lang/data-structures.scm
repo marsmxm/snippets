@@ -23,6 +23,13 @@
      (head expval?)
      (tail expval?)))
 
+  (define empty-list?
+    (lambda (lst)
+      (cases
+       listval lst
+       (empty-list () #t)
+       (else #f))))
+
 ;;; extractors:
 
   ;; expval->num : ExpVal -> Int

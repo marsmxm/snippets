@@ -111,6 +111,11 @@
        ("print" "(" expression ")")
        print-exp)
 
+      ;; Ex 3.18
+      (expression
+       ("unpack" (arbno identifier) "=" expression "in" expression)
+       unpack-exp)
+
       ))
   
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
