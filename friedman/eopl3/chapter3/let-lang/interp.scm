@@ -165,9 +165,7 @@
 	 (let ([val1 (value-of exp1 env)])
 	   (cases expval val1
 	    (list-val (list)
-		      (cases listval list
-			     (empty-list () (bool-val #t))
-			     (non-empty-list (head tail) (bool-val #f))))
+		      (bool-val (empty-list? list)))
 	    (else (bool-val #f)))))
 
 	(list-exp
@@ -195,6 +193,26 @@
 	 (display (value-of exp env))
 	 (newline)
 	 (num-val 1))
+
+        (unpack-exp
+         (ids exp1 body)
+         (let loop ([ids ids]
+                    [lst
+                     (expval->list
+                      (value-of exp1 env))]
+                    [body-env env])
+           (if (null? ids)
+               (if (empty-list? lst)
+                   (value-of body body-env)
+                   (eopl:error 'unpack "not enough elements in the list"))
+               (cases
+                listval lst
+                (empty-list () (eopl:error 'unpack "too many elements in the list"))
+                (non-empty-list (head tail)
+                                (loop (cdr ids) tail
+                                      (extend-env (car ids)
+                                                  (value-of head env)
+                                                  body-env)))))))
 
         )))
 

@@ -72,6 +72,7 @@
       (list-car-empty "car(emptylist)" error)
       (list-cdr "cdr(cons(1,cons(2, emptylist)))" (2))
       (list-cdr-empty "cdr(emptylist)" error)
+      (list-null?-1 "null?(emptylist)" #t)
       (list-1 "let x = 4 in cons(x,cons(cons(-(x,1),emptylist),emptylist))" (4 (3)))
 
       ;; Ex 3.10
@@ -84,6 +85,9 @@
       ;; Ex 3.16
       (let-test "let x=30 in let x=-(x,1) y=-(x,2) in -(x,y)" 1)
       (let*-test "let* x=30 in let* x=-(x,1) y=-(x,2) in -(x,y)" 2)
+
+      ;; Ex 3.18
+      (unpack-test "let u=7 in unpack x y = cons(u,cons(3,emptylist)) in -(x,y)" 4)
       
       ))
   )
