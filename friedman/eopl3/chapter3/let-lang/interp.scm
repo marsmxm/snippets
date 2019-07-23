@@ -130,7 +130,7 @@
 	 (if (null? ids)
 	     (value-of body env)
 	     (value-of
-	      (let-exp (cdr ids) (cdr exps) body)
+	      (let*-exp (cdr ids) (cdr exps) body)
 	      (extend-env (car ids) (value-of (car exps) env) env))))
 
 	;; Ex 3.9
