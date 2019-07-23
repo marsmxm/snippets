@@ -24,6 +24,25 @@
     '((program (expression) a-program)
 
       (expression (number) const-exp)
+
+      ;; Ex 3.6
+      (expression
+        ("minus" "(" expression ")")
+        minus-exp)
+
+      ;; Ex 3.7
+      (expression
+        ("+" "(" expression "," expression ")")
+        add-exp)
+
+      (expression
+        ("*" "(" expression "," expression ")")
+        mult-exp)
+
+      (expression
+        ("/" "(" expression "," expression ")")
+        quotient-exp)
+      
       (expression
         ("-" "(" expression "," expression ")")
         diff-exp)
@@ -31,6 +50,17 @@
       (expression
        ("zero?" "(" expression ")")
        zero?-exp)
+
+      ;; Ex 3.8
+      (expression
+       ("equal?" "(" expression "," expression ")")
+       equal?-exp)
+      (expression
+       ("greater?" "(" expression "," expression ")")
+       greater?-exp)
+      (expression
+       ("lesser?" "(" expression "," expression ")")
+       lesser?-exp)
 
       (expression
        ("if" expression "then" expression "else" expression)
@@ -40,7 +70,24 @@
 
       (expression
        ("let" identifier "=" expression "in" expression)
-       let-exp)   
+       let-exp)
+
+      ;; Ex 3.9
+      (expression
+       ("emptylist")
+       emptylist-exp)
+      (expression
+       ("cons" "(" expression "," expression ")")
+       cons-exp)
+      (expression
+       ("car" "(" expression ")")
+       car-exp)
+      (expression
+       ("cdr" "(" expression ")")
+       cdr-exp)
+      (expression
+       ("null?" "(" expression ")")
+       null?-exp)
 
       ))
   
