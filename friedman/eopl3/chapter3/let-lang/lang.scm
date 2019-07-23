@@ -68,9 +68,16 @@
 
       (expression (identifier) var-exp)
 
+      ;; (expression
+      ;;  ("let" identifier "=" expression "in" expression)
+      ;;  let-exp)
+      ;; Ex 3.16, 3.17
       (expression
-       ("let" identifier "=" expression "in" expression)
+       ("let" (arbno identifier "=" expression) "in" expression)
        let-exp)
+      (expression
+       ("let*" (arbno identifier "=" expression) "in" expression)
+       let*-exp)
 
       ;; Ex 3.9
       (expression
@@ -88,6 +95,21 @@
       (expression
        ("null?" "(" expression ")")
        null?-exp)
+
+      ;; Ex 3.10
+      (expression
+       ("list" "(" (separated-list expression ",") ")")
+       list-exp)
+
+      ;; Ex 3.12
+      (expression
+       ("cond" (arbno expression "==>" expression) "end")
+       cond-exp)
+
+      ;; Ex 3.15
+      (expression
+       ("print" "(" expression ")")
+       print-exp)
 
       ))
   
