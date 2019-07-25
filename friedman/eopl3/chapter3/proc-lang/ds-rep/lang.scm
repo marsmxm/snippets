@@ -25,6 +25,10 @@
       (expression
         ("-" "(" expression "," expression ")")
         diff-exp)
+
+      (expression
+        ("*" "(" expression "," expression ")")
+        mult-exp)
       
       (expression
        ("zero?" "(" expression ")")
@@ -41,11 +45,16 @@
        let-exp)   
 
       (expression
-       ("proc" "(" identifier ")" expression)
+       ("proc" "(" (separated-list identifier ",") ")" expression)
        proc-exp)
 
+      ;; Ex 3.19
       (expression
-       ("(" expression expression ")")
+       ("letproc" identifier "(" (separated-list identifier ",")  ")" expression "in" expression)
+       letproc-exp)
+
+      (expression
+       ("(" expression (arbno expression) ")")
        call-exp)
       
       ))
