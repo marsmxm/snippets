@@ -42,7 +42,15 @@
             (let ((num1 (expval->num val1))
                   (num2 (expval->num val2)))
               (num-val
-                (- num1 num2)))))
+               (- num1 num2)))))
+
+	(mult-exp (exp1 exp2)
+		  (let ((val1 (value-of exp1 env))
+			(val2 (value-of exp2 env)))
+		    (let ((num1 (expval->num val1))
+			  (num2 (expval->num val2)))
+		      (num-val
+                       (* num1 num2)))))
 
         ;\commentbox{\zerotestspec}
         (zero?-exp (exp1)
@@ -65,22 +73,87 @@
             (value-of body
               (extend-env var val1 env))))
         
-        (proc-exp (var body)
-          (proc-val (procedure var body env)))
+        (proc-exp (vars body)
+		  (proc-val (procedure vars body
+				       (env->fv-env env exp))))
 
-        (call-exp (rator rand)
+	(letproc-exp
+	 (var proc-vars proc-body body)
+	 (value-of body
+		   (extend-env var
+			       (proc-val
+				(procedure proc-vars proc-body env))
+			       env)))
+	
+        (call-exp (rator rands)
           (let ((proc (expval->proc (value-of rator env)))
-                (arg (value-of rand env)))
-            (apply-procedure proc arg)))
+                (args (map
+		       (lambda (rand)
+			 (value-of rand env))
+		       rands)))
+            (apply-procedure proc args)))
 
         )))
 
   ;; apply-procedure : Proc * ExpVal -> ExpVal
   ;; Page: 79
   (define apply-procedure
-    (lambda (proc1 val)
+    (lambda (proc1 vals)
       (cases proc proc1
-        (procedure (var body saved-env)
-          (value-of body (extend-env var val saved-env))))))
+             (procedure
+	      (vars body saved-env)
+	      (let loop ([vars vars]
+			 [vals vals]
+			 [env saved-env])
+		(if (null? vars)
+		    (if (null? vals)
+			(value-of body env)
+			(eopl:error 'proc "too many args"))
+		    (if (null? vals)
+			(eopl:error 'proc "too few args")
+			(loop (cdr vars) (cdr vals)
+			      (extend-env (car vars) (car vals) env)))))))))
 
+  (define occurs-free?
+    (lambda (search-var exp)
+      (cases
+       expression exp
+       (const-exp (num) #f)
+       (var-exp (var) (eqv? search-var var))
+       (diff-exp (exp1 exp2)
+		 (or (occurs-free? search-var exp1)
+		     (occurs-free? search-var exp2)))
+       (mult-exp (exp1 exp2)
+		 (or (occurs-free? search-var exp1)
+		     (occurs-free? search-var exp2)))
+       (zero?-exp (exp1) (occurs-free? search-var exp1))
+       (if-exp (exp1 exp2 exp3)
+	       (or (occurs-free? search-var exp1)
+		   (occurs-free? search-var exp2)
+		   (occurs-free? search-var exp3)))
+       (let-exp (var exp1 body)
+		(or (occurs-free? search-var exp1)
+		    (occurs-free? search-var body)))
+       (proc-exp (vars body)
+		 (and (not (member search-var vars))
+		      (occurs-free? search-var body)))
+       (letproc-exp (var proc-vars proc-body body)
+		    (or (occurs-free? search-var
+				      (proc-exp proc-vars proc-body))
+			(occurs-free? search-var body)))
+       (call-exp (rator rands)
+		 (or (occurs-free? search-var rator)
+		     (member search-var rands occurs-free?))))))
+
+  
+  (define env->fv-env
+    (lambda (env exp)
+      (if (empty-env? env)
+	  env
+	  (let ([sym (extended-env-record->sym env)]
+		[val (extended-env-record->val env)]
+		[old-env (extended-env-record->old-env env)])
+	    (if (occurs-free? sym exp)
+		(extend-env sym val (env->fv-env old-env exp))
+		(env->fv-env old-env exp))))))
   )

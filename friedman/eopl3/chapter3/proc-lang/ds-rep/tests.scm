@@ -60,10 +60,54 @@
       (apply-simple-proc "let f = proc (x) -(x,1) in (f 30)" 29)
       (let-to-proc-1 "(proc(f)(f 30)  proc(x)-(x,1))" 29)
 
-
+      (letproc-test "letproc f (x) -(x,1) in (f 2)" 1)
       (nested-procs "((proc (x) proc (y) -(x,y)  5) 6)" -1)
       (nested-procs2 "let f = proc(x) proc (y) -(x,y) in ((f -(10,5)) 6)"
-        -1)
+		     -1)
+      (curried-proc "let f = proc (x) proc (y) -(x,-(0,y)) in ((f 1) 2)" 3)
+      (two-args-proc "let f = proc (x,y) -(x,-(0,y)) in (f 1 2)" 3)
+
+      (times4
+       "
+let makemult = 
+  proc (maker) 
+    proc (x)
+      if zero?(x)
+      then 0
+      else -(((maker maker) -(x,1)), -4)
+in let times4 = proc (x) ((makemult makemult) x) in (times4 3)
+"
+       12)
+
+      (factorial
+       "
+let makefact =
+  proc (maker)
+    proc (n)
+      if zero? (n)
+      then 1
+      else *(((maker maker) -(n,1)), n)
+in ((makefact makefact) 3)
+"
+       6)
+
+      (even-odd "
+let makeeven =
+  proc (oddmaker)
+   proc (evenmaker)
+    proc (n)
+      if zero? (n)
+      then zero? (n)
+      else (((oddmaker evenmaker) oddmaker) -(n,1)) in
+let makeodd =
+  proc (evenmaker)
+   proc (oddmaker)
+    proc (n)
+      if zero? (n)
+      then zero? (-(n, -(0,1)))
+      else (((evenmaker oddmaker) evenmaker) -(n,1)) in
+(((makeeven makeodd) makeeven) 2)
+" #t)
       
       (y-combinator-1 "
 let fix =  proc (f)
@@ -72,6 +116,5 @@ let fix =  proc (f)
 in let
     t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
 in let times4 = (fix t4m)
-   in (times4 3)" 12)
-      ))
+   in (times4 3)" 12)))
   )

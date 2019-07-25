@@ -5,7 +5,7 @@
 
   (require "data-structures.scm")
 
-  (provide init-env empty-env extend-env apply-env)
+  (provide init-env empty-env empty-env? extend-env apply-env)
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
 

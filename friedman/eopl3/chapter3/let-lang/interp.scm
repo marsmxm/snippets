@@ -205,13 +205,13 @@
                (if (empty-list? lst)
                    (value-of body body-env)
                    (eopl:error 'unpack "not enough elements in the list"))
-               (cases
+	       (cases
                 listval lst
                 (empty-list () (eopl:error 'unpack "too many elements in the list"))
                 (non-empty-list (head tail)
-                                (loop (cdr ids) tail
-                                      (extend-env (car ids)
-                                                  (value-of head env)
+                                (loop (cdr ids) (expval->list tail)
+				      (extend-env (car ids)
+                                                  head
                                                   body-env)))))))
 
         )))
