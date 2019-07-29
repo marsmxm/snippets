@@ -52,9 +52,9 @@
   ;; procedure : Var * Exp * Env -> Proc
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
-      (body expression?)
-      (env environment?)))
+     (bvars (list-of symbol?))
+     (body expression?)
+     (env environment?)))
 
   ;; Page: 86
   (define-datatype environment environment?
@@ -65,7 +65,7 @@
       (saved-env environment?))
     (extend-env-rec
       (id symbol?)
-      (bvar symbol?)
+      (bvars (list-of symbol?))
       (body expression?)
       (saved-env environment?)))
 
