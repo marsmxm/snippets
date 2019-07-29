@@ -63,27 +63,59 @@
             (value-of body
               (extend-env var val1 env))))
         
-        (proc-exp (var body)
-          (proc-val (procedure var body env)))
+        (proc-exp (vars body)
+          (proc-val (procedure vars body env)))
 
-        (call-exp (rator rand)
+        (call-exp (rator rands)
           (let ((proc (expval->proc (value-of rator env)))
-                (arg (value-of rand env)))
-            (apply-procedure proc arg)))
+                (args (map
+                      (lambda (rand) (value-of rand env))
+                      rands)))
+            (apply-procedure proc args)))
 
-        (letrec-exp (p-name b-var p-body letrec-body)
-          (value-of letrec-body
-            (extend-env-rec p-name b-var p-body env)))
+        (letrec-exp (p-names b-vars-list p-bodys letrec-body)
+                    (value-of
+                     letrec-body
+                     (let loop ([p-names p-names]
+                                [b-vars-list b-vars-list]
+                                [p-bodys p-bodys])
+                       (if (null? p-names)
+                           env
+                           (extend-env-rec
+                            (car p-names)
+                            (car b-vars-list)
+                            (car p-bodys)
+                            (loop (cdr p-names)
+                                  (cdr b-vars-list)
+                                  (cdr p-bodys)))))))
 
         )))
 
   ;; apply-procedure : Proc * ExpVal -> ExpVal
 
   (define apply-procedure
-    (lambda (proc1 arg)
+    (lambda (proc1 args)
       (cases proc proc1
-        (procedure (var body saved-env)
-          (value-of body (extend-env var arg saved-env))))))
+             (procedure (vars body saved-env)
+                        (display saved-env)
+                        (newline)
+                        (let loop ([vars vars]
+                                   [args args]
+                                   [body-env saved-env])
+                          (if (null? vars)
+                              (if (null? args)
+                                  (value-of body body-env)
+                                  (eopl:error 'call-proc
+                                              "too many args"))
+                              (if (null? args)
+                                  (eopl:error 'call-proc
+                                              "too few args")
+                                  (loop (cdr vars)
+                                        (cdr args)
+                                        (extend-env
+                                         (car vars)
+                                         (car args)
+                                         body-env)))))))))
   
   )
   
