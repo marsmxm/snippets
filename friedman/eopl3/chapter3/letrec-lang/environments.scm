@@ -5,7 +5,7 @@
 
   (require "data-structures.scm")
 
-  (provide init-env empty-env extend-env apply-env)
+  (provide init-env empty-env extend-env extend-env-rec apply-env)
 
 ;;;;;;;;;;;;;;;; initial environment ;;;;;;;;;;;;;;;;
   
@@ -35,12 +35,35 @@
         (empty-env ()
           (eopl:error 'apply-env "No binding for ~s" search-sym))
         (extend-env (var val saved-env)
-	  (if (eqv? search-sym var)
-	    val
-	    (apply-env saved-env search-sym)))
-        (extend-env-rec (p-name b-vars p-body saved-env)
-          (if (eqv? search-sym p-name)
-            (proc-val (procedure b-vars p-body env))          
-            (apply-env saved-env search-sym))))))
+		    (if (vector? val)
+			(let ([vec val]) ; env of rec
+			  (let loop ([names var]
+				     [index 0])
+			    (if (null? names)
+				(apply-env saved-env search-sym)
+				(if (eqv? search-sym (car names))
+				    (vector-ref vec index)
+				    (loop (cdr names) (+ index 1))))))
+			(if (eqv? search-sym var) ; normal env
+			    val
+			    (apply-env saved-env search-sym)))))))
+
+  (define extend-env-rec
+    (lambda (p-names b-vars-list bodies saved-env)
+      (let ((vec (make-vector (length p-names))))
+	(let ((new-env (extend-env p-names vec saved-env)))
+	  (let loop ([vars-list b-vars-list]
+		     [bodies bodies]
+		     [index 0])
+	    (if (null? vars-list)
+		new-env
+		(begin
+		  (vector-set! vec index
+			       (proc-val
+				(procedure (car vars-list)
+					   (car bodies)
+					   new-env)))
+		  (loop (cdr vars-list) (cdr bodies) (+ index 1)))))))))
+
     
   )

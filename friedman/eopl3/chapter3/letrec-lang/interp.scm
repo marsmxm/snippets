@@ -71,23 +71,12 @@
                 (args (map
                       (lambda (rand) (value-of rand env))
                       rands)))
-            (apply-procedure proc args)))
+	    (apply-procedure proc args)))
 
-        (letrec-exp (p-names b-vars-list p-bodys letrec-body)
+        (letrec-exp (p-names b-vars-list p-bodies letrec-body)
                     (value-of
                      letrec-body
-                     (let loop ([p-names p-names]
-                                [b-vars-list b-vars-list]
-                                [p-bodys p-bodys])
-                       (if (null? p-names)
-                           env
-                           (extend-env-rec
-                            (car p-names)
-                            (car b-vars-list)
-                            (car p-bodys)
-                            (loop (cdr p-names)
-                                  (cdr b-vars-list)
-                                  (cdr p-bodys)))))))
+		     (extend-env-rec p-names b-vars-list p-bodies env)))
 
         )))
 
@@ -97,8 +86,6 @@
     (lambda (proc1 args)
       (cases proc proc1
              (procedure (vars body saved-env)
-                        (display saved-env)
-                        (newline)
                         (let loop ([vars vars]
                                    [args args]
                                    [body-env saved-env])
