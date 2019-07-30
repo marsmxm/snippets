@@ -60,13 +60,8 @@
   (define-datatype environment environment?
     (empty-env)
     (extend-env 
-      (bvar symbol?)
-      (bval expval?)
-      (saved-env environment?))
-    (extend-env-rec
-      (id symbol?)
-      (bvars (list-of symbol?))
-      (body expression?)
-      (saved-env environment?)))
+     (bvar (or symbol? (list-of symbol?)))
+     (bval (or expval? vector?))
+     (saved-env environment?)))
 
 )
