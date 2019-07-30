@@ -60,8 +60,10 @@
   (define-datatype environment environment?
     (empty-env)
     (extend-env 
-     (bvar (or symbol? (list-of symbol?)))
-     (bval (or expval? vector?))
+     (bvar (lambda (t) (or (symbol? t)
+                           ((list-of symbol?) t))))
+     (bval (lambda (t) (or (expval? t)
+                           (vector? t))))
      (saved-env environment?)))
 
 )

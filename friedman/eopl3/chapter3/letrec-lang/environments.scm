@@ -63,7 +63,9 @@
 				(procedure (car vars-list)
 					   (car bodies)
 					   new-env)))
-		  (loop (cdr vars-list) (cdr bodies) (+ index 1)))))))))
+		  (loop (cdr vars-list)
+                        (cdr bodies)
+                        (+ index 1)))))))))
 
     
   )
