@@ -55,6 +55,18 @@
             (value-of exp1 nameless-env)
             (value-of exp2 nameless-env)))
 
+	(cond-exp
+	 (exps1 exps2)
+	 (if (null? exps1)
+	     (eopl:error 'cond "Braches exhausted")
+	     (let ([first-cond
+		    (expval->bool
+		     (value-of (car exps1) nameless-env))])
+	       (if first-cond
+		   (value-of (car exps2) nameless-env)
+		   (value-of (cond-exp (cdr exps1) (cdr exps2))
+			     nameless-env)))))
+
         (call-exp (rator rand)          
           (let ((proc (expval->proc (value-of rator nameless-env)))
                 (arg (value-of rand nameless-env)))

@@ -36,6 +36,10 @@
        ("if" expression "then" expression "else" expression)
        if-exp)
 
+      (expression
+       ("cond" (arbno expression "==>" expression) "end")
+       cond-exp)
+
       (expression (identifier) var-exp)
 
       (expression
