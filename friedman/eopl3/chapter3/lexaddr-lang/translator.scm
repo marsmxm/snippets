@@ -32,6 +32,13 @@
             (translation-of exp1 senv)
             (translation-of exp2 senv)
             (translation-of exp3 senv)))
+	(cond-exp
+	 (exps1 exps2)
+	 (cond-exp
+	  (map (lambda (e) (translation-of e senv))
+	       exps1)
+	  (map (lambda (e) (translation-of e senv))
+	       exps2)))
         (var-exp (var)
           (nameless-var-exp
             (apply-senv senv var)))

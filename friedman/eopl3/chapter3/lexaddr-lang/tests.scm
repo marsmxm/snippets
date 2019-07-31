@@ -27,6 +27,11 @@
       ;; simple conditionals
       (if-true "if zero?(0) then 3 else 4" 3)
       (if-false "if zero?(1) then 3 else 4" 4)
+
+      (cond-test-1 "let x=2 in cond zero?(x) ==> 1 zero?(-(x,2)) ==> 3 end"
+		   3)
+      (cond-test-2 "let x=2 in cond zero?(x) ==> 1 zero??(-(x,1)) ==> 3 end"
+		   error)
       
       ;; test dynamic typechecking
       (no-bool-to-diff-1 "-(zero?(0),1)" error)
@@ -41,8 +46,8 @@
 ;      these aren't translatable. Exercise: make them translatable by
 ;      providing a binding for foo.
 ;       ;; and make sure the other arm doesn't get evaluated.
-;       (if-eval-test-true-2 "if zero?(-(11, 11)) then 3 else foo" 3)
-;       (if-eval-test-false-2 "if zero?(-(11,12)) then foo else 4" 4)
+      (if-eval-test-true-2 "if zero?(-(11, 11)) then 3 else foo" 3)
+      (if-eval-test-false-2 "if zero?(-(11,12)) then foo else 4" 4)
 
       ;; simple let
       (simple-let-1 "let x = 3 in x" 3)
