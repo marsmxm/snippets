@@ -54,7 +54,18 @@
        ("(" expression expression ")")
        call-exp)
 
+      (expression
+       ("list" "(" (separated-list expression ",") ")")
+       list-exp)
+      
+      (expression
+       ("unpack" (arbno identifier) "=" expression "in" expression)
+       unpack-exp)
+
+      (expression ("%unpack" expression "in" expression) nameless-unpack-exp)
+
       (expression ("%nameless-var" number) nameless-var-exp)
+      (expression ("%unbound-var" identifier) unbound-var-exp)
       (expression
         ("%let" expression "in" expression)
         nameless-let-exp)

@@ -16,7 +16,22 @@
     (bool-val
       (boolean boolean?))
     (proc-val 
-      (proc proc?)))
+     (proc proc?))
+    (list-val
+     (list listval?)))
+
+  (define-datatype listval listval?
+    (empty-list)
+    (non-empty-list
+     (head expval?)
+     (tail expval?)))
+
+  (define empty-list?
+    (lambda (lst)
+      (cases
+       listval lst
+       (empty-list () #t)
+       (else #f))))
 
 ;;; extractors:
 
@@ -40,6 +55,12 @@
       (cases expval v
 	(proc-val (proc) proc)
 	(else (expval-extractor-error 'proc v)))))
+
+  (define expval->list
+    (lambda (v)
+      (cases expval v
+	     (list-val (list) list)
+	     (else (expval-extractor-error 'list v)))))
 
   (define expval-extractor-error
     (lambda (variant value)

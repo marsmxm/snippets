@@ -73,7 +73,13 @@
 	    (apply-procedure proc arg)))
 
         (nameless-var-exp (n)
-          (apply-nameless-env nameless-env n))
+			  (apply-nameless-env nameless-env n))
+
+	(unbound-var-exp
+	 (var)
+	 (eopl:error 'value-of
+		     "Unbound variable: ~s"
+		     var))
 
         (nameless-let-exp (exp1 body)
           (let ((val (value-of exp1 nameless-env)))
@@ -82,8 +88,31 @@
 
         (nameless-proc-exp (body)
           (proc-val
-            (procedure body nameless-env)))
+           (procedure body nameless-env)))
 
+	(list-exp
+	 (exps)
+	 (if (null? exps)
+	     (list-val (empty-list))
+	     (list-val
+	      (non-empty-list
+	       (value-of (car exps) nameless-env)
+	       (value-of (list-exp (cdr exps)) nameless-env)))))
+
+	(nameless-unpack-exp
+         (exp1 body)
+         (let loop ([lst
+                     (expval->list
+                      (value-of exp1 nameless-env))]
+                    [body-env nameless-env])
+           (cases
+            listval lst
+            (empty-list () (value-of body body-env))
+            (non-empty-list
+	     (head tail)
+             (loop (expval->list tail)
+		   (extend-nameless-env head body-env))))))
+	
         (else
          (eopl:error 'value-of 
 	    "Illegal expression in translated code: ~s" exp))
