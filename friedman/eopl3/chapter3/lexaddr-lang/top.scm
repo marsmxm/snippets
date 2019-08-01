@@ -45,6 +45,11 @@
       (cond
         ((number? sloppy-val) (num-val sloppy-val))
         ((boolean? sloppy-val) (bool-val sloppy-val))
+        ((null? sloppy-val) (list-val (empty-list)))
+        ((pair? sloppy-val) (list-val
+                             (non-empty-list
+                              (sloppy->expval (car sloppy-val))
+                              (sloppy->expval (cdr sloppy-val)))))
         (else
          (eopl:error 'sloppy->expval 
                      "Can't convert sloppy value to expval: ~s"

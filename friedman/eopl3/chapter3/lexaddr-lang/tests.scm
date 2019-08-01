@@ -79,5 +79,15 @@ in let
     t4m = proc (f) proc(x) if zero?(x) then 0 else -((f -(x,1)),-4)
 in let times4 = (fix t4m)
    in (times4 3)" 12)
+
+      (list-test "let x=4 in list(x, -(x,1), -(x,3))" (4 3 1))
+
+      (unpack-test "
+let lst = 
+  let x=4 in list(x, -(x,1), -(x,3)) in
+unpack x y z = lst in -(-(x,y),z)
+" 0)
+      
       ))
+
   )
