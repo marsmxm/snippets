@@ -39,43 +39,47 @@
 	       exps1)
 	  (map (lambda (e) (translation-of e senv senv-applier))
 	       exps2)))
+	
         (var-exp (var)
-		 (let ([val (senv-applier senv var)])
-		   (if (number? val)
-		       (nameless-var-exp val)
-		       val)))
+		 (senv-applier senv var))
+	
         (let-exp (var exp1 body)
           (nameless-let-exp
             (translation-of exp1 senv senv-applier)     
             (translation-of body
-			    (extend-senv var senv)
+			    (extend-senv (list var) senv)
 			    senv-applier)))
-        (proc-exp (var body)
+
+	(letrec-exp
+	 (p-names vars-list p-bodies letrec-body)
+	 )
+	
+        (proc-exp (vars body)
           (nameless-proc-exp
             (translation-of body
-			    (extend-senv var senv)
+			    (extend-senv vars senv)
 			    senv-applier)))
-        (call-exp (rator rand)
+	
+        (call-exp (rator rands)
           (call-exp
-            (translation-of rator senv senv-applier)
-            (translation-of rand senv senv-applier)))
+           (translation-of rator senv senv-applier)
+	   (map
+	    (lambda (rand)
+              (translation-of rand senv senv-applier))
+	    rands)))
 
 	(list-exp
 	 (exps)
 	 (list-exp
-	  (map (lambda (exp) (translation-of exp senv senv-applier))
+	  (map (lambda (exp)
+		 (translation-of exp senv senv-applier))
 	       exps)))
 
 	(unpack-exp
 	 (ids exp1 body)
-	 (let loop ([ids ids]
-		    [body-env senv])
-	   (if (null? ids)
-	       (nameless-unpack-exp
-		(translation-of exp1 senv senv-applier)
-		(translation-of body body-env senv-applier))
-	       (loop (cdr ids)
-		     (extend-senv (car ids) body-env)))))
+	 (nameless-unpack-exp
+	  (translation-of exp1 senv senv-applier)
+	  (translation-of body (extend-senv ids senv) senv-applier)))
 	
         (else (report-invalid-source-expression exp))
         )))
@@ -99,41 +103,50 @@
   ;; extend-senv : Var * Senv -> Senv
   ;; Page: 95
   (define extend-senv
-    (lambda (var senv)
-      (cons var senv)))
+    (lambda (vars senv)
+      (cons vars senv)))
   
-  ;; apply-senv : Senv * Var -> Lexaddr
+  ;; apply-senv : Senv * Var -> Lexaddr: (index . sub-index)
   ;; Page: 95
+
+  ;; Page: 95
+  (define apply-senv0
+    (lambda (unbound-handler)
+      (lambda (senv var)
+	(let loop0 ([senv senv]
+		    [index 0])
+	  (if (null? senv)
+	      (unbound-handler var)
+	      (let loop ([vars (car senv)]
+			 [sub-index 0])
+		(if (null? vars)
+		    (loop0 (cdr senv) (+ 1 index))
+		    (if (eqv? var (car vars))
+			(nameless-var-exp index sub-index)
+			(loop (cdr vars) (+ 1 sub-index))))))))))
+
   (define apply-senv
-    (lambda (senv var)
-      (cond
-        ((null? senv) (report-unbound-var var))
-        ((eqv? var (car senv))
-         0)
-        (else
-          (+ 1 (apply-senv (cdr senv) var))))))
+    (apply-senv0
+     (lambda (var) (report-unbound-var var))))
 
   (define report-unbound-var
     (lambda (var)
       (eopl:error 'translation-of "unbound variable in code: ~s" var)))
 
   (define apply-senv-with-unbound
-    (lambda (senv var)
-      (let loop ([e senv]
-		 [index 0])
-	(cond
-	 ((null? e) (unbound-var-exp var))
-	 ((eqv? var (car e)) index)
-	 (else
-	  (loop (cdr e) (+ 1 index)))))))
+    (apply-senv0
+     (lambda (var) (unbound-var-exp var))))
 
   ;; init-senv : () -> Senv
   ;; Page: 96
   (define init-senv
     (lambda ()
-      (extend-senv 'i
-        (extend-senv 'v
-          (extend-senv 'x
-            (empty-senv))))))
+      (extend-senv
+       '(i)
+       (extend-senv
+	'(v)
+	(extend-senv
+	 '(x)
+	 (empty-senv))))))
   
   )

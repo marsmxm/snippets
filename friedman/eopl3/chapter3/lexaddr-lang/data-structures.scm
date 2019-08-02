@@ -87,7 +87,7 @@
   ;; Page: 99
   (define nameless-environment?
     (lambda (x)
-      ((list-of expval?) x)))
+      ((list-of (list-of expval?)) x)))
 
   ;; empty-nameless-env : () -> Nameless-env
   ;; Page: 99
@@ -103,13 +103,15 @@
   ;; extend-nameless-env : ExpVal * Nameless-env -> Nameless-env
   ;; Page: 99
   (define extend-nameless-env
-    (lambda (val nameless-env)
-      (cons val nameless-env)))
+    (lambda (vals nameless-env)
+      (cons vals nameless-env)))
 
    ;; apply-nameless-env : Nameless-env * Lexaddr -> ExpVal
    ;; Page: 99
    (define apply-nameless-env
-     (lambda (nameless-env n)
-       (list-ref nameless-env n)))
+     (lambda (nameless-env index sub-index)
+       (list-ref
+	(list-ref nameless-env index)
+	sub-index)))
 
 )
