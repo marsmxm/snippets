@@ -67,13 +67,16 @@
 		   (value-of (cond-exp (cdr exps1) (cdr exps2))
 			     nameless-env)))))
 
-        (call-exp (rator rand)          
+        (call-exp (rator rands)          
           (let ((proc (expval->proc (value-of rator nameless-env)))
-                (arg (value-of rand nameless-env)))
-	    (apply-procedure proc arg)))
+                (args (map
+		       (lambda (rand)
+			 (value-of rand nameless-env))
+		       rands)))
+	    (apply-procedure proc args)))
 
-        (nameless-var-exp (n)
-			  (apply-nameless-env nameless-env n))
+        (nameless-var-exp (index sub-index)
+			  (apply-nameless-env nameless-env index sub-index))
 
 	(unbound-var-exp
 	 (var)
@@ -84,7 +87,9 @@
         (nameless-let-exp (exp1 body)
           (let ((val (value-of exp1 nameless-env)))
             (value-of body
-              (extend-nameless-env val nameless-env))))
+		      (extend-nameless-env
+		       (list val)
+		       nameless-env))))
 
         (nameless-proc-exp (body)
           (proc-val
@@ -104,14 +109,17 @@
          (let loop ([lst
                      (expval->list
                       (value-of exp1 nameless-env))]
-                    [body-env nameless-env])
+                    [vals '()])
            (cases
             listval lst
-            (empty-list () (value-of body body-env))
+            (empty-list () (value-of body
+				     (extend-nameless-env
+				      vals
+				      nameless-env)))
             (non-empty-list
 	     (head tail)
              (loop (expval->list tail)
-		   (extend-nameless-env head body-env))))))
+		   (append vals (list head)))))))
 	
         (else
          (eopl:error 'value-of 
@@ -123,9 +131,10 @@
   ;; apply-procedure : Proc * ExpVal -> ExpVal
 
   (define apply-procedure
-    (lambda (proc1 arg)
+    (lambda (proc1 args)
       (cases proc proc1
         (procedure (body saved-env)
-          (value-of body (extend-nameless-env arg saved-env))))))
+		   (value-of body
+			     (extend-nameless-env args saved-env))))))
 
   )

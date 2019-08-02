@@ -69,7 +69,9 @@
 
       (nested-procs "((proc (x) proc (y) -(x,y)  5) 6)" -1)
       (nested-procs2 "let f = proc(x) proc (y) -(x,y) in ((f -(10,5)) 6)"
-        -1)
+		     -1)
+
+      (multi-args-procs "(proc (x,y) -(x,y) 5 6)" -1)
       
       (y-combinator-1 "
 let fix =  proc (f)

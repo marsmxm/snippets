@@ -44,14 +44,20 @@
 
       (expression
        ("let" identifier "=" expression "in" expression)
-       let-exp)   
+       let-exp)
 
       (expression
-       ("proc" "(" identifier ")" expression)
+       ("letrec"
+        (arbno identifier "(" (separated-list identifier ",") ")" "=" expression)
+        "in" expression)
+       letrec-exp)
+
+      (expression
+       ("proc" "(" (separated-list identifier ",") ")" expression)
        proc-exp)
 
       (expression
-       ("(" expression expression ")")
+       ("(" expression (arbno expression) ")")
        call-exp)
 
       (expression
@@ -64,7 +70,7 @@
 
       (expression ("%unpack" expression "in" expression) nameless-unpack-exp)
 
-      (expression ("%nameless-var" number) nameless-var-exp)
+      (expression ("%nameless-var" number number) nameless-var-exp)
       (expression ("%unbound-var" identifier) unbound-var-exp)
       (expression
         ("%let" expression "in" expression)

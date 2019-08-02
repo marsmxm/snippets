@@ -15,11 +15,11 @@
   (define init-nameless-env
     (lambda ()
       (extend-nameless-env 
-       (num-val 1)			; was i
+       (list (num-val 1))			; was i
        (extend-nameless-env
-        (num-val 5)			; was v
+        (list (num-val 5))			; was v
         (extend-nameless-env
-         (num-val 10)			; was x
+         (list (num-val 10))			; was x
          (empty-nameless-env))))))
 
 
