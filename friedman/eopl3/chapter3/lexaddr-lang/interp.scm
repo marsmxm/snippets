@@ -75,8 +75,9 @@
 		       rands)))
 	    (apply-procedure proc args)))
 
-        (nameless-var-exp (index sub-index)
-			  (apply-nameless-env nameless-env index sub-index))
+        (nameless-var-exp
+         (index sub-index)
+	 (apply-nameless-env nameless-env index sub-index))
 
 	(unbound-var-exp
 	 (var)
@@ -99,11 +100,12 @@
 	 (p-bodies letrec-body)
 	 (value-of letrec-body
 		   (exptend-nameless-env
-		    (map
-		     (lambda (p-body)
-		       (proc-val (procedure p-body nameless-env)))
-		     p-bodies)
+		    p-bodies
 		    nameless-env)))
+
+        (nameless-letrec-var-exp
+         (index sub-index)
+         (apply-nameless-env-rec nameless-env index sub-index))
 
 	(list-exp
 	 (exps)
