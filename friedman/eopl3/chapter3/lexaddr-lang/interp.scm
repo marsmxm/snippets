@@ -95,6 +95,16 @@
           (proc-val
            (procedure body nameless-env)))
 
+	(nameless-letrec-exp
+	 (p-bodies letrec-body)
+	 (value-of letrec-body
+		   (exptend-nameless-env
+		    (map
+		     (lambda (p-body)
+		       (proc-val (procedure p-body nameless-env)))
+		     p-bodies)
+		    nameless-env)))
+
 	(list-exp
 	 (exps)
 	 (if (null? exps)

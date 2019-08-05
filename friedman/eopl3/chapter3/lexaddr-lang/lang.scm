@@ -73,8 +73,17 @@
       (expression ("%nameless-var" number number) nameless-var-exp)
       (expression ("%unbound-var" identifier) unbound-var-exp)
       (expression
-        ("%let" expression "in" expression)
-        nameless-let-exp)
+       ("%let" expression "in" expression)
+       nameless-let-exp)
+
+      (expression
+       ("%nameless-letrec-var" number number)
+       nameless-letrec-var-exp)
+      
+      (expression
+       ("%letrec" (arbno expression) "in" expression)
+       nameless-letrec-exp)
+      
       (expression
         ("%lexproc" expression)
         nameless-proc-exp)
