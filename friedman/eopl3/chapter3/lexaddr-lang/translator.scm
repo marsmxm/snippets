@@ -52,7 +52,18 @@
 
 	(letrec-exp
 	 (p-names vars-list p-bodies letrec-body)
-	 )
+	 (nameless-letrec-exp
+          (let loop ([vars-list vars-list]
+                     [p-bodies p-bodies])
+            (if (null? p-bodies)
+		'()
+		(cons (translation-of (car p-bodies)
+                                      (extend-senv (car vars-list) senv)
+                                      senv-applier)
+                      (loop (cdr vars-list) (cdr p-bodies)))))
+          (translation-of letrec-body
+                          (extend-senv p-names senv)
+                          senv-applier)))
 	
         (proc-exp (vars body)
           (nameless-proc-exp
