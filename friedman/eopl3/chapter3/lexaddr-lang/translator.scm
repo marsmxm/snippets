@@ -58,11 +58,13 @@
             (if (null? p-bodies)
 		'()
 		(cons (translation-of (car p-bodies)
-                                      (extend-senv (car vars-list) senv)
+                                      (extend-senv
+                                       (car vars-list)
+                                       senv)
                                       senv-applier)
                       (loop (cdr vars-list) (cdr p-bodies)))))
           (translation-of letrec-body
-                          (extend-senv p-names senv)
+                          (extend-senv-rec p-names senv)
                           senv-applier)))
 	
         (proc-exp (vars body)
@@ -115,7 +117,11 @@
   ;; Page: 95
   (define extend-senv
     (lambda (vars senv)
-      (cons vars senv)))
+      (cons (cons vars #f) senv)))
+
+  (define extend-senv-rec
+    (lambda (vars senv)
+      (cons (cons vars #t) senv)))
   
   ;; apply-senv : Senv * Var -> Lexaddr: (index . sub-index)
   ;; Page: 95
@@ -128,13 +134,16 @@
 		    [index 0])
 	  (if (null? senv)
 	      (unbound-handler var)
-	      (let loop ([vars (car senv)]
-			 [sub-index 0])
-		(if (null? vars)
-		    (loop0 (cdr senv) (+ 1 index))
-		    (if (eqv? var (car vars))
-			(nameless-var-exp index sub-index)
-			(loop (cdr vars) (+ 1 sub-index))))))))))
+              (let ([is-rec (cdar senv)])
+	        (let loop ([vars (caar senv)]
+			   [sub-index 0])
+		  (if (null? vars)
+		      (loop0 (cdr senv) (+ 1 index))
+		      (if (eqv? var (car vars))
+                          (if is-rec
+                              (nameless-letrec-var-exp index sub-index)
+			      (nameless-var-exp index sub-index))
+			  (loop (cdr vars) (+ 1 sub-index)))))))))))
 
   (define apply-senv
     (apply-senv0
@@ -153,11 +162,11 @@
   (define init-senv
     (lambda ()
       (extend-senv
-       '(i)
+       '((i) . #f)
        (extend-senv
-	'(v)
+	'((v) . #f)
 	(extend-senv
-	 '(x)
+	 '((x) . #f)
 	 (empty-senv))))))
   
   )
