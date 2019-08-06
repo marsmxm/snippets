@@ -87,7 +87,10 @@
   ;; Page: 99
   (define nameless-environment?
     (lambda (x)
-      ((list-of (list-of expval?)) x)))
+      (let ([val-or-exp (lambda (e)
+			  (or (list-of expval?)
+			      (list-of expression?)))])
+	((list-of val-or-exp) x))))
 
   ;; empty-nameless-env : () -> Nameless-env
   ;; Page: 99
@@ -116,8 +119,10 @@
 
    (define apply-nameless-env-rec
      (lambda (nameless-env index sub-index)
-       (list-ref
-	(list-ref nameless-env index)
-	sub-index)))
+       (let ([body (list-ref
+		    (list-ref nameless-env index)
+		    sub-index)])
+	 (proc-val
+	  (procedure body nameless-env)))))
 
 )
