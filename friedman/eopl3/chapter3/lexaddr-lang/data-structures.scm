@@ -87,10 +87,10 @@
   ;; Page: 99
   (define nameless-environment?
     (lambda (x)
-      (let ([val-or-exp (lambda (e)
-			  (or (list-of expval?)
-			      (list-of expression?)))])
-	((list-of val-or-exp) x))))
+      (let ([vals-or-vec (lambda (e)
+			  (or ((list-of expval?) e)
+			      (vector? e)))])
+	((list-of vals-or-vec) x))))
 
   ;; empty-nameless-env : () -> Nameless-env
   ;; Page: 99
@@ -109,6 +109,22 @@
     (lambda (vals nameless-env)
       (cons vals nameless-env)))
 
+  (define extend-nameless-env-rec
+    (lambda (bodies saved-env)
+      (let ((vec (make-vector (length bodies))))
+	(let ((new-env (extend-nameless-env vec saved-env)))
+	  (let loop ([bodies bodies]
+		     [index 0])
+	    (if (null? bodies)
+		new-env
+		(begin
+		  (vector-set! vec index
+			       (proc-val
+				(procedure (car bodies)
+					   new-env)))
+		  (loop (cdr bodies)
+                        (+ index 1)))))))))
+
    ;; apply-nameless-env : Nameless-env * Lexaddr -> ExpVal
    ;; Page: 99
    (define apply-nameless-env
@@ -119,10 +135,7 @@
 
    (define apply-nameless-env-rec
      (lambda (nameless-env index sub-index)
-       (let ([body (list-ref
-		    (list-ref nameless-env index)
-		    sub-index)])
-	 (proc-val
-	  (procedure body nameless-env)))))
+       (let ([vec (list-ref nameless-env index)])
+	  (vector-ref vec sub-index))))
 
 )
