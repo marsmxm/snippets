@@ -114,4 +114,10 @@
 	(list-ref nameless-env index)
 	sub-index)))
 
+   (define apply-nameless-env-rec
+     (lambda (nameless-env index sub-index)
+       (list-ref
+	(list-ref nameless-env index)
+	sub-index)))
+
 )
