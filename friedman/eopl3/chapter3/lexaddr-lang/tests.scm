@@ -90,6 +90,18 @@ let lst =
 unpack x y z = lst in -(-(x,y),z)
 " 0)
       
+      (mutual-recursion-1 "
+letrec
+  even(x) = if zero?(x) then 1 else (odd -(x,1)) 
+  odd(x) = if zero?(x) then 0 else (even -(x,1))
+in (odd 13)" 1)
+
+      (mutual-recursion-2 "
+letrec
+  even(x) = if zero?(x) then 1 else (odd -(x,1)) 
+  odd(x) = if zero?(x) then 0 else (even -(x,1))
+in (even 13)" 0)
+      
       ))
 
   )

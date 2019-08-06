@@ -60,7 +60,7 @@
 		(cons (translation-of (car p-bodies)
                                       (extend-senv
                                        (car vars-list)
-                                       senv)
+                                       (extend-senv-rec p-names senv))
                                       senv-applier)
                       (loop (cdr vars-list) (cdr p-bodies)))))
           (translation-of letrec-body
@@ -162,11 +162,11 @@
   (define init-senv
     (lambda ()
       (extend-senv
-       '((i) . #f)
+       '(i)
        (extend-senv
-	'((v) . #f)
+	'(v)
 	(extend-senv
-	 '((x) . #f)
+	 '(x)
 	 (empty-senv))))))
   
   )

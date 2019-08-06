@@ -32,7 +32,7 @@
   (define value-of
     (lambda (exp nameless-env)
       (cases expression exp
-                (const-exp (num) (num-val num))
+             (const-exp (num) (num-val num))
 
         (diff-exp (exp1 exp2)
           (let ((val1
@@ -50,10 +50,10 @@
 	      (bool-val #t)
 	      (bool-val #f))))
 
-        (if-exp (exp0 exp1 exp2) 
-          (if (expval->bool (value-of exp0 nameless-env))
-            (value-of exp1 nameless-env)
-            (value-of exp2 nameless-env)))
+        (if-exp (exp0 exp1 exp2)
+		(if (expval->bool (value-of exp0 nameless-env))
+		    (value-of exp1 nameless-env)
+		    (value-of exp2 nameless-env)))
 
 	(cond-exp
 	 (exps1 exps2)
@@ -67,7 +67,7 @@
 		   (value-of (cond-exp (cdr exps1) (cdr exps2))
 			     nameless-env)))))
 
-        (call-exp (rator rands)          
+        (call-exp (rator rands)
           (let ((proc (expval->proc (value-of rator nameless-env)))
                 (args (map
 		       (lambda (rand)
@@ -99,7 +99,7 @@
 	(nameless-letrec-exp
 	 (p-bodies letrec-body)
 	 (value-of letrec-body
-		   (exptend-nameless-env
+		   (extend-nameless-env
 		    p-bodies
 		    nameless-env)))
 
