@@ -99,7 +99,7 @@
 	(nameless-letrec-exp
 	 (p-bodies letrec-body)
 	 (value-of letrec-body
-		   (extend-nameless-env
+		   (extend-nameless-env-rec
 		    p-bodies
 		    nameless-env)))
 
