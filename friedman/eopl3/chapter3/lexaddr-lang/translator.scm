@@ -113,6 +113,8 @@
     (lambda ()
       '()))
 
+  (define empty-senv? null?)
+
   ;; extend-senv : Var * Senv -> Senv
   ;; Page: 95
   (define extend-senv
@@ -156,6 +158,81 @@
   (define apply-senv-with-unbound
     (apply-senv0
      (lambda (var) (unbound-var-exp var))))
+
+  (define senv->fv-senv
+    (lambda (senv exp)
+      (let loop ([senv senv]
+		 [depth 0]
+		 [position 0]
+		 [positions '()]
+		 [indices '()])
+	(if (empty-senv? senv)
+	    (values senv '())
+	    ))))
+
+  (define occurs-free?
+    (lambda (search-var exp)
+      (cases
+       expression exp
+       (const-exp (num) #f)
+       (var-exp (var) (eqv? search-var var))
+       (diff-exp (exp1 exp2)
+		 (or (occurs-free? search-var exp1)
+		     (occurs-free? search-var exp2)))
+       
+       (zero?-exp (exp1) (occurs-free? search-var exp1))
+       (if-exp (exp1 exp2 exp3)
+	       (or (occurs-free? search-var exp1)
+		   (occurs-free? search-var exp2)
+		   (occurs-free? search-var exp3)))
+       (cond-exp
+	 (exps1 exps2)
+	 (let loop ([exps1 exps1]
+		    [exps2 exps2])
+	   (if (null? exps1)
+	       #f
+	       (or (occurs-free? search-var (car exps1))
+		   (occurs-free? search-var (car exps2))
+		   (loop (cdr exps1) (cdr exps2))))))
+       
+       (let-exp (var exp1 body)
+		(or (occurs-free? search-var exp1)
+		    (occurs-free? search-var body)))
+       (proc-exp (vars body)
+		 (and (not (member search-var vars))
+		      (occurs-free? search-var body)))
+
+       (letrec-exp
+	 (p-names vars-list p-bodies letrec-body)
+	 (or (occurs-free? search-var letrec-body)
+	     (let loop ([vars-list vars-list]
+			[bodies p-bodies])
+	       (if (null? vars-list)
+		   #f
+		   (or (and (not (member search-var (car vars-list)))
+			    (occurs-free? search-var (car bodies)))
+		       (loop (cdr vars-list) (cdr bodies)))))))
+       
+       (call-exp (rator rands)
+		 (or (occurs-free? search-var rator)
+		     (member search-var rands occurs-free?)))
+
+       (list-exp
+	 (exps)
+	 (let loop ([exps exps])
+	   (if (null? exps)
+	       #f
+	       (or (occurs-free? search-var (car exps))
+		   (loop (cdr exps))))))
+
+       (unpack-exp
+	(ids exp1 body)
+	(or (occurs-free? search-var exp1)
+	    (occurs-free? search-var body)))
+
+       
+       (else (report-invalid-source-expression exp))
+       )))
 
   ;; init-senv : () -> Senv
   ;; Page: 96
