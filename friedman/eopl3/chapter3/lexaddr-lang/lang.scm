@@ -85,8 +85,8 @@
        nameless-letrec-exp)
       
       (expression
-        ("%lexproc" expression)
-        nameless-proc-exp)
+       ("%lexproc" expression)
+       nameless-proc-exp)
       
       ))
 
