@@ -67,11 +67,16 @@
                           (extend-senv-rec p-names senv)
                           senv-applier)))
 	
-        (proc-exp (vars body)
-          (nameless-proc-exp
-            (translation-of body
-			    (extend-senv vars senv)
-			    senv-applier)))
+        (proc-exp
+         (vars body)
+         (call-with-values
+           (lambda () (senv->fv-senv senv exp))
+           (lambda (fv-senv indices)
+             ))
+         (nameless-proc-exp
+          (translation-of body
+			  (extend-senv vars senv)
+			  senv-applier)))
 	
         (call-exp (rator rands)
           (call-exp
@@ -161,14 +166,38 @@
 
   (define senv->fv-senv
     (lambda (senv exp)
-      (let loop ([senv senv]
-		 [depth 0]
-		 [position 0]
-		 [positions '()]
-		 [indices '()])
+      (let loop-depth ([senv senv]
+                       [fv-senv (empty-senv)]
+		       [depth 0]
+		       [indices '()])
 	(if (empty-senv? senv)
-	    (values senv '())
-	    ))))
+	    (values fv-senv indices)
+	    (let loop-pos ([vars (caar senv)]
+                           [fvs '()]
+                           [position 0]
+                           [positions '()])
+              (cond
+               [(null? vars)
+                (loop-depth (cdr senv)
+                            (if (null? fvs)
+                                fv-senv
+                                (append fv-senv
+                                        (list (cons fvs (cdar senv)))))
+                            (+ 1 depth)
+                            (if (null? positions)
+                                indices
+                                (append indices
+                                        (list
+                                         (cons depth positions)))))]
+               [(occurs-free? (car vars) exp)
+                (loop-pos (cdr vars)
+                          (cons (car vars) fvs)
+                          (+ 1 position)
+                          (cons position positions))]
+               [else (loop-pos (cdr vars)
+                               fvs
+                               (+ 1 position)
+                               positions)]))))))
 
   (define occurs-free?
     (lambda (search-var exp)
