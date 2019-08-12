@@ -85,7 +85,7 @@
        nameless-letrec-exp)
       
       (expression
-       ("%lexproc" expression )
+       ("%lexproc" expression "(" (arbno "(" (arbno number) ")") ")")
        nameless-proc-exp)
       
       ))
