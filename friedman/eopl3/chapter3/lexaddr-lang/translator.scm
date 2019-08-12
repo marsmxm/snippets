@@ -72,11 +72,11 @@
          (call-with-values
            (lambda () (senv->fv-senv senv exp))
            (lambda (fv-senv indices)
-             ))
-         (nameless-proc-exp
-          (translation-of body
-			  (extend-senv vars senv)
-			  senv-applier)))
+             (nameless-proc-exp
+              (translation-of body
+			      (extend-senv vars fv-senv)
+			      senv-applier)
+	      indices))))
 	
         (call-exp (rator rands)
           (call-exp
