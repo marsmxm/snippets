@@ -14,7 +14,7 @@
           (a-program                    
             (translation-of exp1 (init-senv) apply-senv))))))
 
-  ;; translation-of : Exp * Senv -> Nameless-exp
+  ;; translation-of : Exp * Senv * SenvApplier * KnownProcs -> Nameless-exp
   ;; Page 97
   (define translation-of
     (lambda (exp senv senv-applier)
