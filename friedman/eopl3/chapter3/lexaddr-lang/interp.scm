@@ -94,8 +94,22 @@
 
         (nameless-proc-exp
 	 (body indices)
-	 (proc-val
-          (procedure body nameless-env)))
+	 (letrec ([trim-env
+		   (lambda (env depth)
+		     (if (empty-nameless-env? env)
+                         (empty-nameless-env)
+                         (let ([positions (assoc depth indices)])
+                           (if positions
+                               (cons (map
+                                      (lambda (pos)
+                                        (list-ref (car env) pos))
+                                      (cdr positions))
+                                     (trim-env (cdr env)
+                                               (+ 1 depth)))
+                               (trim-env (cdr env)
+                                         (+ 1 depth))))))])
+           (proc-val
+            (procedure body (trim-env nameless-env 0)))))
 
 	(nameless-letrec-exp
 	 (p-bodies letrec-body)
