@@ -94,11 +94,8 @@
 
         (nameless-proc-exp
 	 (body indices)
-	 (letrec ([trim-env
-		   (lambda (env depth inds)
-		     env)])
-           (proc-val
-            (procedure body (trim-env nameless-env 0 indices)))))
+	 (proc-val
+          (procedure body nameless-env)))
 
 	(nameless-letrec-exp
 	 (p-bodies letrec-body)
