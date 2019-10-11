@@ -21,6 +21,11 @@
       (ref reference?))
     )
 
+  (define-datatype answer answer?
+    (an-answer
+     (val expval?)
+     (store store?)))
+
 ;;; extractors:
 
   (define expval->num
