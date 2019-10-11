@@ -2,7 +2,7 @@
   
   (require "drscheme-init.scm")
    
-  (provide initialize-store! reference? newref deref setref!
+  (provide store? initialize-store! reference? newref deref setref!
     instrument-newref get-store-as-list)
   
   (define instrument-newref (make-parameter #f))
@@ -20,6 +20,8 @@
   ;; Page: 111
   (define empty-store
     (lambda () '()))
+
+  (define store? list?)
   
   ;; initialize-store! : () -> Sto
   ;; usage: (initialize-store!) sets the-store to the empty-store
