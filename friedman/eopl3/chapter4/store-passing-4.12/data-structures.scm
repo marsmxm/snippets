@@ -61,7 +61,7 @@
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
+      (vars (list-of symbol?))
       (body expression?)
       (env environment?)))
   
