@@ -93,34 +93,42 @@
           (proc-val (procedure vars body env))
 	  store))
 
-        (call-exp (rator rand)
-          (let ((proc (expval->proc (value-of rator env)))
-                (arg (value-of rand env)))
-            (apply-procedure proc arg)))
-	
 	(call-exp
 	 (rator rands)
-	 (let ((proc (expval->proc (value-of rator env)))
-	       ()
-               (args (map
-		      (lambda (rand)
-			(value-of rand env store))
-		      rands)))
-           (apply-procedure proc args)))
+	 (let ((proc (expval->proc (value-of rator env))))
+	   (call-with-values
+	       (lambda ()
+		 (let loop ([rands rands]
+			    [args '()]
+			    [new-store store])
+		   (if (null? rands)
+		       (values args new-sotre)
+		       (cases
+			answer (value-of (car rands) env new-store)
+			(an-answer
+			 (val sto)
+			 (loop (cdr rands)
+			       (append args (list val))
+			       sto))))))
+	     (lambda (args new-store)
+               (apply-procedure proc args new-store)))))
 
         (letrec-exp (p-names b-vars p-bodies letrec-body)
           (value-of letrec-body
-            (extend-env-rec* p-names b-vars p-bodies env)))
+		    (extend-env-rec* p-names b-vars p-bodies env)
+		    store))
 
         (begin-exp (exp1 exps)
           (letrec 
             ((value-of-begins
-               (lambda (e1 es)
-                 (let ((v1 (value-of e1 env)))
-                   (if (null? es)
-                     v1
-                     (value-of-begins (car es) (cdr es)))))))
-            (value-of-begins exp1 exps)))
+              (lambda (e1 es new-store)
+		(cases answer (value-of e1 env new-store)
+		       (an-answer
+			(v1 store1)
+			(if (null? es)
+			    (an-answer v1 store1)
+			    (value-of-begins (car es) (cdr es) store1)))))))
+            (value-of-begins exp1 exps store)))
 
         (newref-exp (exp1)
           (let ((v1 (value-of exp1 env)))
@@ -130,6 +138,7 @@
           (let ((v1 (value-of exp1 env)))
             (let ((ref1 (expval->ref v1)))
               (deref ref1))))
+	
 	(deref-exp
 	 (exp1)
 	 (cases answer (value-of exp1 env store)
