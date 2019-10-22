@@ -2,7 +2,7 @@
   
   (require "drscheme-init.scm")
    
-  (provide store? initialize-store! reference? newref deref setref!
+  (provide the-store store? initialize-store! reference? newref deref setref!
     instrument-newref get-store-as-list)
   
   (define instrument-newref (make-parameter #f))
