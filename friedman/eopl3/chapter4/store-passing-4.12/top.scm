@@ -35,7 +35,9 @@
   
   (define equal-answer?
     (lambda (ans correct-ans)
-      (equal? ans (sloppy->expval correct-ans))))
+      (cases answer ans
+             (an-answer (value store)
+                        (equal? value (sloppy->expval correct-ans))))))
   
   (define sloppy->expval 
     (lambda (sloppy-val)
