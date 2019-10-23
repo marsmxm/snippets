@@ -56,9 +56,9 @@
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
-      (body expression?)
-      (env environment?)))
+     (bvars (list-of symbol?))
+     (body expression?)
+     (env environment?)))
 
   (define-datatype environment environment?
     (empty-env)

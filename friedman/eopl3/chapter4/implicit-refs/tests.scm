@@ -130,7 +130,18 @@ let f = proc (x) proc (y)
                    -(x,y)
                   end
 in ((f 44) 33)"
-	12)
-      
+			  12)
+
+
+      ;; new test cases for exercises
+      (apply-proc-in-rator-pos-multi "(proc(x,y) -(x,y)  30 1)" 29)
+      (apply-simple-proc-multi "let f = proc (x,y) -(x,y) in (f 30 1)" 29)
+      (let-to-proc-1-multi "(proc(f)(f 30 1)  proc(x,y)-(x,y))" 29)
+      (let-to-proc-2-multi "
+let f = proc (x,y) -(x,y)
+    g = proc (f) (f 30 1)
+in (g f)
+"
+			   29)
       ))
   )
