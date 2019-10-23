@@ -66,18 +66,30 @@
               (value-of exp3 env))))
 
         ;\commentbox{\ma{\theletspecsplit}}
-        (let-exp (var exp1 body)       
-          (let ((v1 (value-of exp1 env)))
-            (value-of body
-              (extend-env var (newref v1) env))))
+	(let-exp
+	 (ids exps body)
+	 (let f ([ids ids]
+		 [exps exps]
+		 [body-env env])
+	   (if (null? ids)
+	       (value-of body body-env)
+	       (f (cdr ids)
+		  (cdr exps)
+		  (extend-env (car ids)
+			      (newref
+			       (value-of (car exps) env))
+			      body-env)))))
         
-        (proc-exp (var body)
-          (proc-val (procedure var body env)))
+        (proc-exp (vars body)
+          (proc-val (procedure vars body env)))
 
-        (call-exp (rator rand)
+        (call-exp (rator rands)
           (let ((proc (expval->proc (value-of rator env)))
-                (arg (value-of rand env)))
-            (apply-procedure proc arg)))
+                (args (map
+		       (lambda (rand)
+			 (value-of rand env))
+		       rands)))
+            (apply-procedure proc args)))
 
         (letrec-exp (p-names b-vars p-bodies letrec-body)
           (value-of letrec-body
@@ -116,21 +128,31 @@
   
   ;; instrumented version
   (define apply-procedure
-    (lambda (proc1 arg)
-      (cases proc proc1
-        (procedure (var body saved-env)
-          (let ((r (newref arg)))
-            (let ((new-env (extend-env var r saved-env)))
-              (when (instrument-let)
-                (begin
-                  (eopl:printf
-                    "entering body of proc ~s with env =~%"
-                    var)
-                  (pretty-print (env->list new-env)) 
-                  (eopl:printf "store =~%")
-                  (pretty-print (store->readable (get-store-as-list)))
-                  (eopl:printf "~%")))
-              (value-of body new-env)))))))  
+    (lambda (proc1 args)
+      (cases
+       proc proc1
+       (procedure
+	(vars body saved-env)
+	(let loop ([vars vars]
+		   [args args]
+		   [new-env saved-env])
+	  (if (null? vars)
+	      (begin
+		(when (instrument-let)
+                  (begin
+                    (eopl:printf
+                     "entering body of proc ~s with env =~%"
+                     vars)
+                    (pretty-print (env->list new-env)) 
+                    (eopl:printf "store =~%")
+                    (pretty-print (store->readable (get-store-as-list)))
+                    (eopl:printf "~%")))
+		(value-of body new-env))
+	      (loop (cdr vars)
+		    (cdr args)
+		    (extend-env (car vars)
+				(newref (car args))
+				new-env))))))))  
 
   ;; store->readable : Listof(List(Ref,Expval)) 
   ;;                    -> Listof(List(Ref,Something-Readable))

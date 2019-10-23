@@ -40,8 +40,8 @@
                   (proc-val
                     (procedure 
                      (list (list-ref b-vars n))
-                      (list-ref p-bodies n)
-                      env))))
+                     (list-ref p-bodies n)
+                     env))))
             (else (apply-env saved-env search-sym)))))))
 
   ;; location : Sym * Listof(Sym) -> Maybe(Int)
