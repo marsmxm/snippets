@@ -91,7 +91,10 @@
 		       rands)))
             (apply-procedure proc args)))
 
-        (letrec-exp (p-names b-vars p-bodies letrec-body)
+        (letrec-exp
+	 (p-names b-vars p-bodies letrec-body)
+	 (let ([vec (make-vector (length p-names))])
+	   (let ([new-env])))
           (value-of letrec-body
             (extend-env-rec* p-names b-vars p-bodies env)))
 
