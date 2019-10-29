@@ -32,17 +32,12 @@
 	  (if (eqv? search-var bvar)
 	    bval
 	    (apply-env saved-env search-var)))
-        (extend-env-rec* (p-names b-vars p-bodies saved-env)
+        (extend-env-rec* (p-names vec saved-env)
           (let ((n (location search-var p-names)))
             ;; n : (maybe int)
             (if n
-              (newref
-                (proc-val
-                  (procedure 
-                   (list (list-ref b-vars n))
-                   (list-ref p-bodies n)
-                   env)))
-              (apply-env saved-env search-var)))))))
+		(vector-ref vec n)
+		(apply-env saved-env search-var)))))))
 
   ;; location : Sym * Listof(Sym) -> Maybe(Int)
   ;; (location sym syms) returns the location of sym in syms or #f is
