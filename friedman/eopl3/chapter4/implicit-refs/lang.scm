@@ -39,6 +39,9 @@
       (expression
        ("let" (arbno identifier "=" expression) "in" expression)
        let-exp)
+      (expression
+       ("letmutable" (arbno identifier "=" expression) "in" expression)
+       let-mut-exp)
 
       (expression
        ("proc" "(" (separated-list identifier ",") ")" expression)

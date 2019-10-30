@@ -39,8 +39,13 @@
 
         ;\commentbox{ (value-of (var-exp \x{}) \r) 
         ;              = (deref (apply-env \r \x{}))}
-        (var-exp (var) (deref (apply-env env var)))
-
+        (var-exp
+	 (var)
+	 (let ([val (apply-env env var)])
+	   (if (reference? val)
+	       (deref val)
+	       val)))
+	
         ;\commentbox{\diffspec}
         (diff-exp (exp1 exp2)
           (let ((val1 (value-of exp1 env))
@@ -76,6 +81,19 @@
 	       (f (cdr ids)
 		  (cdr exps)
 		  (extend-env (car ids)
+			      (value-of (car exps) env)
+			      body-env)))))
+
+	(let-mut-exp
+	 (ids exps body)
+	 (let f ([ids ids]
+		 [exps exps]
+		 [body-env env])
+	   (if (null? ids)
+	       (value-of body body-env)
+	       (f (cdr ids)
+		  (cdr exps)
+		  (extend-env (car ids)
 			      (newref
 			       (value-of (car exps) env))
 			      body-env)))))
@@ -91,9 +109,25 @@
 		       rands)))
             (apply-procedure proc args)))
 
-        (letrec-exp (p-names b-vars p-bodies letrec-body)
-          (value-of letrec-body
-            (extend-env-rec* p-names b-vars p-bodies env)))
+        (letrec-exp
+	 (p-names b-vars p-bodies letrec-body)
+	 (let ([vec (make-vector (length p-names))])
+	   (let ([new-env (extend-env-rec* p-names vec env)])
+	     (let loop ([vars b-vars]
+			[bodies p-bodies]
+			[index 0])
+	       (if (null? vars)
+		   (value-of letrec-body new-env)
+		   (begin
+		     (vector-set!
+		      vec index
+		      (newref
+		       (proc-val
+			(procedure 
+			 (list (car vars))
+			 (car bodies)
+			 new-env))))
+		     (loop (cdr vars) (cdr bodies) (+ index 1))))))))
 
         (begin-exp (exp1 exps)
           (letrec 
@@ -105,12 +139,16 @@
                      (value-of-begins (car es) (cdr es)))))))
             (value-of-begins exp1 exps)))
 
-        (assign-exp (var exp1)
-          (begin
-            (setref!
-              (apply-env env var)
-              (value-of exp1 env))
-            (num-val 27)))
+        (assign-exp
+	 (var exp1)
+	 (let ([val (apply-env env var)])
+	   (if (reference? val)
+               (begin
+		 (setref!
+		  val
+		  (value-of exp1 env))
+		 (num-val 27))
+	       (eopl:error 'assignment "Setting an immutable var ~s" var))))
 
         )))
 
