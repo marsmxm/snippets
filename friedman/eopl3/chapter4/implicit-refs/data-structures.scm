@@ -64,12 +64,13 @@
     (empty-env)
     (extend-env 
       (bvar symbol?)
-      (bval reference?)                 ; new for implicit-refs
+      (bval (lambda (t)
+	      (or (expval? t)
+                  (reference? t))))
       (saved-env environment?))
     (extend-env-rec*
       (proc-names (list-of symbol?))
-      (b-vars (list-of symbol?))
-      (proc-bodies (list-of expression?))
+      (vec vector?)
       (saved-env environment?)))
 
   ;; env->list : Env -> List
@@ -83,7 +84,7 @@
 	    (list sym val)              ; val is a denoted value-- a
                                         ; reference. 
 	    (env->list saved-env)))
-	(extend-env-rec* (p-names b-vars p-bodies saved-env)
+	(extend-env-rec* (p-names vec saved-env)
 	  (cons
 	    (list 'letrec p-names '...)
 	    (env->list saved-env))))))
