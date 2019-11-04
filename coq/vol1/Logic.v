@@ -405,7 +405,7 @@ Proof.
 Fact not_implies_our_not : forall (P:Prop),
   ~ P -> (forall (Q:Prop), P -> Q).
 Proof.
-  intros. destruct H. apply H0. Qed.
+  intros. apply H in H0. destruct H0. Qed.
 (** [] *)
 
 (** Inequality is a frequent enough example of negated statement
