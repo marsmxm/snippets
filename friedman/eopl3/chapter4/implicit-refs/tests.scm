@@ -141,7 +141,15 @@ in ((f 44) 33)"
 let f = proc (x,y) -(x,y)
     g = proc (f) (f 30 1)
 in (g f)
-"
-			   29)
+" 29)
+
+      (setdynamic "
+letmutable x = 11
+in let p = proc (y) -(y,x)
+   in -(setdynamic x = 17 during (p 22), (p 13))
+" 3)
+
       ))
+
+  
   )

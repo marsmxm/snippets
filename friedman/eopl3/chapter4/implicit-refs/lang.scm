@@ -52,20 +52,24 @@
        call-exp)
 
       (expression
-        ("letrec"
-          (arbno identifier "(" identifier ")" "=" expression)
-           "in" expression)
-        letrec-exp)
+       ("letrec"
+        (arbno identifier "(" identifier ")" "=" expression)
+        "in" expression)
+       letrec-exp)
       
       (expression
-        ("begin" expression (arbno ";" expression) "end")
-        begin-exp)
+       ("begin" expression (arbno ";" expression) "end")
+       begin-exp)
 
       ;; new for implicit-refs
 
       (expression
-        ("set" identifier "=" expression)
-        assign-exp)
+       ("set" identifier "=" expression)
+       assign-exp)
+
+      (expression
+       ("setdynamic" identifier "=" expression "during" expression)
+       setdynamic-exp)
 
       ))
 

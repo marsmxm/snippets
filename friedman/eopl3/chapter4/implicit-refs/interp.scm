@@ -150,6 +150,18 @@
 		 (num-val 27))
 	       (eopl:error 'assignment "Setting an immutable var ~s" var))))
 
+	(setdynamic-exp
+	 (var exp1 body)
+	 (let ([ref (apply-env env var)])
+	   (if (reference? ref)
+	       (let ([old-val (deref ref)]
+		     [new-val (value-of exp1 env)])
+		 (setref! ref new-val)
+		 (let ([result (value-of body env)])
+		   (setref! ref old-val)
+		   result))
+	       (eopl:error 'setdynamic "Setting an immutable var ~s" var))))
+
         )))
 
 
