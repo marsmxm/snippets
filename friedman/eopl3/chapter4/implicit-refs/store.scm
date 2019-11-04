@@ -2,7 +2,7 @@
   
   (require "drscheme-init.scm")
   
-  (provide initialize-store! reference? newref deref setref!
+  (provide initialize-store! reference? newref deref setref! rmref
     instrument-newref get-store-as-list)
   
   (define instrument-newref (make-parameter #f))
@@ -80,6 +80,16 @@
                      (setref-inner
                        (cdr store1) (- ref1 1))))))))
           (setref-inner the-store ref)))))
+
+  ;; rmref : Ref -> Unspecified
+  ;; for setdynamic
+  (define rmref
+    (lambda (ref)
+      (cond
+       [(null? the-store) the-store]
+       [(zero? ref) (cdr the-store)]
+       [else (cons (car the-store)
+		   (rmref (- ref 1)))])))
 
   (define report-invalid-reference
     (lambda (ref the-store)
