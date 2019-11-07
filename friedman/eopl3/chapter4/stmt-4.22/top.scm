@@ -17,6 +17,10 @@
     (run-all))
 
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
+
+  (define start
+    (lambda (string)
+      (result-of-program (scan&parse string))))
   
   ;; run : String -> ExpVal
 

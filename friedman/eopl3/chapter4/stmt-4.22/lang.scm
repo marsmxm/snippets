@@ -19,8 +19,8 @@
       ))
   
   (define the-grammar
-    '((program (expression) a-program)
-
+    '((program (statement) a-program)
+      (program1 (expression) b-program)
       ;; statements
       (statement
        (identifier "=" expression)
@@ -44,7 +44,7 @@
 
       (statement
        ("var" (separated-list identifier ",") ";" statement)
-       var-stmt)
+       declare-stmt)
       
       ;; expressions
       (expression (number) const-exp)

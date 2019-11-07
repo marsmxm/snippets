@@ -9,7 +9,8 @@
   (require "environments.scm")
   (require "store.scm")
   
-  (provide value-of-program value-of instrument-let instrument-newref)
+  (provide result-of-program value-of-program value-of
+	   instrument-let instrument-newref)
 
 ;;;;;;;;;;;;;;;; switches for instrument-let ;;;;;;;;;;;;;;;;
 
@@ -20,13 +21,58 @@
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
+  (define result-of-program
+    (lambda (pgm)
+      (cases program pgm
+	     (a-program (stmt1)
+			(initialize-store!)
+			(result-of stmt1 (init-env) the-store)))))
+
+
   ;; value-of-program : Program -> ExpVal
   (define value-of-program 
     (lambda (pgm)
       (initialize-store!)
-      (cases program pgm
-        (a-program (exp1)
-          (value-of exp1 (init-env))))))
+      (cases program1 pgm
+        (b-program (exp1)
+		   (value-of exp1 (init-env))))))
+
+  ;; result-of : Stmt * Env * Store -> Store
+  (define result-of
+    (lambda (stmt env store)
+      (cases
+       statement stmt
+
+       (declare-stmt
+	(vars stmt1)
+	(let loop ([vars vars]
+		   [env env]
+		   [store store])
+	  (if (null? vars)
+	      (result-of stmt1 env store)
+	      (let ([new-env (extend-env (car vars)
+					 (newref
+					  'uninitialized-var)
+					 env)])
+		(loop (cdr vars)
+		      new-env
+		      the-store)))))
+
+       (assign-stmt
+	(var exp1)
+	(value-of (assign-exp var exp1) env)
+	the-store)
+
+       (print-stmt
+	(exp1)
+	(display (value-of exp1 env))
+	(newline)
+	the-store)
+
+       
+
+       (else
+	(eopl:error 'result-of "Unknown statement: ~s" stmt)))))
 
   ;; value-of : Exp * Env -> ExpVal
   ;; Page: 118, 119
