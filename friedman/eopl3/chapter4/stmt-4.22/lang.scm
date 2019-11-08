@@ -23,6 +23,10 @@
       (program1 (expression) b-program)
       ;; statements
       (statement
+       ("var" (separated-list identifier "=" expression ",") ";" statement)
+       block-stmt)
+      
+      (statement
        (identifier "=" expression)
        assign-stmt)
 
@@ -32,7 +36,7 @@
 
       (statement
        ("{" (separated-list statement ";") "}")
-       block-stmt)
+       brace-stmt)
 
       (statement
        ("if" expression statement statement)
@@ -43,18 +47,30 @@
        while-stmt)
 
       (statement
-       ("var" (separated-list identifier ",") ";" statement)
-       declare-stmt)
+       ("do" statement "while" expression)
+       do-while-stmt)
+
+      (statement
+       ("read" identifier)
+       read-stmt)
       
       ;; expressions
       (expression (number) const-exp)
       (expression
-        ("-" "(" expression "," expression ")")
-        diff-exp)
+       ("-" "(" expression "," expression ")")
+       diff-exp)
+
+      (expression
+       ("+" "(" expression "," expression ")")
+       plus-exp)
       
       (expression
        ("zero?" "(" expression ")")
        zero?-exp)
+
+      (expression
+       ("not" "(" expression ")")
+       not-exp)
 
       (expression
        ("if" expression "then" expression "else" expression)
