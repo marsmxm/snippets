@@ -43,20 +43,19 @@
       (cases
        statement stmt
 
-       (declare-stmt
-	(vars stmt1)
-	(let loop ([vars vars]
-		   [env env]
-		   [store store])
-	  (if (null? vars)
-	      (result-of stmt1 env store)
-	      (let ([new-env (extend-env (car vars)
-					 (newref
-					  'uninitialized-var)
-					 env)])
-		(loop (cdr vars)
-		      new-env
-		      the-store)))))
+       (block-stmt
+	(vars exps stmt1)
+	(let ([vec (make-vector (length vars))])
+	  (let ([new-env (extend-env-rec* vars vec env)])
+	    (let loop ([exps exps]
+		       [index 0])
+	      (if (null? exps)
+		  (result-of stmt1 new-env store)
+		  (begin
+		    (vector-set! vec index
+				 (newref
+				  (value-of (car exps) new-env)))
+		    (loop (cdr exps) (+ index 1))))))))
 
        (assign-stmt
 	(var exp1)
@@ -69,8 +68,48 @@
 	(newline)
 	the-store)
 
-       
+       (brace-stmt
+	(stmts)
+	(let loop ([stmts stmts]
+		   [store store])
+	  (if (null? stmts)
+	      store
+	      (let ([new-store (result-of (car stmts) env store)])
+		(loop (cdr stmts) new-store)))))
 
+       (while-stmt
+	(exp1 stmt1)
+	(let loop ([condition (expval->bool
+			       (value-of exp1 env))]
+		   [store store])
+	  (if condition
+	      (let ([new-store (result-of stmt1 env store)])
+		(loop (expval->bool (value-of exp1 env))
+		      new-store))
+	      store)))
+
+       (do-while-stmt
+	(stmt1 exp1)
+	(let loop ([new-store store])
+	  (let ([store1 (result-of stmt1 env new-store)])
+	    (let ([condition (expval->bool
+			      (value-of exp1 env))])
+	      (if condition
+		  (loop store1)
+		  store1)))))
+
+       (read-stmt
+	(var)
+	(let ([input (read)])
+	  (if (and (integer? input)
+		   (not (negative? input)))
+	      (begin
+		(value-of (const-exp input) env)
+		the-store)
+	      (eopl:error 'read-stmt
+			  "Expecting a non-negative integer: ~s"
+			  input))))
+       
        (else
 	(eopl:error 'result-of "Unknown statement: ~s" stmt)))))
 
@@ -99,7 +138,15 @@
             (let ((num1 (expval->num val1))
                   (num2 (expval->num val2)))
               (num-val
-                (- num1 num2)))))
+               (- num1 num2)))))
+
+	(plus-exp (exp1 exp2)
+          (let ((val1 (value-of exp1 env))
+                (val2 (value-of exp2 env)))
+            (let ((num1 (expval->num val1))
+                  (num2 (expval->num val2)))
+              (num-val
+               (+ num1 num2)))))
 
         ;\commentbox{\zerotestspec}
         (zero?-exp (exp1)
@@ -108,6 +155,12 @@
               (if (zero? num1)
                 (bool-val #t)
                 (bool-val #f)))))
+
+	(not-exp
+	 (exp1)
+	 (let ([val1 (value-of exp1 env)])
+	   (let ([b (expval->bool val1)])
+	     (bool-val (not b)))))
               
         ;\commentbox{\ma{\theifspec}}
         (if-exp (exp1 exp2 exp3)
