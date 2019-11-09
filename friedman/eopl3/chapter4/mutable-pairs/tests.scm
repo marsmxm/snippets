@@ -172,7 +172,15 @@ in let f = proc (loc)
              -(left(loc),right(loc))
             end
 in (f glo)"
-        88)
+                                         88)
+
+      (array-test "
+let a = newarray(2,-99)
+in let p = proc (x) let v = arrayref(x,1) in arrayset(x,1,-(v,-1))
+   in begin arrayset(a,1,0); (p a); (p a); arrayref(a,1) end
+" 2)
+      (array-length-test "let a=newarray(2,-99) in arraylength(a)"
+                         2)
 
 
       ))
