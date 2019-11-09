@@ -9,6 +9,7 @@
   (require "environments.scm")
   (require "store.scm")
   (require "pairvals.scm")
+  (require "arrayvals.scm")
 
   (provide value-of-program value-of instrument-let instrument-newref)
 
@@ -142,6 +143,38 @@
               (begin
                 (setright p v2)
                 (num-val 83)))))
+
+        (newarray-exp
+         (exp1 exp2)
+         (let ([v1 (value-of exp1 env)]
+               [v2 (value-of exp2 env)])
+           (let ([len (expval->num v1)])
+             (array-val (make-array len v2)))))
+
+        (arrayref-exp
+         (exp1 exp2)
+         (let ([v1 (value-of exp1 env)]
+               [v2 (value-of exp2 env)])
+           (let ([arr (expval->array v1)]
+                 [index (expval->num v2)])
+             (array-ref arr index))))
+
+        (arrayset-exp
+         (exp1 exp2 exp3)
+         (let ([v1 (value-of exp1 env)]
+               [v2 (value-of exp2 env)]
+               [v3 (value-of exp3 env)])
+           (let ([arr (expval->array v1)]
+                 [index (expval->num v2)])
+             (array-set arr index v3)
+             (num-val 42))))
+
+        (arraylength-exp
+         (exp1)
+         (let ([arr (expval->array
+                     (value-of exp1 env))])
+           (num-val (array-length arr))))
+
         )))
 
   ;; apply-procedure : Proc * ExpVal -> ExpVal
