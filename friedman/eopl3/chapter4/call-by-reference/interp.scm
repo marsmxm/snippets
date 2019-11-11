@@ -77,7 +77,8 @@
 	    (let ((new-env (extend-env var (newref val) env)))
 	      (when (instrument-let)
 		(begin
-		  (eopl:printf "entering body of let ~s with env =~%" var)
+		  (eopl:printf "entering body of let ~s with env =~%"
+                               var)
 		  (pretty-print (env->list new-env))
 		  (eopl:printf "store =~%")
 		  (pretty-print (store->readable (get-store-as-list)))
@@ -222,27 +223,53 @@
        proc proc1
        (procedure
 	(vars body saved-env type)
-	(let loop ([vars vars]
-		   [vals vals]
-		   [new-env saved-env])
-	  (if (null? vars)
-	      (begin
-		(when (instrument-let)
-		  (begin
-	            (eopl:printf
-		     "entering body of proc ~s with env =~%"
-		     vars)
-		    (pretty-print (env->list new-env))
-                    (eopl:printf "store =~%")
-                    (pretty-print (store->readable (get-store-as-list)))
-		    (eopl:printf "~%")))
-		(value-of body new-env))
-	      (loop (cdr vars)
-		    (cdr vals)
-		    (extend-env (car vars)
-				(car vals)
-				new-env))))))))
+        (if (eq? type 2) ; call-by-value-result
+            (apply-cbvr vars vals body saved-env)
+	    (let loop ([vars vars] ; cbr or cbv
+		       [vals vals]
+		       [new-env saved-env])
+	      (if (null? vars)
+	          (begin
+		    (when (instrument-let)
+		      (begin
+	                (eopl:printf
+		         "entering body of proc ~s with env =~%"
+		         vars)
+		        (pretty-print (env->list new-env))
+                        (eopl:printf "store =~%")
+                        (pretty-print (store->readable
+                                       (get-store-as-list)))
+		        (eopl:printf "~%")))
+		    (value-of body new-env))
+	          (loop (cdr vars)
+		        (cdr vals)
+		        (extend-env (car vars)
+				    (car vals)
+				    new-env)))))))))
 
+  (define apply-cbvr
+    (lambda (vars old-refs body env)
+      (let loop ([vars vars]
+                 [nrefs '()]
+                 [orefs old-refs]
+                 [new-env env])
+        (if (null? vars)
+            (let ([val (value-of body new-env)])
+              (let set-result ([orefs old-refs]
+                               [nrefs nrefs])
+                (when (not (null? orefs))
+                  (begin
+                    (setref! (car orefs)
+                             (deref (car nrefs)))
+                    (set-result (cdr orefs) (cdr nrefs)))))
+              val) ; return the final value of body evaluation
+            (let ([new-ref (newref (deref (car orefs)))])
+              (loop (cdr vars)
+                    (append nrefs (list new-ref))
+                    (cdr orefs)
+                    (extend-env (car vars)
+                                new-ref
+                                new-env)))))))
 
   ;; value-of-rand : Exp * Env -> Ref
   ;; Page: 132
