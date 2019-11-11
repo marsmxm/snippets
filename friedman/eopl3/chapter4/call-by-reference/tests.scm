@@ -274,6 +274,37 @@ let swap = proc (x) proc (y)
 "
 		    11)
 
+      ;; call-by-value-result
+      (cbvr-swap-1
+        "let swap = cbvrproc (x,y)
+                      let temp = x
+                      in begin 
+                          set x = y;
+                          set y = temp
+                         end
+         in let a = 33
+         in let b = 44
+         in begin
+             (swap a b);
+             -(a,b)
+            end"
+        11)
+
+      (cbvr-swap-2
+        "let swap = cbvrproc (x) cbvrproc (y)
+                      let temp = x
+                      in begin 
+                          set x = y;
+                          set y = temp
+                         end
+         in let a = 33
+         in let b = 44
+         in begin
+             ((swap a) b);
+             -(a,b)
+            end"
+        0)
+
 
       ))
 
