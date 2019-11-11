@@ -6,6 +6,7 @@
   (require "store.scm")                 ; for reference?
 
   (require "pairvals.scm")
+  (require "arrayvals.scm")
 
   (provide (all-defined-out))               ; too many things to list
 
@@ -24,7 +25,9 @@
     (ref-val
       (ref reference?))
     (mutpair-val
-      (p mutpair?))
+     (p mutpair?))
+    (array-val
+     (arr array?))
     )
 
 ;;; extractors:
@@ -59,6 +62,12 @@
 	(mutpair-val (ref) ref)
 	(else (expval-extractor-error 'mutable-pair v)))))
 
+  (define expval->array
+    (lambda (v)
+      (cases expval v
+             (array-val (ref) ref)
+             (else (expval-extractor-error 'array v)))))
+
   (define expval-extractor-error
     (lambda (variant value)
       (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
@@ -68,9 +77,10 @@
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
-      (body expression?)
-      (env environment?)))
+     (bvars (list-of symbol?))
+     (body expression?)
+     (env environment?)
+     (type number?)))
   
 ;;;;;;;;;;;;;;;; environment data structures ;;;;;;;;;;;;;;;;
 
@@ -110,7 +120,7 @@
       (cases expval val
 	(proc-val (p)
 	  (cases proc p
-	    (procedure (var body saved-env)
+	    (procedure (var body saved-env type)
 	      (list 'procedure var '... (env->list saved-env)))))
 	(else val))))
 
