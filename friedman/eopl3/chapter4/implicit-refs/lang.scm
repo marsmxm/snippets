@@ -71,6 +71,19 @@
        ("setdynamic" identifier "=" expression "during" expression)
        setdynamic-exp)
 
+      ;; for Ex 4.35
+      (expression
+       ("ref" identifier)
+       ref-exp)
+
+      (expression
+       ("deref" "(" expression ")")
+       deref-exp)
+
+      (expression
+       ("setref" "(" expression "," expression ")")
+       setref-exp)
+
       ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

@@ -45,6 +45,27 @@
 	   (if (reference? val)
 	       (deref val)
 	       val)))
+
+	;; Ex 4.35
+	(ref-exp
+	 (var)
+	 (let ([ref (apply-env env var)])
+	   (if (reference? ref)
+	       (ref-val ref)
+	       (eopl:error 'ref "Can't ref an immutable variable: ~s" var))))
+
+	(deref-exp
+	 (exp1)
+	 (let ([val1 (value-of exp1 env)])
+	   (let ([ref (expval->ref val1)])
+	     (deref ref))))
+
+	(setref-exp
+	 (exp1 exp2)
+	 (let ([val1 (value-of exp1 env)]
+	       [val2 (value-of exp2 env)])
+	   (let ([ref (expval->ref val1)])
+	     (setref! ref val2))))
 	
         ;\commentbox{\diffspec}
         (diff-exp (exp1 exp2)

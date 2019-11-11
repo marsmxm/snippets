@@ -38,14 +38,26 @@
 
       (expression
        ("let" identifier "=" expression "in" expression)
-       let-exp)   
+       let-exp)
 
       (expression
-       ("proc" "(" identifier ")" expression)
+       ("letref" identifier "=" expression "in" expression)
+       letref-exp)
+
+      (expression
+       ("proc" "(" (separated-list identifier ",") ")" expression)
        proc-exp)
 
       (expression
-       ("(" expression expression ")")
+       ("cbvproc" "(" (separated-list identifier ",") ")" expression)
+       proc-cbv-exp)
+
+      (expression
+       ("cbvrproc" "(" (separated-list identifier ",") ")" expression)
+       proc-cbvr-exp)
+
+      (expression
+       ("(" expression (arbno expression) ")")
        call-exp)
 
       (expression
@@ -81,6 +93,24 @@
       (expression
         ("setright" expression "=" expression)
         setright-exp)
+
+       ;; new for arrays
+
+      (expression
+       ("newarray" "(" expression "," expression ")")
+       newarray-exp)
+
+      (expression
+       ("arrayref" "(" expression "," expression ")")
+       arrayref-exp)
+
+      (expression
+       ("arrayset" "(" expression "," expression "," expression ")")
+       arrayset-exp)
+
+      (expression
+       ("arraylength" "(" expression ")")
+       arraylength-exp)
 
       ))
 

@@ -231,7 +231,48 @@ in begin
     (g z);
     z
   end"
-        44)
+			    44)
+
+      ;; tests for exercises
+      (cbv-swap-1
+        "let swap = cbvproc (x) cbvproc (y)
+                      let temp = x
+                      in begin 
+                          set x = y;
+                          set y = temp
+                         end
+         in let a = 33
+         in let b = 44
+         in begin
+             ((swap a) b);
+             -(a,b)
+            end"
+        -11)
+
+      (letref-1 "let x=1 in letref y=x in begin set y=2; x end" 2)
+
+      (array-test "
+let a = newarray(2,-99)
+in let p = proc (x) let v = arrayref(x,1) in arrayset(x,1,-(v,-1))
+   in begin arrayset(a,1,0); (p a); (p a); arrayref(a,1) end
+" 2)
+      (array-length-test "let a=newarray(2,-99) in arraylength(a)" 2)
+
+      (array-swap-1 "
+let swap = proc (x) proc (y)
+                      let temp = x
+                      in begin 
+                          set x = y;
+                          set y = temp
+                         end
+         in let a = newarray(1, 33)
+         in let b = newarray(1, 44)
+         in begin
+             ((swap arrayref(a,0)) arrayref(b,0));
+             -(arrayref(a,0),arrayref(b,0))
+            end
+"
+		    11)
 
 
       ))

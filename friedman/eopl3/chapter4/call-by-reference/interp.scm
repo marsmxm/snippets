@@ -9,6 +9,7 @@
   (require "environments.scm")
   (require "store.scm")
   (require "pairvals.scm")
+  (require "arrayvals.scm")
 
   (provide value-of-program value-of instrument-let instrument-newref)
 
@@ -84,14 +85,37 @@
 		  ))
 	      (value-of body new-env))))
 
-        (proc-exp (var body)
-	  (proc-val
-	    (procedure var body env)))
+       (letref-exp
+	(var exp1 body)
+	(let ([new-env (extend-env
+			var (value-of-operand exp1 env)	env)])
+	  (value-of body new-env)))
 
-        (call-exp (rator rand)
-          (let ((proc (expval->proc (value-of rator env)))
-                (arg (value-of-operand rand env)))
-            (apply-procedure proc arg)))
+        (proc-exp (vars body)
+	  (proc-val
+	   (procedure vars body env 0)))
+
+	(proc-cbv-exp
+	 (vars body)
+	 (proc-val (procedure vars body env 1)))
+
+	(proc-cbvr-exp
+	 (vars body)
+	 (proc-val (procedure vars body env 2)))
+
+        (call-exp
+	 (rator rands)
+         (let ((proc1 (expval->proc (value-of rator env))))
+	   (let ((args (cases
+		       proc proc1
+		       (procedure
+			(vars body saved-env type)
+			(map (lambda (rand)
+			       (if (eq? type 1) ;; call-by-value
+				   (newref (value-of rand env))
+				   (value-of-operand rand env)))
+			     rands)))))
+             (apply-procedure proc1 args))))
 
         (letrec-exp (p-names b-vars p-bodies letrec-body)
           (value-of letrec-body
@@ -145,6 +169,38 @@
                 (setright p v2)
                 (num-val 83)))))
 
+	;; Ex 4.36
+	(newarray-exp
+         (exp1 exp2)
+         (let ([v1 (value-of exp1 env)]
+               [v2 (value-of exp2 env)])
+           (let ([len (expval->num v1)])
+             (array-val (make-array len v2)))))
+
+        (arrayref-exp
+         (exp1 exp2)
+         (let ([v1 (value-of exp1 env)]
+               [v2 (value-of exp2 env)])
+           (let ([arr (expval->array v1)]
+                 [index (expval->num v2)])
+             (array-ref arr index))))
+
+        (arrayset-exp
+         (exp1 exp2 exp3)
+         (let ([v1 (value-of exp1 env)]
+               [v2 (value-of exp2 env)]
+               [v3 (value-of exp3 env)])
+           (let ([arr (expval->array v1)]
+                 [index (expval->num v2)])
+             (array-set arr index v3)
+             (num-val 42))))
+
+        (arraylength-exp
+         (exp1)
+         (let ([arr (expval->array
+                     (value-of exp1 env))])
+           (num-val (array-length arr))))
+
         )))
 
   ;; apply-procedure : Proc * Ref -> ExpVal
@@ -161,20 +217,31 @@
   ;; apply-procedure : Proc * Ref -> ExpVal
   ;; instrumented version
   (define apply-procedure
-    (lambda (proc1 val)
-      (cases proc proc1
-        (procedure (var body saved-env)
-          (let ((new-env (extend-env var val saved-env)))
-	    (when (instrument-let)
+    (lambda (proc1 vals)
+      (cases
+       proc proc1
+       (procedure
+	(vars body saved-env type)
+	(let loop ([vars vars]
+		   [vals vals]
+		   [new-env saved-env])
+	  (if (null? vars)
 	      (begin
-	        (eopl:printf
-		  "entering body of proc ~s with env =~%"
-		   var)
-		(pretty-print (env->list new-env))
-                (eopl:printf "store =~%")
-                (pretty-print (store->readable (get-store-as-list)))
-		(eopl:printf "~%")))
-	      (value-of body new-env))))))
+		(when (instrument-let)
+		  (begin
+	            (eopl:printf
+		     "entering body of proc ~s with env =~%"
+		     vars)
+		    (pretty-print (env->list new-env))
+                    (eopl:printf "store =~%")
+                    (pretty-print (store->readable (get-store-as-list)))
+		    (eopl:printf "~%")))
+		(value-of body new-env))
+	      (loop (cdr vars)
+		    (cdr vals)
+		    (extend-env (car vars)
+				(car vals)
+				new-env))))))))
 
 
   ;; value-of-rand : Exp * Env -> Ref
@@ -185,10 +252,18 @@
 
   (define value-of-operand
     (lambda (exp env)
-      (cases expression exp
-        (var-exp (var) (apply-env env var)) 
-        (else
-          (newref (value-of exp env))))))
+      (cases
+       expression exp
+       (var-exp (var) (apply-env env var))
+       (arrayref-exp
+	(exp1 exp2)
+	(let ([v1 (value-of exp1 env)]
+	      [v2 (value-of exp2 env)])
+	  (let ([arr (expval->array v1)]
+		[index (expval->num v2)])
+	    (array-ref-ref arr index))))
+       (else
+        (newref (value-of exp env))))))
     
   ;; store->readable : Listof(List(Ref,Expval)) 
   ;;                    -> Listof(List(Ref,Something-Readable))

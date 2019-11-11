@@ -149,6 +149,18 @@ in let p = proc (y) -(y,x)
    in -(setdynamic x = 17 during (p 22), (p 13))
 " 3)
 
+      ;; Ex 4.35
+      (ref-deref-1 "
+letmutable a = 3 in
+letmutable b = 4 in
+let swap = proc (x) proc (y) let temp = deref(x)
+                             in begin
+                               setref(x,deref(y));
+                               setref(y,temp)
+                             end in
+begin ((swap ref a) ref b); -(a,b) end
+" 1)
+
       ))
 
   
