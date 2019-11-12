@@ -144,10 +144,15 @@
   ;; Page: 137
   (define value-of-operand
     (lambda (exp env)
-      (cases expression exp
-        (var-exp (var) (apply-env env var)) ; no deref!
-        (else
-          (newref (a-thunk exp env))))))
+      (cases
+       expression exp
+       (var-exp (var) (apply-env env var)) ; no deref!
+       (const-exp (num) (newref (num-val num)))
+       (proc-exp (var body) (newref
+			     (proc-val
+			      (procedure var body env))))
+       (else
+        (newref (a-thunk exp env))))))
 
   ;; value-of-thunk : Thunk -> ExpVal
   (define value-of-thunk
