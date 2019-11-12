@@ -33,9 +33,9 @@
       (cases expression exp
         (const-exp (num) (apply-cont cont (num-val num)))
         (var-exp (var) (apply-cont cont (apply-env env var)))
-        (proc-exp (var body)
+        (proc-exp (vars body)
           (apply-cont cont 
-            (proc-val (procedure var body env))))
+            (proc-val (procedure vars body env))))
         (letrec-exp (p-name b-var p-body letrec-body)
           (value-of/k letrec-body
             (extend-env-rec p-name b-var p-body env)
@@ -56,9 +56,9 @@
         (diff-exp (exp1 exp2)
           (value-of/k exp1 env
             (diff1-cont exp2 env cont)))        
-        (call-exp (rator rand) 
+        (call-exp (rator rands) 
           (value-of/k rator env
-            (rator-cont rand env cont)))
+            (rator-cont rands env cont)))
 
 	;; for list
 	(emptylist-exp () (apply-cont cont (list-val (emptylist))))
@@ -79,9 +79,16 @@
 	(cdr-exp
 	 (exp1)
 	 (value-of/k exp1 env (cdr1-cont cont)))
-	
-	
-	)))
+
+        (list-exp
+         (exps)
+         (if (null? exps)
+             (apply-cont cont (list-val (emptylist)))
+             (value-of/k (car exps)
+                         env
+                         (list-first-cont (cdr exps) env cont))))
+
+        )))
 
   ;; apply-cont : Cont * ExpVal -> FinalAnswer
   ;; Page: 148
@@ -121,12 +128,31 @@
                 (num2 (expval->num val)))
             (apply-cont saved-cont
               (num-val (- num1 num2)))))
-        (rator-cont (rand saved-env saved-cont)
-          (value-of/k rand saved-env
-            (rand-cont val saved-cont)))
-        (rand-cont (val1 saved-cont)
-          (let ((proc (expval->proc val1)))
-            (apply-procedure/k proc val saved-cont)))
+        (rator-cont
+         (rands saved-env saved-cont)
+         (let ([proc (expval->proc val)])
+           (if (null? rands)
+               (apply-procedure/k proc '() saved-cont)
+               (value-of/k (car rands)
+                           saved-env
+                           (rand-cont proc
+                                      (cdr rands)
+                                      '() ; vals
+                                      saved-env
+                                      saved-cont)))))
+        (rand-cont
+         (proc rest-rands vals saved-env saved-cont)
+         (if (null? rest-rands)
+             (apply-procedure/k proc
+                                (append vals (list val))
+                                saved-cont)
+             (value-of/k (car rest-rands)
+                         saved-env
+                         (rand-cont proc
+                                    (cdr rest-rands)
+                                    (append vals (list val))
+                                    saved-env
+                                    saved-cont))))
 	;; for list
 	(cons1-cont
 	 (exp2 saved-env saved-cont)
@@ -141,9 +167,10 @@
 	(null1-cont
 	 (saved-cont)
 	 (let ([a-list (expval->list val)])
-	   (cases listval a-list
-		  (emptylist () (bool-val #t))
-		  (else (bool-val #f)))))
+           (apply-cont saved-cont
+	               (cases listval a-list
+		              (emptylist () (bool-val #t))
+		              (else (bool-val #f))))))
 	
 	(car1-cont
 	 (saved-cont)
@@ -167,18 +194,57 @@
 	    (else
 	     (eopl:error 'cdr "empty list")))))
 
+        (list-first-cont
+         (rest-exps saved-env saved-cont)
+         (value-of/k (car rest-exps)
+                     saved-env
+                     (list-rest-cont
+                      (list val)
+                      (cdr rest-exps)
+                      saved-env
+                      saved-cont)))
+
+        (list-rest-cont
+         (vals rest-exps saved-env saved-cont)
+         (if (null? rest-exps)
+             (apply-cont saved-cont
+                         (list-val
+                          (let loop ([vals vals])
+                            (if (null? vals)
+                                (conslist val (emptylist))
+                                (conslist (car vals)
+                                          (loop (cdr vals)))))))
+             (value-of/k (car rest-exps)
+                         saved-env
+                         (list-rest-cont
+                          (append vals (list val))
+                          (cdr rest-exps)
+                          saved-env
+                          saved-cont))))
+
 	
 	)))
 
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
   ;; Page 152 and 155
   (define apply-procedure/k
-    (lambda (proc1 arg cont)
-      (cases proc proc1
-        (procedure (var body saved-env)
-          (value-of/k body
-            (extend-env var arg saved-env)
-            cont)))))
+    (lambda (proc1 args cont)
+      (cases
+       proc proc1
+       (procedure
+        (vars body saved-env)
+        (value-of/k body
+                    (let loop ([vars vars]
+                               [args args]
+                               [new-env saved-env])
+                      (if (null? vars)
+                          new-env
+                          (loop (cdr vars)
+                                (cdr args)
+                                (extend-env (car vars)
+                                            (car args)
+                                            new-env))))
+                    cont)))))
   
   )
   

@@ -41,11 +41,11 @@
        let-exp)
 
       (expression
-       ("proc" "(" identifier ")" expression)
+       ("proc" "(" (separated-list identifier ",") ")" expression)
        proc-exp)
 
       (expression
-       ("(" expression expression ")")
+       ("(" expression (arbno expression) ")")
        call-exp)
 
       (expression
@@ -74,6 +74,10 @@
       (expression
        ("cdr" "(" expression ")")
        cdr-exp)
+
+      (expression
+       ("list" "(" (separated-list expression ",") ")")
+       list-exp)
       ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;

@@ -107,6 +107,29 @@ in let times4 = (fix t4m)
 
       (car-1 "car(cons(1, emptylist))" 1)
       (car-2 "car(emptylist)" error)
+
+      (cdr-1 "cdr(cons(1, emptylist))" ())
+      (cdr-2 "cdr(emptylist)" error)
+
+      (null-1 "null?(emptylist)" #t)
+      (null-2 "null?(cons(1,emptylist))" #f)
+
+      (list-1 "list()" ())
+      (list-2 "list(1,2,3)" (1 2 3))
+
+      (list-length "
+letrec len(es)=
+  if null?(es) then 0 else -((len cdr(es)), -1) in
+let l1=list(1,2,3) in (len l1)
+"
+                   3)
+
+      (multi-args-proc-1
+       "let f=proc(x,y,z) -(-(x,y),z) in -((f 4 2 1), -1)"
+       2)
+
+      
+
       
       ))
   )

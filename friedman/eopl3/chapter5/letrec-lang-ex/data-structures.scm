@@ -86,12 +86,15 @@
       (val1 expval?)
       (saved-cont continuation?))
     (rator-cont            
-      (rand expression?)
-      (saved-env environment?)
-      (saved-cont continuation?))
+     (rands (list-of expression?))
+     (saved-env environment?)
+     (saved-cont continuation?))
     (rand-cont             
-      (val1 expval?)
-      (saved-cont continuation?))
+     (proc proc?)
+     (rest-rands (list-of expression?))
+     (vals (list-of expval?))
+     (saved-env environment?)
+     (saved-cont continuation?))
     ;; for list
     (cons1-cont
      (exp2 expression?)
@@ -106,15 +109,24 @@
      (saved-cont continuation?))
     (cdr1-cont
      (saved-cont continuation?))
+    (list-first-cont
+     (rest-exps (list-of expression?))
+     (saved-env environment?)
+     (saved-cont continuation?))
+    (list-rest-cont
+     (vals (list-of expval?))
+     (rest-exps (list-of expression?))
+     (saved-env environment?)
+     (saved-cont continuation?))
     )
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
-      (body expression?)
-      (env environment?)))
+     (bvars (list-of symbol?))
+     (body expression?)
+     (env environment?)))
   
 ;;;;;;;;;;;;;;;; environment structures ;;;;;;;;;;;;;;;;
 

@@ -40,7 +40,7 @@
 	    (apply-env saved-env search-sym)))
         (extend-env-rec (p-name b-var p-body saved-env)
           (if (eqv? search-sym p-name)
-            (proc-val (procedure b-var p-body env))          
-            (apply-env saved-env search-sym))))))
+              (proc-val (procedure (list b-var) p-body env))          
+              (apply-env saved-env search-sym))))))
     
   )
