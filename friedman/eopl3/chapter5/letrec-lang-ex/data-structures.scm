@@ -1,7 +1,8 @@
 (module data-structures (lib "eopl.ss" "eopl")
 
   (require "lang.scm")                  ; for expression?
-
+  (require "store.scm")
+  
   (provide (all-defined-out))               ; too many things to list
 
 ;;;;;;;;;;;;;;;; expressed values ;;;;;;;;;;;;;;;;
@@ -78,13 +79,15 @@
       (exp3 expression?)
       (saved-env environment?)
       (saved-cont continuation?))
-    (diff1-cont                
-      (exp2 expression?)
-      (saved-env environment?)
-      (saved-cont continuation?))
-    (diff2-cont                
-      (val1 expval?)
-      (saved-cont continuation?))
+    (binop1-cont                
+     (exp2 expression?)
+     (op procedure?)
+     (saved-env environment?)
+     (saved-cont continuation?))
+    (binop2-cont                
+     (val1 expval?)
+     (op procedure?)
+     (saved-cont continuation?))
     (rator-cont            
      (rands (list-of expression?))
      (saved-env environment?)
@@ -118,6 +121,14 @@
      (rest-exps (list-of expression?))
      (saved-env environment?)
      (saved-cont continuation?))
+    ;; for implicit-refs
+    (set-rhs-cont
+     (ref reference?)
+     (saved-cont continuation?))
+    (begin1-cont
+     (exps (list-of expression?))
+     (saved-env environment?)
+     (saved-cont continuation?))
     )
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
@@ -134,11 +145,11 @@
     (empty-env)
     (extend-env 
       (bvar symbol?)
-      (bval expval?)
+      (bval reference?)
       (saved-env environment?))
     (extend-env-rec
       (p-name symbol?)
-      (b-var symbol?)
+      (b-vars (list-of symbol?))
       (p-body expression?)
       (saved-env environment?)))
 

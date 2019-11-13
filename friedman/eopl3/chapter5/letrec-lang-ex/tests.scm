@@ -128,6 +128,19 @@ let l1=list(1,2,3) in (len l1)
        "let f=proc(x,y,z) -(-(x,y),z) in -((f 4 2 1), -1)"
        2)
 
+      (set-begin-1 "let x=3 in begin set x=2; x end" 2)
+
+      (fact "
+letrec fact(n)=
+  if zero?(n) 
+  then 1 
+  else *( n, (fact -(n,1)) ) in (fact 4)" 24)
+
+      (fact-iter "
+letrec fact-iter(n,a) =
+  if zero?(n)
+  then a
+  else (fact-iter -(n,1) *(n,a)) in (fact-iter 4 1)" 24)
       
 
       

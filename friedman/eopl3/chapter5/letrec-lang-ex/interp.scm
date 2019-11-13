@@ -13,17 +13,20 @@
   (require "lang.scm")
   (require "data-structures.scm")
   (require "environments.scm")
+  (require "store.scm")
 
-  (provide value-of-program value-of/k)
+  (provide value-of-program value-of/k instrument-cont)
 
+  (define instrument-cont (make-parameter #f))
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
   ;; value-of-program : Program -> FinalAnswer
   ;; Page: 143 and 154
   (define value-of-program 
     (lambda (pgm)
-      (cases program pgm
-        (a-program (exp1)
+      (initialize-store!)
+      (cases program pgm       
+	(a-program (exp1)
           (value-of/k exp1 (init-env) (end-cont))))))  
 
   ;; value-of/k : Exp * Env * Cont -> FinalAnswer
@@ -32,13 +35,14 @@
     (lambda (exp env cont)
       (cases expression exp
         (const-exp (num) (apply-cont cont (num-val num)))
-        (var-exp (var) (apply-cont cont (apply-env env var)))
+        (var-exp (var) (apply-cont cont
+				   (deref (apply-env env var))))
         (proc-exp (vars body)
           (apply-cont cont 
             (proc-val (procedure vars body env))))
-        (letrec-exp (p-name b-var p-body letrec-body)
+        (letrec-exp (p-name b-vars p-body letrec-body)
           (value-of/k letrec-body
-            (extend-env-rec p-name b-var p-body env)
+            (extend-env-rec p-name b-vars p-body env)
             cont))
         (zero?-exp (exp1)
           (value-of/k exp1 env
@@ -55,10 +59,19 @@
             (if-test-cont exp2 exp3 env cont)))
         (diff-exp (exp1 exp2)
           (value-of/k exp1 env
-            (diff1-cont exp2 env cont)))        
-        (call-exp (rator rands) 
-          (value-of/k rator env
-            (rator-cont rands env cont)))
+            (binop1-cont exp2 - env cont)))        
+        (multiply-exp
+	 (exp1 exp2)	 
+	 (value-of/k exp1 env
+		     (binop1-cont exp2 * env cont)))
+	(call-exp
+	 (rator rands)
+	 (when (instrument-cont)
+	   (eopl:printf "Applying function ~%")
+	   (pretty-print cont)
+	   (newline))
+         (value-of/k rator env
+		     (rator-cont rands env cont)))
 
 	;; for list
 	(emptylist-exp () (apply-cont cont (list-val (emptylist))))
@@ -87,13 +100,22 @@
              (value-of/k (car exps)
                          env
                          (list-first-cont (cdr exps) env cont))))
+	(set-exp
+	 (var exp1)
+	 (value-of/k exp1 env
+		     (set-rhs-cont (apply-env env var) cont)))
+
+	(begin-exp
+	 (exp1 exps)
+	 (value-of/k exp1 env
+		     (begin1-cont exps env cont)))
 
         )))
 
   ;; apply-cont : Cont * ExpVal -> FinalAnswer
   ;; Page: 148
   (define apply-cont
-    (lambda (cont val)
+    (lambda (cont val)     
       (cases continuation cont
         (end-cont () 
           (begin
@@ -107,7 +129,7 @@
               (zero? (expval->num val)))))
 	(let-exp-cont
 	 (var vars-left exps-left body saved-env saved-cont)
-	 (let ([new-env (extend-env var val saved-env)])
+	 (let ([new-env (extend-env var (newref val) saved-env)])
 	   (if (null? vars-left)
 	       (value-of/k body
 			   new-env
@@ -120,17 +142,17 @@
           (if (expval->bool val)
              (value-of/k exp2 saved-env saved-cont)
              (value-of/k exp3 saved-env saved-cont)))
-        (diff1-cont (exp2 saved-env saved-cont)
+        (binop1-cont (exp2 op saved-env saved-cont)
           (value-of/k exp2
-            saved-env (diff2-cont val saved-cont)))
-        (diff2-cont (val1 saved-cont)
+            saved-env (binop2-cont val op saved-cont)))
+        (binop2-cont (val1 op saved-cont)
           (let ((num1 (expval->num val1))
                 (num2 (expval->num val)))
             (apply-cont saved-cont
-              (num-val (- num1 num2)))))
+              (num-val (op num1 num2)))))
         (rator-cont
          (rands saved-env saved-cont)
-         (let ([proc (expval->proc val)])
+         (let ([proc (expval->proc val)])	   
            (if (null? rands)
                (apply-procedure/k proc '() saved-cont)
                (value-of/k (car rands)
@@ -222,7 +244,22 @@
                           saved-env
                           saved-cont))))
 
-	
+	(set-rhs-cont
+	 (ref saved-cont)
+	 (begin
+	   (setref! ref val)
+	   (apply-cont saved-cont (num-val 42))))
+
+	(begin1-cont
+	 (exps saved-env saved-cont)
+	 (if (null? exps)
+	     (apply-cont saved-cont val)
+	     (value-of/k (car exps)
+			 saved-env
+			 (begin1-cont (cdr exps)
+				      saved-env
+				      saved-cont))))
+
 	)))
 
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
@@ -242,7 +279,7 @@
                           (loop (cdr vars)
                                 (cdr args)
                                 (extend-env (car vars)
-                                            (car args)
+                                            (newref (car args))
                                             new-env))))
                     cont)))))
   

@@ -23,8 +23,11 @@
 
       (expression (number) const-exp)
       (expression
-        ("-" "(" expression "," expression ")")
-        diff-exp)
+       ("-" "(" expression "," expression ")")
+       diff-exp)
+      (expression
+       ("*" "(" expression "," expression ")")
+       multiply-exp)
       
       (expression
        ("zero?" "(" expression ")")
@@ -50,8 +53,8 @@
 
       (expression
         ("letrec"
-          identifier "(" identifier ")" "=" expression
-           "in" expression)
+         identifier "(" (separated-list identifier ",") ")" "=" expression
+         "in" expression)
         letrec-exp)
 
       ;; for list
@@ -78,6 +81,14 @@
       (expression
        ("list" "(" (separated-list expression ",") ")")
        list-exp)
+
+      (expression
+       ("set" identifier "=" expression)
+       set-exp)
+
+      (expression
+       ("begin" expression (arbno ";" expression) "end")
+       begin-exp)
       ))
 
   ;;;;;;;;;;;;;;;; sllgen boilerplate ;;;;;;;;;;;;;;;;
