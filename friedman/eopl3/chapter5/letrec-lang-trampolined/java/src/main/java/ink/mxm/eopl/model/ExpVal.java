@@ -1,6 +1,5 @@
 package ink.mxm.eopl.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 /**
