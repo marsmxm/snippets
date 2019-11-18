@@ -27,6 +27,9 @@
   (define args 'uninitialized)          ; proc args for apply-procedure/k
   (define pc #f)
 
+  (define op1 'uninitialized)
+  (define op2 'uninitialized)
+
   ;; value-of-program : Program -> FinalAnswer
   ;; Page: 167
   (define value-of-program 
@@ -154,11 +157,11 @@
           (value-of/k))
         (diff2-cont (val1 saved-cont)
           ;; (apply-cont cont (num-val (- num1 num2)))))
-          (let ((num1 (expval->num val1))
-                (num2 (expval->num val)))
-            (set! cont saved-cont)
-            (set! val (num-val (- num1 num2)))
-            (apply-cont)))
+          (set! op1 (expval->num val1))
+          (set! op2 (expval->num val))
+          (set! cont saved-cont)
+          (set! val (num-val (- op1 op2)))
+          (apply-cont))
 	(multiply1-cont (exp2 saved-env saved-cont)
           ;; (value-of/k exp2 env (diff2-cont val cont)))
           (set! cont (multiply2-cont val saved-cont))
@@ -167,31 +170,30 @@
           (value-of/k))
         (multiply2-cont (val1 saved-cont)
           ;; (apply-cont cont (num-val (- num1 num2)))))
-          (let ((num1 (expval->num val1))
-                (num2 (expval->num val)))
-            (set! cont saved-cont)
-            (set! val (num-val (* num1 num2)))
-            (apply-cont)))
+          (set! op1 (expval->num val1))
+	  (set! op2 (expval->num val))
+	  (set! cont saved-cont)
+          (set! val (num-val (* op1 op2)))
+          (apply-cont))
         (rator-cont
 	 (rands saved-env saved-cont)
-	 (let ([rator-proc (expval->proc val)])
-	   (if (null? rands)
-	       (begin
-		 (set! cont saved-cont)
-		 (set! proc1 rator-proc)
-		 (set! args '())
-		 (set! pc apply-procedure/k)
-		 pc)
-	       (begin
-		 ;; (value-of/k rand env (rand-cont val cont))
-		 (set! cont (rand-cont rator-proc
-				       (cdr rands)
-				       '()
-				       saved-env
-				       saved-cont))
-		 (set! exp (car rands))
-		 (set! env saved-env)
-		 (value-of/k)))))
+	 (set! proc1 (expval->proc val))
+	 (if (null? rands)
+	     (begin
+	       (set! cont saved-cont)	       
+	       (set! args '())
+	       (set! pc apply-procedure/k)
+	       pc)
+	     (begin
+	       ;; (value-of/k rand env (rand-cont val cont))
+	       (set! cont (rand-cont proc1
+				     (cdr rands)
+				     '()
+				     saved-env
+				     saved-cont))
+	       (set! exp (car rands))
+	       (set! env saved-env)
+	       (value-of/k))))
         (rand-cont
 	 (rator-proc rest-rands vals saved-env saved-cont)
 	 (if (null? rest-rands)
