@@ -7,7 +7,8 @@
   (require "data-structures.scm")  ; for expval constructors
   (require "lang.scm")             ; for scan&parse
 
-  (require "interp.scm")           
+  ;(require "interp.scm")
+  (require "interp-5.35.scm")           
  
   (require "tests.scm")            ; for test-list
   
