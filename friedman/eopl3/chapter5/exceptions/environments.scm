@@ -43,9 +43,9 @@
       (cons (list sym val) old-env)))
 
   (define extend-env-rec
-    (lambda (p-name b-var p-body saved-env)
+    (lambda (p-name b-vars p-body saved-env)
       (cons 
-        (list p-name b-var p-body)
+        (list p-name b-vars p-body)
         saved-env)))
 
   (define apply-env
@@ -54,17 +54,17 @@
         (eopl:error 'apply-env "No binding for ~s" search-sym)
         (let* ((binding (car env))
                (id (list-ref binding 0))
-               (expval-or-bvar (list-ref binding 1)))
+               (expval-or-bvars (list-ref binding 1)))
           (cond
             ((not (eqv? search-sym id))
              (apply-env (cdr env) search-sym))
-            ((not (symbol? expval-or-bvar))
+            ((not (list? expval-or-bvars))
             ;; this was built by extend-env
-             expval-or-bvar)
+             expval-or-bvars)
             (else
             ;; this was built by extend-env-rec
-              (let ((bvar (cadr binding))
+              (let ((bvars (cadr binding))
                     (body (caddr binding)))
-                (proc-val (procedure bvar body env)))))))))
+                (proc-val (procedure bvars body env)))))))))
             
   )
