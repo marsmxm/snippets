@@ -11,58 +11,7 @@
 
   (define trace-apply-procedure (make-parameter #f))
 
-;;;;;;;;;;;;;;;; continuations ;;;;;;;;;;;;;;;;
   (define handlers '()) 
-
-  (define-datatype continuation continuation?
-    (end-cont)                          ; []
-    (diff1-cont                       ; cont[(- [] (value-of e2 env))]
-      (exp2 expression?)
-      (env environment?)
-      (cont continuation?))
-    (diff2-cont                         ; cont[(- val1 [])]
-      (val1 expval?)
-      (cont continuation?))
-    (div1-cont                       ; cont[(- [] (value-of e2 env))]
-      (exp2 expression?)
-      (env environment?)
-      (cont continuation?))
-    (div2-cont                         ; cont[(- val1 [])]
-     (val1 expval?)
-     (env environment?)
-     (cont continuation?))
-    (unop-arg-cont
-      (unop unary-op?)
-      (cont continuation?))
-    (if-test-cont
-      (exp2 expression?)
-      (exp3 expression?)
-      (env environment?)
-      (cont continuation?))
-    (rator-cont            ; cont[(apply-proc [] (value-of rand env))]
-     (rands (list-of expression?))
-     (env environment?)
-     (cont continuation?))
-    (rand-cont                          ; cont[(apply-proc val1 [])]
-     (proc proc?)
-     (rands (list-of expression?))
-     (vals (list-of expval?))
-     (env environment?)
-     (cont continuation?))
-    (try-cont
-      (var symbol?)
-      (handler-exp expression?)
-      (env environment?)
-      (cont continuation?))
-    (try/k-cont
-     (var symbol?)
-     (kvar symbol?)
-     (handler-exp expression?)
-     (env environment?)
-     (cont continuation?))
-    (raise1-cont
-     (saved-cont continuation?))
-    )
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
@@ -183,29 +132,45 @@
           (if (expval->bool val)
             (value-of/k exp2 env cont)
             (value-of/k exp3 env cont)))
+        
 	(rator-cont
          (rands saved-env saved-cont)
-         (let ([proc1 (expval->proc val)])
-	   (cases proc proc1
-		  (procedure
-		   (vars body p-env)
-		   (let ([vars-len (length vars)]
-			 [rands-len (length rands)])
-		     (if (not (eq? vars-len rands-len))
-			 (value-of/k (raise-exp
-				      (const-exp
-				       (- vars-len rands-len)))
-				     saved-env
-				     saved-cont)
-			 (if (null? rands)
-			     (apply-procedure/k proc1 '() saved-cont)
-			     (value-of/k (car rands)
-					 saved-env
-					 (rand-cont proc1
-						    (cdr rands)
-						    '() ; vals
-						    saved-env
-						    saved-cont)))))))))
+         (cases
+          expval val
+          (cont-val ; continuation application
+           (cont)
+           (if (eq? 1 (length rands))
+               (value-of/k (car rands)
+                           saved-env
+                           (cont-rand-cont
+                            cont))
+               (eopl:error 'call-cont
+                           "continuation takes exactly one argument")))
+          (proc-val ; procedure continuation
+           (proc1)
+           (cases
+            proc proc1
+	    (procedure
+	     (vars body p-env)
+	     (let ([vars-len (length vars)]
+		   [rands-len (length rands)])
+	       (if (not (eq? vars-len rands-len))
+		   (value-of/k (raise-exp
+				(const-exp
+				 (- vars-len rands-len)))
+			       saved-env
+			       saved-cont)
+		   (if (null? rands)
+		       (apply-procedure/k proc1 '() saved-cont)
+		       (value-of/k (car rands)
+				   saved-env
+				   (rand-cont proc1
+					      (cdr rands)
+					      '() ; vals
+					      saved-env
+					      saved-cont))))))))
+          (else eopl:error "Illegle operator: ~s" val)))
+        
 	(rand-cont
          (proc rest-rands vals saved-env saved-cont)
          (if (null? rest-rands)
@@ -219,9 +184,23 @@
                                     (append vals (list val))
                                     saved-env
                                     saved-cont))))
+
+        (cont-rand-cont
+         (saved-cont)
+         (apply-cont saved-cont val))
         ;; the body of the try finished normally-- don't evaluate the handler
         (try-cont (var handler-exp saved-env saved-cont)
-          (apply-cont saved-cont val))
+                  (set! handlers (cdr handlers))
+                  (apply-cont saved-cont val))
+        (try/k-cont (var kvar handler-exp saved-env saved-cont)
+                    (set! handlers (cdr handlers))
+                    (apply-cont saved-cont val))
+        ;; reaching here means normal returning in the handler-exp
+        ;; we need to clean the handler from global handlers
+        (try/k-handler-cont
+         (saved-cont)
+         (set! handlers (cdr handlers))
+         (apply-cont saved-cont val))
         ;; val is the value of the argument to raise
         (raise1-cont
 	 (saved-cont)
@@ -246,8 +225,9 @@
 	      (var kvar handler-exp saved-env saved-cont)
 	      (value-of/k handler-exp
 			  (extend-env kvar (cont-val raise-cont)
-				      (extend var val saved-env))
-			  saved-cont))
+				      (extend-env var val saved-env))
+			  (try/k-handler-cont
+                           saved-cont)))
              (else (eopl:error 'apply-handler "illegle handler")))))))
 
 

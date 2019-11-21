@@ -241,7 +241,27 @@
    (div-zero-error "/(3,0)" error)
    (div-zero-catched "try /(3,0) catch (n) n" 0)
 
-   (raise/k-1 "try -(100, raise/k 99) catch (n) 30" 70)
+   (try-in-try-1
+    "try let x = try 4 catch (m) m in raise -(x, 1)
+     catch (n) -(n,1)" 2)
+
+   (try/k-0
+    "try/k -(100, raise 50) catch (n,k) (k /(n, 2))"
+    75)
+   
+   (try/k-1
+    "try/k -(100, raise 50) catch (n,k) /(n, 2)"
+    25)
+
+   (try/k-2
+    "try/k /(100, raise 50) catch (n,k) (k -(n, 50))" -50)
+
+   (try/k-3
+    "try let x=try/k -(100, raise 50) catch (n,k) (k /(n,2))
+         in raise x
+     catch (n) -(n,5)"
+    70)
+   
 
     ))
 
