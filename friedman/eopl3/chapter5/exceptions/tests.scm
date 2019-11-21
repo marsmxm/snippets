@@ -84,7 +84,7 @@
       (if-eval-test-false-2 "if zero?(-(11,12)) then foo else 4" 4)
 
 
-   (twice "
+      (twice "
         (proc (twice)
            ((twice proc (z) -(z,1)) 11)
          proc (f) proc (x) (f (f x)))"
@@ -232,6 +232,16 @@
                    catch (x) -1
        in ((index 5) list(2, 3))"
       -1)
+
+   ;; tests for exercises
+   (var-arg-mismatch-1 "(proc (x,y) -(x,y) 1)" error)
+   (var-arg-mismatch-2 "try (proc (x,y) -(x,y) 1) catch (n) n" 1)
+
+   (div-1 "/(3,2)" 3/2)
+   (div-zero-error "/(3,0)" error)
+   (div-zero-catched "try /(3,0) catch (n) n" 0)
+
+   (raise/k-1 "try -(100, raise/k 99) catch (n) 30" 70)
 
     ))
 

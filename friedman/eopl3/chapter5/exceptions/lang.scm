@@ -28,8 +28,12 @@
       (expression (number) const-exp)
 
       (expression
-        ("-" "(" expression "," expression ")")
-        diff-exp)
+       ("-" "(" expression "," expression ")")
+       diff-exp)
+
+      (expression
+       ("/" "(" expression "," expression ")")
+       div-exp)
 
       (expression
        ("if" expression "then" expression "else" expression)
@@ -38,11 +42,11 @@
       (expression (identifier) var-exp)
 
       (expression
-       ("proc" "(" identifier ")" expression)
+       ("proc" "(" (separated-list identifier ",") ")" expression)
        proc-exp)
 
       (expression
-       ("(" expression expression ")")
+       ("(" expression (arbno expression) ")")
        call-exp)
       
       (expression
@@ -51,8 +55,8 @@
 
       (expression
         ("letrec"
-          identifier "(" identifier ")" "=" expression
-           "in" expression)
+         identifier "(" (separated-list identifier ",") ")" "=" expression
+         "in" expression)
         letrec-exp)
 
       ;; Lists.  We will have lists of literal numbers only.
@@ -70,8 +74,17 @@
         try-exp)
 
       (expression
+       ("try/k" expression "catch" "(" identifier "," identifier ")"
+	expression)
+       try/k-exp)
+
+      (expression
         ("raise" expression)
         raise-exp)
+
+      ;; (expression
+      ;;  ("raise/k" expression)
+      ;;  raise/k-exp)
 
       (unary-op ("null?") null?-unop)
       (unary-op ("car")   car-unop)

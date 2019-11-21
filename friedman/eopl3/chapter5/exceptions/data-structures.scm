@@ -17,7 +17,10 @@
     (proc-val 
       (proc proc?))
     (list-val
-      (lst (list-of expval?))))
+     (lst (list-of expval?)))
+    (cont-val
+     (cont continuation?))
+    )
 
 ;;; extractors:
 
@@ -45,6 +48,12 @@
 	(list-val (lst) lst)
 	(else (expval-extractor-error 'list v)))))
 
+  (define expval->cont
+    (lambda (v)
+      (cases expval v
+	     (cont-val (cont) cont)
+	     (else (expval-extractor-error 'cont v)))))
+
   (define expval-extractor-error
     (lambda (variant value)
       (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
@@ -58,9 +67,9 @@
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
-      (body expression?)
-      (env environment?)))
+     (bvars (list-of symbol?))
+     (body expression?)
+     (env environment?)))
 
 ;;;;;;;;;;;;;;;; environment structures ;;;;;;;;;;;;;;;;
 
