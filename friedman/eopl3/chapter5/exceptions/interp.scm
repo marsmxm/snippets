@@ -93,6 +93,17 @@
           (value-of/k exp1 env
 		      (raise1-cont cont)))
 
+	(letcc-exp
+	 (var exp1)
+	 (value-of/k exp1
+		     (extend-env var (cont-val cont) env)
+		     cont))
+
+	(callcc-exp
+	 (exp1)
+	 (value-of/k exp1 env
+		     (callcc-cont env cont)))
+
 	;; (raise/k-exp
 	;;  (exp1)
 	;;  (value-of/k exp1 env
@@ -206,6 +217,13 @@
 	 (saved-cont)
          ;; we put the short argument first to make the trace more readable.
 	 (apply-handler val saved-cont))
+
+	(callcc-cont
+	 (saved-env saved-cont)
+	 (let ([proc1 (expval->proc val)])
+	   (apply-procedure/k proc1
+			      (list (cont-val saved-cont))
+			      saved-cont)))
         )))
       
   ;; apply-handler : ExpVal * Cont -> FinalAnswer
