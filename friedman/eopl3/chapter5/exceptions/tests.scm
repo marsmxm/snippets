@@ -261,6 +261,21 @@
          in raise x
      catch (n) -(n,5)"
     70)
+
+   (letcc-1 "letcc k in (k 88)" 88)
+   (letcc-2 "letcc k in 99" 99)
+   (letcc-3
+    "let safediv=proc (n,m) 
+                 letcc k in
+                   if zero?(m) then (k 0) else /(n,m)
+     in -((safediv 4 2), (safediv 3 0))"
+    2)
+
+   (callcc-1
+    "let f = proc (x) 
+              callcc 
+               proc (k) if zero?(x) then (k 0) else /(100, x)
+     in -((f 20), (f 0))" 5)
    
 
     ))

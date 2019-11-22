@@ -82,6 +82,14 @@
         ("raise" expression)
         raise-exp)
 
+      (expression
+       ("letcc" identifier "in" expression)
+       letcc-exp)
+
+      (expression
+       ("callcc" expression)
+       callcc-exp)
+
       ;; (expression
       ;;  ("raise/k" expression)
       ;;  raise/k-exp)

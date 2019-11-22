@@ -74,6 +74,9 @@
      (saved-cont continuation?))
     (raise1-cont
      (saved-cont continuation?))
+    (callcc-cont
+     (saved-env environment?)
+     (saved-cont continuation?))
     )
 
 ;;; extractors:
