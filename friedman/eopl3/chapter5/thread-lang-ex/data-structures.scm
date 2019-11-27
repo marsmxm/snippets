@@ -57,7 +57,13 @@
     (lambda (variant value)
       (eopl:error 'expval-extractors "Looking for a ~s, found ~s"
 	variant value)))
-  
+
+  ;;;;; threads ;;;;;;
+  (define-datatype thread thread?
+    (a-thread
+     (id number?)
+     (thunk proceduer?)
+     (quantum number?)))
 ;;;;;;;;;;;;;;;; mutexes ;;;;;;;;;;;;;;;;
 
   (define-datatype mutex mutex?
