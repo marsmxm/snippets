@@ -62,7 +62,7 @@
   (define-datatype thread thread?
     (a-thread
      (id number?)
-     (thunk proceduer?)
+     (thunk procedure?)
      (quantum number?)))
 ;;;;;;;;;;;;;;;; mutexes ;;;;;;;;;;;;;;;;
 
