@@ -32,5 +32,11 @@
 ;; Exercise 3
 (redex-match
  L
-  ; your solution goes here
+ (e_0 ... e_1 e_2 e_3 ...)
  (term (1 2 3 4)))
+
+;; Exercise 4
+(redex-match
+ L
+ (e_1 ..._1 e_left e_2 ... e_right e_3 ..._1)
+ (term (1 2 3 4 5)))

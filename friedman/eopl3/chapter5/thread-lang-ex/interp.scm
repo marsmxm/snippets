@@ -95,9 +95,12 @@
           (value-of/k exp env
             (spawn-cont cont)))
 
-        (yield-exp ()
-          (place-on-ready-queue!
-            (lambda () (apply-cont cont (num-val 99))))
+        (yield-exp
+	 ()
+	 (place-on-ready-queue!
+	  (a-thread 0
+		  (lambda () (apply-cont cont (num-val 99)))
+		  the-time-remaining))
           (run-next-thread))
 
         (mutex-exp ()
@@ -124,7 +127,9 @@
       (if (time-expired?)
         (begin
           (place-on-ready-queue!
-            (lambda () (apply-cont cont val)))
+	   (a-thread 0
+		   (lambda () (apply-cont cont val))
+		   0))
           (run-next-thread))
         (begin
 
@@ -164,10 +169,12 @@
             (spawn-cont (saved-cont)
               (let ((proc1 (expval->proc val)))
                 (place-on-ready-queue!
-                  (lambda ()
-                    (apply-procedure proc1
-                      (num-val 28)
-                      (end-subthread-cont))))
+		 (a-thread 0
+			   (lambda ()
+			     (apply-procedure proc1
+					      (num-val 28)
+					      (end-subthread-cont)))
+			   0))
               (apply-cont saved-cont (num-val 73))))
 
             (wait-cont (saved-cont)

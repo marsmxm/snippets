@@ -15,6 +15,8 @@
     place-on-ready-queue!
     run-next-thread
 
+    the-time-remaining
+
     )
   
   ;;;;;;;;;;;;;;;; the state ;;;;;;;;;;;;;;;;
@@ -42,8 +44,16 @@
   ;; Page: 184  
   (define place-on-ready-queue!
     (lambda (th)
-      (set! the-ready-queue
-        (enqueue the-ready-queue th))))
+      (cases
+       thread th
+       (a-thread
+	(id thunk quantum)
+	(let ([ticks (if (and quantum
+			      (not (zero? quantum)))
+			 quantum
+			 the-max-time-slice)])
+	  (set! the-ready-queue
+		(enqueue the-ready-queue (a-thread id thunk ticks))))))))
 
   ;; run-next-thread : () -> FinalAnswer
   ;; Page: 184    
@@ -51,12 +61,16 @@
     (lambda ()
       (if (empty? the-ready-queue)
         the-final-answer
-        (dequeue the-ready-queue
-          (lambda (first-ready-thread other-ready-threads)
-            (set! the-ready-queue other-ready-threads)            
-            (set! the-time-remaining the-max-time-slice) 
-            (first-ready-thread)
-            )))))
+        (dequeue
+	 the-ready-queue
+	 (lambda (first-ready-thread other-ready-threads)
+	   (cases
+	    thread first-ready-thread
+	    (a-thread
+	     (id thunk quantum)
+             (set! the-ready-queue other-ready-threads)            
+             (set! the-time-remaining quantum) 
+             (thunk))))))))
 
   ;; set-final-answer! : ExpVal -> Unspecified
   ;; Page: 184    

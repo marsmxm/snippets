@@ -32,7 +32,8 @@
           (cond
             ((deref ref-to-closed?)                  
              (setref! ref-to-wait-queue
-               (enqueue (deref ref-to-wait-queue) th))
+		      (enqueue (deref ref-to-wait-queue)
+			       (list th the-time-remaining)))
              (run-next-thread))
             (else
               (setref! ref-to-closed? #t)
@@ -49,13 +50,15 @@
             (when closed?
               (if (empty? wait-queue)
                 (setref! ref-to-closed? #f)
-                (dequeue wait-queue
-                  (lambda (first-waiting-th other-waiting-ths)
-                    (place-on-ready-queue!
-                      first-waiting-th)
-                    (setref!
+                (dequeue
+		 wait-queue
+		 (lambda (first-waiting other-waitings)
+		   (let ([th (car first-waiting)]
+			 [ticks (cadr first-waiting)])
+                     (place-on-ready-queue! (a-thread 0 th ticks))
+                     (setref!
                       ref-to-wait-queue
-                      other-waiting-ths)))))
+                      other-waitings))))))
             (th))))))
 
   )
