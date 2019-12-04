@@ -1,0 +1,66 @@
+(module semaphores (lib "eopl.ss" "eopl")
+
+  (require "drscheme-init.scm")
+  (require "store.scm")                    ; for store ops
+  (require "data-structures.scm")          ; for lock, a-lock
+  (require "scheduler.scm")                ; for os calls
+  (require "queues.scm")
+
+  (provide (all-defined-out))
+
+  ;; implements binary semaphores (mutexes).
+
+  (define instrument-mutexes (make-parameter #f))
+
+  ;; new-mutex () -> Mutex
+  ;; Page: 188
+  (define new-mutex
+    (lambda ()
+      (a-mutex
+        (newref #f)                     
+        (newref '()))))                 
+
+  ; wait queue, initially empty
+
+  ;; wait-for-mutex : Mutex * Thread -> FinalAnswer
+  ;; waits for mutex to be open, then closes it.
+  ;; Page: 190
+  (define wait-for-mutex
+    (lambda (m th)
+      (cases mutex m
+        (a-mutex (ref-to-closed? ref-to-wait-queue)
+          (cond
+            ((deref ref-to-closed?)                  
+             (setref! ref-to-wait-queue
+		      (enqueue (deref ref-to-wait-queue)
+			       (list th the-time-remaining)))
+             (run-next-thread))
+            (else
+              (setref! ref-to-closed? #t)
+              (th)))))))
+
+  ;; signal-mutex : Mutex * Thread -> FinalAnswer
+  ;; Page 190
+  (define signal-mutex
+    (lambda (m th)
+      (cases mutex m
+        (a-mutex (ref-to-closed? ref-to-wait-queue)
+          (let ((closed? (deref ref-to-closed?))
+                (wait-queue (deref ref-to-wait-queue)))
+            (when closed?
+              (if (empty? wait-queue)
+                (setref! ref-to-closed? #f)
+                (dequeue
+		 wait-queue
+		 (lambda (first-waiting other-waitings)
+		   (let ([th (car first-waiting)]
+			 [ticks (cadr first-waiting)])
+                     (place-on-ready-queue! (a-thread 0 th ticks
+                                                      exp env cont
+                                                      val proc1 unop1))
+                     (setref!
+                      ref-to-wait-queue
+                      other-waitings))))))
+            (th))))))
+
+  )
