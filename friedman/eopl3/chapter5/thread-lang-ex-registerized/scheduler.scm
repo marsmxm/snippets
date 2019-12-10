@@ -18,6 +18,7 @@
     the-time-remaining
 
     exp env cont val proc1 unop1
+    set-exp! set-env! set-cont! set-val! set-proc1! set-unop1!
     )
 
   ;; registers
@@ -27,6 +28,13 @@
   (define val 'uninitialized)
   (define proc1 'uninitialized)
   (define unop1 'uninitialized)
+
+  (define (set-exp! exp1) (set! exp exp1))
+  (define (set-env! env1) (set! env env1))
+  (define (set-cont! cont1) (set! cont cont1))
+  (define (set-val! val1) (set! val val1))
+  (define (set-proc1! p) (set! proc1 p))
+  (define (set-unop1! u) (set! unop1 u))
   
   ;;;;;;;;;;;;;;;; the state ;;;;;;;;;;;;;;;;
   

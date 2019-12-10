@@ -69,7 +69,8 @@
   (define-datatype mutex mutex?
     (a-mutex
       (ref-to-closed?    reference?)    ; ref to bool
-      (ref-to-wait-queue reference?)))  ; ref to (listof thread)
+      (ref-to-wait-queue reference?)    ; ref to (listof thread)
+      (ref-to-condition-queue reference?)))
   
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;
 
