@@ -1242,8 +1242,23 @@ Definition tr_rev {X} (l : list X) : list X :=
     call); a decent compiler will generate very efficient code in this
     case.  Prove that the two definitions are indeed equivalent. *)
 
+Lemma rev_append_app_assoc : forall X (x y z: list X), rev_append x (y ++ z) = rev_append x y ++ z.
+Proof.
+  intros X. induction x as [|a x'].
+  - intros. simpl. reflexivity.
+  - simpl. intros. rewrite <- (IHx' (a :: y) z). simpl. reflexivity. Qed.
+
+Lemma rev_append_app: forall (X: Type) (x: X) (l : list X),
+    rev_append l [x] = rev_append l [] ++ [x].
+Proof.
+  intros. rewrite <- rev_append_app_assoc. simpl. reflexivity. Qed.
+
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
-(* FILL IN HERE *) Admitted.
+Proof.
+  intros.
+  apply functional_extensionality. unfold tr_rev. induction x as [|a x'].
+  - simpl. reflexivity.
+  - simpl. rewrite rev_append_app. rewrite IHx'. reflexivity. Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -1279,10 +1294,14 @@ Qed.
 (** **** Exercise: 3 stars, standard (evenb_double_conv)  *)
 Theorem evenb_double_conv : forall n,
   exists k, n = if evenb n then double k
-                else S (double k).
+           else S (double k).
 Proof.
   (* Hint: Use the [evenb_S] lemma from [Induction.v]. *)
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n'].
+  - simpl. exists 0. reflexivity.
+  - rewrite evenb_S. destruct (evenb n').
+    + simpl. destruct IHn'. exists x. rewrite H. reflexivity.
+    + simpl. destruct IHn'. rewrite H. exists (S x). reflexivity. Qed.
 (** [] *)
 
 Theorem even_bool_prop : forall n,
