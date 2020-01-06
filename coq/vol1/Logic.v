@@ -1459,12 +1459,33 @@ Qed.
 Lemma andb_true_iff : forall b1 b2:bool,
   b1 && b2 = true <-> b1 = true /\ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  - intros. split.
+    + destruct b1 eqn:E.
+      * reflexivity.
+      * simpl in H. discriminate.
+    + destruct b2 eqn:E.
+      * reflexivity.
+      * destruct b1.
+        { discriminate. }
+        { discriminate. }
+  - intros [H1 H2]. rewrite H1. rewrite H2. reflexivity. Qed.
+                                       
 
 Lemma orb_true_iff : forall b1 b2,
   b1 || b2 = true <-> b1 = true \/ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  - intros. destruct b1.
+    + left. reflexivity.
+    + destruct b2.
+      * right. reflexivity.
+      * simpl in H. discriminate.
+  - intros [H1 | H2].
+    + rewrite H1. reflexivity.
+    + rewrite H2. destruct b1.
+      * reflexivity.
+      * reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (eqb_neq)  
@@ -1476,7 +1497,11 @@ Proof.
 Theorem eqb_neq : forall x y : nat,
   x =? y = false <-> x <> y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  - intros. unfold not. intros. apply eqb_eq in H0. rewrite H in H0. discriminate.
+  - intros. unfold not in H. destruct (x =? y) eqn:E.
+    + apply eqb_eq in E. apply H in E. destruct E.
+    + reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (eqb_list)  
@@ -1488,15 +1513,51 @@ Proof.
     definition is correct, prove the lemma [eqb_list_true_iff]. *)
 
 Fixpoint eqb_list {A : Type} (eqb : A -> A -> bool)
-                  (l1 l2 : list A) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+                  (l1 l2 : list A) : bool :=
+  match l1 with
+  | [] => match l2 with
+         | [] => true
+         | x :: l2' => false
+         end
+  | x :: l1' => match l2 with
+              | [] => false
+              | y :: l2' => (eqb x y) && (eqb_list eqb l1' l2')
+              end
+  end.
+
+Example test_eqb_list1: (eqb_list eqb [1;2;3] [1;2;3]) = true.
+Proof. simpl. reflexivity. Qed.
+Example test_eqb_list2: (@eqb_list nat eqb [1;2;3] [4;5;6]) = false.
+Proof. reflexivity. Qed.
 
 Lemma eqb_list_true_iff :
   forall A (eqb : A -> A -> bool),
     (forall a1 a2, eqb a1 a2 = true <-> a1 = a2) ->
     forall l1 l2, eqb_list eqb l1 l2 = true <-> l1 = l2.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros. split.
+  - intros. generalize dependent l2. induction l1 as [|x l1'].
+    + intros. induction l2 as [|y l2'].
+      * reflexivity.
+      * simpl in H0. discriminate.
+    + intros. induction l2 as [|y l2'].
+      * simpl in H0. discriminate.
+      * destruct (eqb x y) eqn:E.
+        { apply H in E as E'. simpl in H0. rewrite E in H0.
+          assert ((eqb_list eqb l1' l2') = true).
+          { destruct (eqb_list eqb l1' l2') eqn:E''.
+            { reflexivity. } { simpl in H0. discriminate. }
+          }
+          apply IHl1' in H1. rewrite E'. rewrite H1. reflexivity.
+        }
+        { simpl in H0. rewrite E in H0. simpl in H0. discriminate. }
+  - intros. generalize dependent l2. induction l1 as [|x l1'].
+    + intros. rewrite <- H0. reflexivity.
+    + intros. rewrite <- H0. simpl. destruct (eqb x x) eqn:E.
+      * apply IHl1'. reflexivity.
+      * simpl. assert (H2 : x = x). { reflexivity. } apply H in H2. rewrite E in H2.
+        discriminate. Qed.
+        
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, recommended (All_forallb)  
