@@ -1819,10 +1819,22 @@ Proof.
 Theorem em_eq_dmnan : excluded_middle <-> de_morgan_not_and_not.
 Proof.
   unfold excluded_middle. unfold de_morgan_not_and_not. split.
-  - intros. destruct (H P) as [H' | H'].
-    + left. apply H'.
-    + unfold not in H0, H'.
-    
+  - intros. destruct (H P) as [HP | HNP].
+    + left. apply HP.
+    + unfold not in H0, HNP. assert (HNNQ : (Q -> False) -> False).
+      { intro HNQ. assert (HNPQ : (P -> False) /\ (Q -> False)).
+        { split. apply HNP. apply HNQ. } apply H0 in HNPQ. destruct HNPQ.
+      } right. apply em_eq_dne in H. apply H in HNNQ. apply HNNQ.
+  - intros. unfold not in H. apply H. intros [HNP HNNP]. unfold not in HNNP.
+    apply HNNP in HNP. apply HNP. Qed.
+
+Theorem em_eq_ito : excluded_middle <-> implies_to_or.
+Proof.
+  unfold excluded_middle, implies_to_or. split.
+  - intros. destruct (H P) as [HP | HNP].
+    + apply H0 in HP as HQ. right. apply HQ.
+    + left. apply HNP.
+  - intros. apply or_commut. apply H. intros. apply H0. Qed.
 (* [] *)
 
 (* Wed Jan 9 12:02:45 EST 2019 *)
