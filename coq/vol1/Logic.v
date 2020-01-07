@@ -1577,7 +1577,18 @@ Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool :=
 Theorem forallb_true_iff : forall X test (l : list X),
    forallb test l = true <-> All (fun x => test x = true) l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  - intros. induction l as [|x l'].
+    + simpl. apply I.
+    + simpl. simpl in H. split.
+      * destruct (test x). { reflexivity. } { simpl in H. discriminate. }
+      * destruct (forallb test l').
+        { assert (Ht : true = true). { reflexivity. } apply IHl' in Ht. apply Ht. }
+        { rewrite andb_commutative in H. simpl in H. discriminate. }
+  - intros. induction l as [|x l'].
+    + simpl. reflexivity.
+    + simpl. simpl in H. destruct H as [H1 H2]. apply IHl' in H2. rewrite H1. rewrite H2.
+      reflexivity. Qed.
 
 (** Are there any important properties of the function [forallb] which
     are not captured by this specification? *)
@@ -1712,10 +1723,28 @@ Qed.
     contradiction.  But since we can't, it is safe to add [P \/ ~P] as
     an axiom. *)
 
+(** Pie version:
+(claim pem-not-false
+  (Π ((X U))
+    (-> (-> (Either
+              X
+              (-> X
+                Absurd))
+          Absurd)
+      Absurd)))
+(define pem-not-false
+  (λ (X)
+    (λ (pem-false)
+      (pem-false
+        (right
+          (λ (x)
+            (pem-false
+              (left x))))))))
+*)
 Theorem excluded_middle_irrefutable: forall (P:Prop),
   ~ ~ (P \/ ~ P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold not. intros. apply H. right. intros. apply H. left. apply H0. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (not_exists_dist)  
@@ -1736,7 +1765,9 @@ Theorem not_exists_dist :
   forall (X:Type) (P : X -> Prop),
     ~ (exists x, ~ P x) -> (forall x, P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. unfold excluded_middle in H. unfold not in H0. destruct (H (P x)) as [Hem1 | Hem2].
+  - apply Hem1.
+  - unfold not in Hem2. destruct H0. exists x. apply Hem2. Qed.
 (** [] *)
 
 (** **** Exercise: 5 stars, standard, optional (classical_axioms)  
@@ -1763,8 +1794,35 @@ Definition de_morgan_not_and_not := forall P Q:Prop,
 Definition implies_to_or := forall P Q:Prop,
   (P->Q) -> (~P\/Q).
 
-(* FILL IN HERE 
+Theorem em_eq_peirce : excluded_middle <-> peirce.
+Proof.
+  unfold excluded_middle. unfold peirce. split.
+  - intros. destruct (H P) as [H1 | H2].
+    + apply H1.
+    + unfold not in H2. apply H0. intros. apply H2 in H1. destruct H1.
+  - (* https://math.stackexchange.com/questions/447098/why-peirces-law-implies-law-of-excluded-middle *)
+    intros. unfold not. assert (H1 : (not P) -> (not P)). { intros. apply H0. } unfold not in H1.
+    assert (H2 : (P \/ (not P) -> False) -> (P -> False)).
+    { unfold not. intros. apply H0. left. apply H2. }
+    assert (H3 : (P \/ (not P) -> False) -> (P \/ (not P))).
+    { unfold not. intros. right. apply H2. intros. apply H0 in H3. destruct H3. }
+    apply (H (P \/ (not P)) False) in H3. apply H3. Qed.
 
-    [] *)
+Theorem em_eq_dne : excluded_middle <-> double_negation_elimination.
+Proof.
+  unfold excluded_middle. unfold double_negation_elimination. split.
+  - intros. destruct (H P) as [H1 | H2].
+    + apply H1.
+    + unfold not in H0, H2. apply H0 in H2. destruct H2.
+  - intros. apply H. apply excluded_middle_irrefutable. Qed.
+
+Theorem em_eq_dmnan : excluded_middle <-> de_morgan_not_and_not.
+Proof.
+  unfold excluded_middle. unfold de_morgan_not_and_not. split.
+  - intros. destruct (H P) as [H' | H'].
+    + left. apply H'.
+    + unfold not in H0, H'.
+    
+(* [] *)
 
 (* Wed Jan 9 12:02:45 EST 2019 *)
