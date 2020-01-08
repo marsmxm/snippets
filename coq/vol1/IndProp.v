@@ -148,7 +148,9 @@ Qed.
 Theorem ev_double : forall n,
   even (double n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. induction n.
+  - simpl. apply ev_0.
+  - simpl. apply ev_SS. apply IHn. Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -292,7 +294,16 @@ Theorem one_not_even' : ~ even 1.
 Theorem SSSSev__even : forall n,
   even (S (S (S (S n)))) -> even n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. inversion H. inversion H1. apply H3. Qed.
+
+Theorem SSSSev__even' : forall n, even (S (S (S (S n)))) -> even n.
+Proof.
+  intros. apply ev_inversion in H. destruct H.
+  - discriminate.
+  - destruct H as [n' [H1 H2]].
+    + injection H1 as H1'. rewrite <- H1' in H2. apply ev_inversion in H2. destruct H2.
+      * discriminate.
+      * destruct H as [n'' [H1 H2]]. injection H1 as H1''. rewrite H1''. apply H2. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (even5_nonsense)  
@@ -302,7 +313,7 @@ Proof.
 Theorem even5_nonsense :
   even 5 -> 2 + 2 = 9.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. inversion H. inversion H1. inversion H3. Qed.
 (** [] *)
 
 (** The [inversion] tactic does quite a bit of work. When
