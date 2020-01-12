@@ -463,7 +463,15 @@ Qed.
 (** **** Exercise: 2 stars, standard (ev_sum)  *)
 Theorem ev_sum : forall n m, even n -> even m -> even (n + m).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m Hn Hm.
+  induction Hn.
+  - induction Hm.
+    + simpl. apply ev_0.
+    + simpl. apply ev_SS. apply Hm.
+  - induction Hm.
+    + simpl. apply ev_SS. apply IHHn.
+    + simpl. apply ev_SS. apply IHHn. Qed.
+                  
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, optional (even'_ev)  
@@ -483,18 +491,39 @@ Inductive even' : nat -> Prop :=
 
 Theorem even'_ev : forall n, even' n <-> even n.
 Proof.
- (* FILL IN HERE *) Admitted.
+  split.
+  - intros. induction H.
+    + apply ev_0.
+    + apply ev_SS. apply ev_0.
+    + induction IHeven'1.
+      * induction IHeven'2.
+        { apply ev_0. }
+        { apply ev_SS. apply IHeven'2. }
+      * apply ev_sum. { apply ev_SS. apply IHeven'1. } { apply IHeven'2. }
+  - intros. induction H.
+    + apply even'_0.
+    + induction IHeven.
+      * apply even'_2.
+      * apply (even'_sum 2 2).
+        { apply even'_2. } { apply even'_2. }
+      * apply (even'_sum 2 (n + m)).
+        { apply even'_2. }
+        { apply even'_sum. { apply IHeven1. } { apply IHeven2. } }
+Qed.
+                                     
+       
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, recommended (ev_ev__ev)  
 
     Finding the appropriate thing to do induction on is a
     bit tricky here: *)
-
 Theorem ev_ev__ev : forall n m,
   even (n+m) -> even n -> even m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m Hnm Hn. induction Hn.
+  - apply Hnm.
+  - simpl in Hnm. apply evSS_ev in Hnm. apply IHHn. apply Hnm. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, optional (ev_plus_plus)  
@@ -506,7 +535,15 @@ Proof.
 Theorem ev_plus_plus : forall n m p,
   even (n+m) -> even (n+p) -> even (m+p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. apply (ev_sum (n + m) (n + p)) in H.
+  - rewrite plus_assoc in H. rewrite <- (plus_assoc n m n) in H.
+    rewrite (plus_comm m n) in H. rewrite (plus_assoc n n m) in H.
+    rewrite <- plus_assoc in H. assert (Hn : even (n + n)).
+    { apply ev_even_iff. exists n. rewrite double_plus. reflexivity. }
+    apply (ev_ev__ev (n + n) (m + p)). apply H. apply Hn.
+  - apply H0. Qed.
+
+    
 (** [] *)
 
 (* ################################################################# *)
