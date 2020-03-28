@@ -1,13 +1,9 @@
 rootProject.name = 'tutorials'
 
-include 'hazelcast'
 include 'zookeeper'
-include 'reactor'
 include 'flow'
-include 'quasar'
 include 'asm'
 include 'sbe'
-include 'jedis'
 include 'server-sent-events'
 include 'kafka'
 include 'aeron'
