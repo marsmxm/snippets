@@ -36,8 +36,8 @@
 			       (list th the-time-remaining)))
              (run-next-thread))
             (else
-              (setref! ref-to-closed? #t)
-              (th)))))))
+             (setref! ref-to-closed? #t)
+             (th)))))))
 
   ;; signal-mutex : Mutex * Thread -> FinalAnswer
   ;; Page 190

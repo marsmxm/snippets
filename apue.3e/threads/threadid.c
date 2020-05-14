@@ -1,8 +1,6 @@
 #include "apue.h"
 #include <pthread.h>
 
-pthread_t ntid;
-
 void
 printids(const char *s)
 {
@@ -26,7 +24,7 @@ int
 main(void)
 {
 	int		err;
-
+	pthread_t ntid;
 	err = pthread_create(&ntid, NULL, thr_fn, NULL);
 	if (err != 0)
 		err_exit(err, "can't create thread");
