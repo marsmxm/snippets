@@ -1,4 +1,7 @@
 use std::collections::HashSet;
+use std::iter::FromIterator;
+use std::collections::hash_map::RandomState;
+
 
 fn length_of_longest_substring(s: String) -> i32 {
     // brute force
@@ -14,11 +17,8 @@ fn length_of_longest_substring(s: String) -> i32 {
 }
 
 fn has_repeated(s: &str) -> bool {
-    let mut chars = HashSet::new();
-    for (i, &char) in s.chars().enumerate() {
-        chars.insert(char);
-    }
-    false
+    let chars: HashSet<&u8, RandomState> = HashSet::from_iter(s.as_bytes().iter());
+    chars.len() < s.len()
 }
 
 fn main() {
