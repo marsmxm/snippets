@@ -63,4 +63,42 @@
                       other-waitings))))))
             (th))))))
 
+  (define new-cond-var
+    (lambda ()
+      (a-cond-var
+       (newref '()))))
+
+  (define wait-for-cond
+    (lambda (cond-var mutex th)
+      (cases
+       cond-var cond-var
+       (a-cond-var
+	(ref-to-wait-queue)
+	(signal-mutex
+	 mutex
+	 (lambda ()
+	   (enqueue (deref ref-to-wait-queue)
+		    (list th the-time-remaining mutex))))))))
+
+  (define signal-cond
+    (lambda (cond-var th)
+      (cases
+       cond-var cond-var
+       (a-cond-var
+	(ref-to-wait-queue)
+	(let ([wait-queue (deref ref-to-wait-queue)])
+	  (when (not (empty? wait-queue))
+	    (dequeue
+	     wait-queue
+	     (lambda (first-waiting other-waitings)
+	       (let ([th (car first-waiting)]
+		     [ticks (cadr first-waiting)]
+		     [mutex (caddr first-waiting)])
+		 (wait-for-mutex
+		  mutex
+		  (lambda ()
+		    (place-on-ready-queue!
+		     (a-thread 0 th ticks exp env cont val proc1 unop1))))))))
+	  (th))))))
+
   )
