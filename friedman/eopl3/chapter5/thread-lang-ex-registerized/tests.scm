@@ -388,6 +388,24 @@ in
 "
         44)
 
+      (ex-5.52 "
+let x = 0
+      in let 
+      in let mut = mutex()
+      in let incr_x = proc (id)
+                       proc (dummy)
+                        begin
+                         wait(mut);
+                         set x = -(x,-1);
+                         signal(mut)
+                        end
+      in begin
+          spawn((incr_x 100));
+          spawn((incr_x 200));
+          spawn((incr_x 300))
+         end
+"
+	       3)
  
       ))
   )
