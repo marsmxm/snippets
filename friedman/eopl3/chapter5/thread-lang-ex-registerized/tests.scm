@@ -390,19 +390,33 @@ in
 
       (ex-5.52 "
 let x = 0
-      in let 
+      in let mut100 = mutex()
+      in let mut200 = mutex()
+      in let mut300 = mutex()
       in let mut = mutex()
       in let incr_x = proc (id)
                        proc (dummy)
                         begin
                          wait(mut);
                          set x = -(x,-1);
-                         signal(mut)
+                         signal(mut);
+                         if zero?(-(id, 100)) 
+                         then signal(mut100)
+                         else if zero?(-(id, 200))
+                              then signal(mut200)
+                              else signal(mut300)
                         end
       in begin
+          wait(mut100);
+          wait(mut200);
+          wait(mut300);
           spawn((incr_x 100));
           spawn((incr_x 200));
-          spawn((incr_x 300))
+          spawn((incr_x 300));
+          wait(mut100);
+          wait(mut200);
+          wait(mut300);
+          x
          end
 "
 	       3)

@@ -23,7 +23,7 @@
 
       ;; like list(n1,...,nk) in exceptions language. Sorry about that.
       (expression 
-        ("[" (separated-list number ",") "]")
+        ("[" (separated-list number "," ) "]")
         const-list-exp)
                   
       (expression (identifier) var-exp)   
