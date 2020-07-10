@@ -71,7 +71,7 @@
   (define wait-for-cond
     (lambda (cond-var mutex th)
       (cases
-       cond-var cond-var
+       cond-variable cond-var
        (a-cond-var
 	(ref-to-wait-queue)
 	(signal-mutex
@@ -83,7 +83,7 @@
   (define signal-cond
     (lambda (cond-var th)
       (cases
-       cond-var cond-var
+       cond-variable cond-var
        (a-cond-var
 	(ref-to-wait-queue)
 	(let ([wait-queue (deref ref-to-wait-queue)])

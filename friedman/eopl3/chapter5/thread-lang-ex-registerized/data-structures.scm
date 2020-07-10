@@ -77,7 +77,7 @@
       (ref-to-closed?    reference?)    ; ref to bool
       (ref-to-wait-queue reference?)))  ; ref to (listof thread)
 
-  (define-datatype cond-var cond-var?
+  (define-datatype cond-variable cond-var?
     (a-cond-var
      (ref-to-wait-queue reference?)))
   
