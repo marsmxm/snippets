@@ -19,11 +19,12 @@
 
     exp env cont val proc1 unop1
     set-exp! set-env! set-cont! set-val! set-proc1! set-unop1!
+    increase-get-thread-id
     )
 
   ;; registers
   (define exp 'uninitialized)
-  (define env 'uninitialized)
+  (define env 'uninitialized) 
   (define cont 'uninitialized)
   (define val 'uninitialized)
   (define proc1 'uninitialized)
@@ -35,6 +36,12 @@
   (define (set-val! val1) (set! val val1))
   (define (set-proc1! p) (set! proc1 p))
   (define (set-unop1! u) (set! unop1 u))
+
+  ;; global thread sequence
+  (define current-thread-id 0)
+  (define (increase-get-thread-id)
+    (set! current-thread-id (+ current-thread-id 1))
+    current-thread-id)
   
   ;;;;;;;;;;;;;;;; the state ;;;;;;;;;;;;;;;;
   
