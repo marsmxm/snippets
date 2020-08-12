@@ -111,7 +111,7 @@
              (yield-exp
 	      ()
 	      (place-on-ready-queue!
-	       (a-thread 0
+	       (a-thread (increase-get-thread-id)
 		         (lambda ()
                            (set-val! (num-val 99))
                            (apply-cont))
@@ -151,7 +151,7 @@
       (if (time-expired?)
         (begin
           (place-on-ready-queue!
-	   (a-thread 0
+	   (a-thread (increase-get-thread-id)
 		     (lambda () (apply-cont))
 		     0
                      exp env cont val proc1 unop1))
@@ -211,19 +211,21 @@
                 (set-val! (num-val 26))
                 (apply-cont)))
 
-            (spawn-cont (saved-cont)
-              (let ((proc2 (expval->proc val)))
+            (spawn-cont
+	     (saved-cont)
+	     (let ((proc2 (expval->proc val))
+		   (tid (increase-get-thread-id)))
                 (place-on-ready-queue!
-		 (a-thread 0
+		 (a-thread tid
 			   (lambda ()
                              (set-proc1! proc2)
-                             (set-val! (num-val 28))
+                             (set-val! (num-val tid))
                              (set-cont! (end-subthread-cont))
 			     (apply-procedure))
 			   0
                            exp env cont val proc1 unop1))
                 (set-cont! saved-cont)
-                (set-val! (num-val 73))
+                (set-val! (num-val tid))
                 (apply-cont)))
 
             (wait-cont (saved-cont)

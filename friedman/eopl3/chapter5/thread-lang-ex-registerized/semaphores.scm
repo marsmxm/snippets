@@ -54,8 +54,9 @@
 		 wait-queue
 		 (lambda (first-waiting other-waitings)
 		   (let ([th (car first-waiting)]
-			 [ticks (cadr first-waiting)])
-                     (place-on-ready-queue! (a-thread 0 th ticks
+			 [ticks (cadr first-waiting)]
+			 [tid (increase-get-thread-id)])
+                     (place-on-ready-queue! (a-thread tid th ticks
                                                       exp env cont
                                                       val proc1 unop1))
                      (setref!
@@ -98,7 +99,7 @@
 		  mutex
 		  (lambda ()
 		    (place-on-ready-queue!
-		     (a-thread 0 th ticks exp env cont val proc1 unop1))))))))
+		     (a-thread (increase-get-thread-id) th ticks exp env cont val proc1 unop1))))))))
 	  (th))))))
 
   )
