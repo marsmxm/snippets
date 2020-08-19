@@ -42,6 +42,14 @@
                      (lambda (v)
                        (cont (+ (car loi) v)))))))
 
+ ;; Ex6.10
+ (define list-sum/k-1
+   (lambda (loi cont)
+     (if (null? loi)
+	 cont
+	 (list-sum/k-1 (cdr loi)
+		       (+ cont (car loi))))))
+
  (define occurs-free?
    (lambda (var exp)
      (cond
