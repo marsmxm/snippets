@@ -131,3 +131,23 @@
                                     (extend-env vvar val saved-env)
                                     cont)))))
   )
+
+;; Ex 6.11
+(define value-of-simple-exp
+  (lambda (simple-exp env)
+    (cases simple-exp exp
+	   (const-exp (num) (num-val num))
+	   (var-exp (var) (apply-env env var))
+	   (cps-diff-exp (simple1 simple2)
+			 (num-val
+			  (- (exp->num (value-of-simple-exp simple1 env))
+			     (exp->num (value-of-simple-exp simple2 env)))))
+	   (cps-zero?-exp (simple1)
+			  (bool-val
+			   (zero?
+			    (exp->num
+			     (value-of-simple-exp simple1 env)))))
+	   (cps-proc-exp (vars body)
+			 (proc-val
+			  (procedure vars body env))))))
+
