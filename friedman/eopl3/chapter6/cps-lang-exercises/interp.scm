@@ -23,6 +23,11 @@
         (cps-const-exp (num) (num-val num))
         (cps-var-exp (var) (apply-env env var))
 
+        (cps-number?-exp (simple1)
+                         (bool-val
+                          (number?
+                           (expval->num
+                            (value-of-simple-exp simple1 env)))))
         (cps-diff-exp (exp1 exp2)
           (let ((val1
 		  (expval->num
@@ -52,9 +57,30 @@
 
         (cps-proc-exp (vars body)
           (proc-val
-            (procedure vars body env)))
+           (procedure vars body env)))
 
-        )))
+        (emptylist-exp () (list-val (emptylist)))
+        (cons-exp (simple1 simple2)
+                  (list-val
+                   (conslist
+                    (value-of-simple-exp simple1 env)
+                    (expval->list
+                     (value-of-simple-exp simple2 env)))))
+        (null?-exp (simple1)
+                   (cases listval (expval->list
+                                   (value-of-simple-exp simple1 env))
+                          (emptylist () (bool-val #t))
+                          (else (bool-val #f))))
+        (car-exp (simple1)
+                 (cases listval (expval->list
+                                 (value-of-simple-exp simple1 env))
+                        (conslist (head tail) head)
+                        (else (eopl:error 'car "empty list"))))
+        (cdr-exp (simple1)
+                 (cases listval (expval->list
+                                 (value-of-simple-exp simple1 env))
+                        (conslist (head tail) (list-val tail))
+                        (else (eopl:error 'cdr "empty list")))))))
   
   ;; value-of/k : TfExp * Env * Cont -> FinalAnswer
   ;; Page: 209

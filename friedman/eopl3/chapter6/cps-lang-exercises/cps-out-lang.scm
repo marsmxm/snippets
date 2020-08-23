@@ -18,7 +18,7 @@
       (number ("-" digit (arbno digit)) number)
       ))
  
- (define cps-out-grammar
+  (define cps-out-grammar
 
     '((cps-out-program (tfexp) cps-a-program)
 
@@ -26,6 +26,7 @@
 
       (simple-expression (identifier) cps-var-exp)
 
+      (simple-expression ("number?" "(" simple-expression ")") cps-number?-exp)
       (simple-expression
         ("-" "(" simple-expression "," simple-expression ")")
         cps-diff-exp)
@@ -41,6 +42,28 @@
       (simple-expression
        ("proc" "(" (arbno identifier) ")" tfexp)
        cps-proc-exp)
+
+      ;; for list
+      (simple-expression
+       ("emptylist")
+       emptylist-exp)
+
+      (simple-expression
+       ("cons" "(" simple-expression "," simple-expression ")")
+       cons-exp)
+
+      (simple-expression
+       ("null?" "(" simple-expression ")")
+       null?-exp)
+
+      (simple-expression
+       ("car" "(" simple-expression ")")
+       car-exp)
+
+      (simple-expression
+       ("cdr" "(" simple-expression ")")
+       cdr-exp)
+      
 
       (tfexp
         (simple-expression)
