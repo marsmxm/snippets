@@ -27,6 +27,15 @@
       (simple-expression (identifier) cps-var-exp)
 
       (simple-expression ("number?" "(" simple-expression ")") cps-number?-exp)
+
+      (simple-expression
+       ("equal?" "(" simple-expression "," simple-expression ")")
+       cps-equal?-exp)
+
+      (simple-expression
+       ("less?" "(" simple-expression "," simple-expression ")")
+       cps-less?-exp)
+      
       (simple-expression
         ("-" "(" simple-expression "," simple-expression ")")
         cps-diff-exp)
