@@ -25,9 +25,23 @@
 
         (cps-number?-exp (simple1)
                          (bool-val
-                          (number?
-                           (expval->num
-                            (value-of-simple-exp simple1 env)))))
+                          (cases expval
+				 (value-of-simple-exp simple1 env)
+				 (num-val (n) #t)
+				 (else #f))))
+
+	(cps-equal?-exp (simple1 simple2)
+			(bool-val
+			 (=
+			  (expval->num (value-of-simple-exp simple1 env))
+			  (expval->num (value-of-simple-exp simple2 env)))))
+	
+	(cps-less?-exp (simple1 simple2)
+			(bool-val
+			 (<
+			  (expval->num (value-of-simple-exp simple1 env))
+			  (expval->num (value-of-simple-exp simple2 env)))))
+	
         (cps-diff-exp (exp1 exp2)
           (let ((val1
 		  (expval->num
