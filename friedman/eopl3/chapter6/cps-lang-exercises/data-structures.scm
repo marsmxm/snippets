@@ -121,7 +121,7 @@
                        (procedure
                          (list-ref bvars pos)
                          (list-ref bodies pos)
-                         env)))))
+                        env)))))
               (apply-env saved-env search-sym)))))))
 
   ;; returns position of sym in los, else #f

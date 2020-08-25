@@ -122,5 +122,52 @@ letrec
 in (depth cons(cons(1, cons(2, emptylist)), cons(3, emptylist)) proc(v) v)
 "
 	     4)
+
+
+      (map "
+letrec
+ map(f l k) = if null?(l)
+              then (k emptylist)
+              else (f car(l) 
+                      proc(v1) 
+                       (map f cdr(l) 
+                            proc(v2) (k cons(v1, v2))))
+ square(n k) = (k *(n,n))
+in (map square list(1,2,3,4,5) proc(v) v)
+"
+	   (1 4 9 16 25))
+
+      (fnlrgtn "
+letrec
+ fnlrgtn(l n k) =
+  if null?(l)
+  then (k emptylist)
+  else if number?(car(l))
+       then if less?(n, car(l))
+            then (k car(l))
+            else (fnlrgtn cdr(l) n k)
+       else (fnlrgtn car(l) n
+                     proc(v1)
+                      if number?(v1)
+                      then (k v1)
+                      else (fnlrgtn cdr(l) n k))
+in (fnlrgtn list(1, list(3, list(2), 7, list(9))) 6 proc(v) v)
+"
+	       7)
+
+      (every "
+letrec
+ every(pred l k) =
+  if null?(l)
+  then (k 1)
+  else (pred car(l) 
+             proc(v)
+              if v
+              then (every pred cdr(l) k)
+              else (k 0))
+in (every proc(n k) (k less?(n, 10)) list(6,7,8,9) proc(v) v)
+"
+	     1)
+      
       )))
 

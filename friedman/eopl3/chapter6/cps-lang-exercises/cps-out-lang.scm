@@ -45,8 +45,12 @@
        cps-zero?-exp)
 
       (simple-expression
-        ("+" "(" (separated-list simple-expression ",") ")")
-        cps-sum-exp)
+       ("+" "(" (separated-list simple-expression ",") ")")
+       cps-sum-exp)
+
+      (simple-expression
+       ("*" "(" (separated-list simple-expression ",") ")")
+       cps-multiple-exp)
 
       (simple-expression
        ("proc" "(" (arbno identifier) ")" tfexp)
@@ -72,7 +76,10 @@
       (simple-expression
        ("cdr" "(" simple-expression ")")
        cdr-exp)
-      
+
+      (simple-expression
+       ("list" "(" (separated-list simple-expression ",") ")")
+       list-exp)
 
       (tfexp
         (simple-expression)
