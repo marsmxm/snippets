@@ -67,7 +67,18 @@
             (num-val
               (let sum-loop ((nums nums))
                 (if (null? nums) 0
-                  (+ (car nums) (sum-loop (cdr nums))))))))
+                    (+ (car nums) (sum-loop (cdr nums))))))))
+
+	(cps-multiple-exp (exps)
+          (let ((nums (map
+                        (lambda (exp)
+                          (expval->num
+                            (value-of-simple-exp exp env)))
+                        exps)))
+            (num-val
+              (let loop ((nums nums))
+                (if (null? nums) 1
+                  (* (car nums) (loop (cdr nums))))))))
 
         (cps-proc-exp (vars body)
           (proc-val
@@ -94,7 +105,19 @@
                  (cases listval (expval->list
                                  (value-of-simple-exp simple1 env))
                         (conslist (head tail) (list-val tail))
-                        (else (eopl:error 'cdr "empty list")))))))
+                        (else (eopl:error 'cdr "empty list"))))
+
+	(list-exp
+         (exps)
+         (if (null? exps)
+             (list-val (emptylist))
+	     (list-val
+	      (conslist
+	       (value-of-simple-exp (car exps) env)
+	       (expval->list
+		(value-of-simple-exp (list-exp (cdr exps)) env))))))
+	
+	)))
   
   ;; value-of/k : TfExp * Env * Cont -> FinalAnswer
   ;; Page: 209
