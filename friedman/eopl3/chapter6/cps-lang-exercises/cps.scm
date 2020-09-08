@@ -67,7 +67,8 @@
                 (list-ref exps pos)
                 (cps-proc-exp (list var)
                   (cps-of-rest
-                    (list-set exps pos (var-exp var)))))))))))
+                   (list-set exps pos (var-exp var)))))))))))
+
 
   ;; inp-exp-simple? : InpExp -> Bool
   ;; returns #t or #f, depending on whether exp would be a 
