@@ -23,25 +23,6 @@
         (cps-const-exp (num) (num-val num))
         (cps-var-exp (var) (apply-env env var))
 
-        (cps-number?-exp (simple1)
-                         (bool-val
-                          (cases expval
-				 (value-of-simple-exp simple1 env)
-				 (num-val (n) #t)
-				 (else #f))))
-
-	(cps-equal?-exp (simple1 simple2)
-			(bool-val
-			 (=
-			  (expval->num (value-of-simple-exp simple1 env))
-			  (expval->num (value-of-simple-exp simple2 env)))))
-	
-	(cps-less?-exp (simple1 simple2)
-			(bool-val
-			 (<
-			  (expval->num (value-of-simple-exp simple1 env))
-			  (expval->num (value-of-simple-exp simple2 env)))))
-	
         (cps-diff-exp (exp1 exp2)
           (let ((val1
 		  (expval->num
@@ -67,57 +48,13 @@
             (num-val
               (let sum-loop ((nums nums))
                 (if (null? nums) 0
-                    (+ (car nums) (sum-loop (cdr nums))))))))
-
-	(cps-multiple-exp (exps)
-          (let ((nums (map
-                        (lambda (exp)
-                          (expval->num
-                            (value-of-simple-exp exp env)))
-                        exps)))
-            (num-val
-              (let loop ((nums nums))
-                (if (null? nums) 1
-                  (* (car nums) (loop (cdr nums))))))))
+                  (+ (car nums) (sum-loop (cdr nums))))))))
 
         (cps-proc-exp (vars body)
           (proc-val
-           (procedure vars body env)))
+            (procedure vars body env)))
 
-        (emptylist-exp () (list-val (emptylist)))
-        (cons-exp (simple1 simple2)
-                  (list-val
-                   (conslist
-                    (value-of-simple-exp simple1 env)
-                    (expval->list
-                     (value-of-simple-exp simple2 env)))))
-        (null?-exp (simple1)
-                   (cases listval (expval->list
-                                   (value-of-simple-exp simple1 env))
-                          (emptylist () (bool-val #t))
-                          (else (bool-val #f))))
-        (car-exp (simple1)
-                 (cases listval (expval->list
-                                 (value-of-simple-exp simple1 env))
-                        (conslist (head tail) head)
-                        (else (eopl:error 'car "empty list"))))
-        (cdr-exp (simple1)
-                 (cases listval (expval->list
-                                 (value-of-simple-exp simple1 env))
-                        (conslist (head tail) (list-val tail))
-                        (else (eopl:error 'cdr "empty list"))))
-
-	(list-exp
-         (exps)
-         (if (null? exps)
-             (list-val (emptylist))
-	     (list-val
-	      (conslist
-	       (value-of-simple-exp (car exps) env)
-	       (expval->list
-		(value-of-simple-exp (list-exp (cdr exps)) env))))))
-	
-	)))
+        )))
   
   ;; value-of/k : TfExp * Env * Cont -> FinalAnswer
   ;; Page: 209
