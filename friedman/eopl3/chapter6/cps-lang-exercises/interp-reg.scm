@@ -9,60 +9,87 @@
 
 ;;;;;;;;;;;;;;;; the interpreter ;;;;;;;;;;;;;;;;
 
+  (define exp 'uninitialized)
+  (define env 'uninitialized)
+  (define proc1 'uninitialized)
+  (define args 'uninitialized)
+
   ;; value-of-program : Program -> ExpVal
 
   (define value-of-program 
     (lambda (pgm)
       (cases cps-out-program pgm
-        (cps-a-program (exp1)
-          (value-of/k exp1 (init-env) (end-cont))))))
+             (cps-a-program (exp1)
+			    (set! exp exp1)
+			    (set! env (init-env))
+			    (value-of/k)))))
 
   (define value-of-simple-exp
-    (lambda (exp env)
+    (lambda ()
       (cases simple-expression exp
         (cps-const-exp (num) (num-val num))
         (cps-var-exp (var) (apply-env env var))
 
         (cps-number?-exp (simple1)
                          (bool-val
-                          (cases expval
-				 (value-of-simple-exp simple1 env)
-				 (num-val (n) #t)
-				 (else #f))))
+                          (cases
+			   expval (begin
+				    (set! exp simple1)
+				    (value-of-simple-exp))
+			   (num-val (n) #t)
+			   (else #f))))
 
 	(cps-equal?-exp (simple1 simple2)
 			(bool-val
 			 (=
-			  (expval->num (value-of-simple-exp simple1 env))
-			  (expval->num (value-of-simple-exp simple2 env)))))
+			  (expval->num
+			   (begin
+			     (set! exp simple1)
+			     (value-of-simple-exp)))
+			  (expval->num
+			   (begin
+			     (set! exp simple2)
+			     (value-of-simple-exp))))))
 	
 	(cps-less?-exp (simple1 simple2)
 			(bool-val
 			 (<
-			  (expval->num (value-of-simple-exp simple1 env))
-			  (expval->num (value-of-simple-exp simple2 env)))))
+			  (expval->num
+			   (begin
+			     (set! exp simple1)
+			     (value-of-simple-exp)))
+			  (expval->num
+			   (begin
+			     (set! exp simple2)
+			     (value-of-simple-exp))))))
 	
         (cps-diff-exp (exp1 exp2)
           (let ((val1
-		  (expval->num
-		    (value-of-simple-exp exp1 env)))
+		 (expval->num
+		  (begin
+		    (set! exp exp1)
+		    (value-of-simple-exp))))
                 (val2
-		  (expval->num
-		    (value-of-simple-exp exp2 env))))
+		 (expval->num
+		  (begin
+		    (set! exp exp2)
+		    (value-of-simple-exp)))))
             (num-val
-	      (- val1 val2))))
+	     (- val1 val2))))
 
         (cps-zero?-exp (exp1)
           (bool-val
             (zero?
-              (expval->num
-                (value-of-simple-exp exp1 env)))))
+             (expval->num
+	      (begin
+		(set! exp exp1)
+                (value-of-simple-exp))))))
 
         (cps-sum-exp (exps)
           (let ((nums (map
-                        (lambda (exp)
+                        (lambda (exp1)
                           (expval->num
-                            (value-of-simple-exp exp env)))
+                            (value-of-simple-exp exp1 env)))
                         exps)))
             (num-val
               (let sum-loop ((nums nums))
@@ -122,34 +149,46 @@
   ;; value-of/k : TfExp * Env * Cont -> FinalAnswer
   ;; Page: 209
   (define value-of/k
-    (lambda (exp env cont)
+    (lambda ()
       (cases tfexp exp
-        (simple-exp->exp (simple)
-          (apply-cont cont
-            (value-of-simple-exp simple env)))
+             (simple-exp->exp (simple)
+			      (set! exp simple)
+			      (value-of-simple-exp))
         (cps-let-exp (var rhs body)
-         (let ((val (value-of-simple-exp rhs env)))
-            (value-of/k body
-              (extend-env* (list var) (list val) env)
-              cont)))
+		     (let ((val (begin
+				  (set! exp rhs)
+				  (value-of-simple-exp))))
+		       (set! exp body)
+		       (set! env (extend-env* (list var) (list val) env))
+		       (value-of/k)))
         (cps-letrec-exp (p-names b-varss p-bodies letrec-body)
-          (value-of/k letrec-body
-            (extend-env-rec** p-names b-varss p-bodies env)
-            cont))
+			(set! exp letrec-body)
+			(set! env (extend-env-rec** p-names b-varss p-bodies env))
+			(value-of/k))
         (cps-if-exp (simple1 body1 body2)
-          (if (expval->bool (value-of-simple-exp simple1 env))
-            (value-of/k body1 env cont)
-            (value-of/k body2 env cont)))
+		    (if (expval->bool
+			 (begin
+			   (set! exp simple1)
+			   (value-of-simple-exp)))
+			(set! exp body1)
+			(set! exp body2))
+		    (value-of/k))
         (cps-call-exp (rator rands)
           (let ((rator-proc
-                  (expval->proc
-                    (value-of-simple-exp rator env)))
+                 (expval->proc
+		  (begin
+		    (set! exp rator)
+                    (value-of-simple-exp))))
                 (rand-vals
                   (map
-                    (lambda (simple)
-                      (value-of-simple-exp simple env))
-                    rands)))
-            (apply-procedure/k rator-proc rand-vals cont))))))
+                   (lambda (simple)
+		     (begin
+		       (set! exp simple)
+                       (value-of-simple-exp)))
+                   rands)))
+	    (set! proc1 rator-proc)
+	    (set! args rand-vals)
+            (apply-procedure/k))))))
 
   ;; apply-cont : Cont * ExpVal -> Final-ExpVal
   ;; there's only one continuation, and it only gets invoked once, at
@@ -162,12 +201,12 @@
   ;; apply-procedure/k : Proc * ExpVal * Cont -> ExpVal
   ;; Page: 209 
   (define apply-procedure/k
-    (lambda (proc1 args cont)
+    (lambda ()
       (cases proc proc1
-        (procedure (vars body saved-env)
-          (value-of/k body
-            (extend-env* vars args saved-env)
-            cont)))))
+             (procedure (vars body saved-env)
+			(set! exp body)
+			(set! env (extend-env* vars args saved-env))
+			(value-of/k)))))
 
   '(define apply-procedure/k
     (lambda (proc1 args cont)
