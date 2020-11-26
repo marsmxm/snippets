@@ -60,6 +60,33 @@
       (expression
        ("(" expression (arbno expression) ")")
        call-exp)
+
+      ;; list
+      (expression
+       ("emptylist")
+       emptylist-exp)
+
+      (expression
+       ("cons" "(" expression "," expression ")")
+       cons-exp)
+
+      (expression
+       ("null?" "(" expression ")")
+       null?-exp)
+
+      (expression
+       ("car" "(" expression ")")
+       car-exp)
+
+      (expression
+       ("cdr" "(" expression ")")
+       cdr-exp)
+
+      (expression
+       ("list" "(" (separated-list expression ",") ")")
+       list-exp)
+
+      
       
       ))
 

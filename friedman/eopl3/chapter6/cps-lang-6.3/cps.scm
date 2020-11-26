@@ -142,7 +142,10 @@
   ;; Page: 214
   (define make-send-to-cont
     (lambda (cont bexp)
-      (cps-call-exp cont (list bexp))))
+      (cases simple-expression cont
+	     (cps-proc-exp (vars body)
+			   (cps-let-exp (car vars) bexp body))
+	     (else (cps-call-exp cont (list bexp))))))
 
   ;; cps-of-zero?-exp : InpExp * SimpleExp -> TfExp
   ;; Page: 222
@@ -180,13 +183,25 @@
 
   ;; cps-of-if-exp : InpExp * InpExp * InpExp * SimpleExp -> TfExp
   ;; Page: 223
-  (define cps-of-if-exp
+  '(define cps-of-if-exp
     (lambda (exp1 exp2 exp3 k-exp)
       (cps-of-exps (list exp1)
         (lambda (new-rands)
           (cps-if-exp (car new-rands)
             (cps-of-exp exp2 k-exp)
             (cps-of-exp exp3 k-exp))))))
+
+  (define cps-of-if-exp
+    (lambda (exp1 exp2 exp3 k-exp)
+      (cps-of-exps (list exp1)
+		   (lambda (new-rands)
+		     (let ([var (fresh-identifier 'var)])
+		       (cps-let-exp
+			var
+			k-exp
+			(cps-if-exp (car new-rands)
+				    (cps-of-exp exp2 (cps-var-exp var))
+				    (cps-of-exp exp3 (cps-var-exp var)))))))))
 
   ;; This is wrong, because it puts k-exp inside the scope of id.
   ;; cps-of-let-exp : Var * InpExp * InpExp * SimpleExp -> TfExp
