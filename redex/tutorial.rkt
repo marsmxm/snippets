@@ -1,6 +1,8 @@
 #lang racket
 (require redex)
 
+;; 1.1 Defining a Language
+(display "1.1 Defining a Language") (newline)
 
 ;; 1.1 Defining a Language
 (define-language L
@@ -42,7 +44,8 @@
  (e_1 ..._1 e_left e_2 ... e_right e_3 ..._1)
  (term (1 2 3 4 5)))
 
-
 ;; 1.2 Typing
+(display "1.2 Typing") (newline)
+
 (define-extended-language L+Γ L
   [Γ · (x : t Γ)])
