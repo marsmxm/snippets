@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.ml": "ocaml",
+    "*.rkt": "racket",
+    "pthread.h": "c",
+    "apue.h": "c"
+  }
+}
