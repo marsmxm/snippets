@@ -9,8 +9,10 @@ thr_fn1(void *arg)
 {
 	sleep(1);
 	x = 1;
-	int r1 = y;
+	int r1 = x;
+	int r2 = y;
 	printf("r1 = %d\n", r1);
+	printf("r2 = %d\n", r2);
 	return((void *)0);
 }
 
@@ -19,8 +21,10 @@ thr_fn2(void *arg)
 {
 	sleep(1);
 	y = 1;
-	int r2 = x;
-	printf("r2 = %d\n", r2);
+	int r3 = y;
+	int r4 = x;
+	printf("r3 = %d\n", r3);
+	printf("r4 = %d\n", r4);
 	return ((void *)0);
 }
 
