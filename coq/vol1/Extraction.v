@@ -1,4 +1,4 @@
-(** * Extraction: Extracting ML from Coq *)
+(** * Extraction: Extracting OCaml from Coq *)
 
 (* ################################################################# *)
 (** * Basic Extraction *)
@@ -129,4 +129,4 @@ Extraction "imp.ml" empty_st ceval_step parse.
     chapter in _Verified Functional Algorithms_ (_Software
     Foundations_ volume 3). *)
 
-(* Wed Jan 9 12:02:46 EST 2019 *)
+(* 2021-05-26 09:56 *)
