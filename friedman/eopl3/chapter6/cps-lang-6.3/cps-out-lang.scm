@@ -42,6 +42,10 @@
        ("proc" "(" (arbno identifier) ")" tfexp)
        cps-proc-exp)
 
+      (simple-expression
+       ("emptylist")
+       cps-emptylist-exp)
+
       (tfexp
         (simple-expression)
         simple-exp->exp)   
