@@ -41,7 +41,11 @@
         (letrec-exp (ids bidss proc-bodies body)
           (cps-of-letrec-exp ids bidss proc-bodies body cont))
         (call-exp (rator rands)
-          (cps-of-call-exp rator rands cont)))))
+		  (cps-of-call-exp rator rands cont))
+
+	(emptylist-exp () (make-send-to-cont cont (cps-emptylist-exp)))
+
+	)))
 
   ;; cps-of-exps : Listof(InpExp) * (Listof(InpExp) -> TfExp) 
   ;;                -> TfExp
