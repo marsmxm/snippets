@@ -44,6 +44,16 @@
 		  (cps-of-call-exp rator rands cont))
 
 	(emptylist-exp () (make-send-to-cont cont (cps-emptylist-exp)))
+	(cons-exp (exp1 exp2)
+		  (cps-of-cons-exp exp1 exp2 cont))
+	(null?-exp (exp1)
+		   (cps-of-null?-exp exp1 cont))
+	(car-exp (exp1)
+		 (cps-of-car-exp exp1 cont))
+	(cdr-exp (exp1)
+		 (cps-of-cdr-exp exp1 cont))
+	(list-exp (exps)
+		  (cps-of-list-exp exps cont))
 
 	)))
 
@@ -89,7 +99,20 @@
           (inp-exp-simple? exp1))
         (proc-exp (ids exp) #t)
         (sum-exp (exps)
-          (all-simple? exps))
+		 (all-simple? exps))
+
+	(cons-exp (exp1 exp2)
+		  (and
+		   (inp-exp-simple? exp1)
+		   (inp-exp-simple? exp2)))
+	(null?-exp (exp1)
+		   (inp-exp-simple? exp1))
+	(car-exp (exp1)
+		 (inp-exp-simple? exp1))
+	(cdr-exp (exp1)
+		 (inp-exp-simple? exp1))
+	(list-exp (exps)
+		  (all-simple? exp1))
         (else #f))))
 
   (define all-simple?
@@ -132,7 +155,24 @@
             (cps-of-exp exp (cps-var-exp 'k%00))))
         (sum-exp (exps)
           (cps-sum-exp
-            (map cps-of-simple-exp exps)))
+           (map cps-of-simple-exp exps)))
+
+	(cons-exp (exp1 exp2)
+		  (cps-cons-exp
+		   (cps-of-simple-exp exp1)
+		   (cps-of-simple-exp exp2)))
+	(null?-exp (exp1)
+		   (cps-null?-exp
+		    (cps-of-simple-exp exp1)))
+	(car-exp (exp1)
+		 (cps-car-exp
+		  (cps-of-simple-exp exp1)))
+	(cdr-exp (exp1)
+		 (cps-cdr-exp
+		  (cps-of-simple-exp exp1)))
+	(list-exp (exps)
+		  (cps-list-exp
+		   (map cps-of-simple-exp exps)))
         (else 
           (report-invalid-exp-to-cps-of-simple-exp exp)))))
 
@@ -184,6 +224,17 @@
             (cps-diff-exp
               (car new-rands)
               (cadr new-rands)))))))
+
+  (define cps-of-cons-exp
+    (lambda (exp1 exp2 k-exp)
+      (cps-of-exps
+       (list exp1 exp2)
+       (lambda (new-exps)
+	 (make-send-to-cont
+	  k-exp
+	  (cps-cons-exp
+	   (car new-exps)
+	   (cadr new-exps)))))))
 
   ;; cps-of-if-exp : InpExp * InpExp * InpExp * SimpleExp -> TfExp
   ;; Page: 223
