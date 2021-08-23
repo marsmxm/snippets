@@ -46,6 +46,26 @@
        ("emptylist")
        cps-emptylist-exp)
 
+      (simple-expression
+       ("cons" "(" simple-expression "," simple-expression ")")
+       cps-cons-exp)
+
+      (expression
+       ("null?" "(" simple-expression ")")
+       cps-null?-exp)
+
+      (expression
+       ("car" "(" simple-expression ")")
+       cps-car-exp)
+
+      (expression
+       ("cdr" "(" simple-expression ")")
+       cps-cdr-exp)
+
+      (expression
+       ("list" "(" (separated-list simple-expression ",") ")")
+       cps-list-exp)
+
       (tfexp
         (simple-expression)
         simple-exp->exp)   
