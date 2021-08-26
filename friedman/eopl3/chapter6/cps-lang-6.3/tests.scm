@@ -151,7 +151,10 @@ in let times4 = (fix t4m)
     ;; thanks to EFanZh for finding this
     (let-scope-1 "
       let x = 6 in -(let x = 11 in x, x)"
-      5)
+		 5)
+
+    ;; list
+    (cons-1 "cons(1,emptylist)" (1))
 
 
     )))

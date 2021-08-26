@@ -112,7 +112,7 @@
 	(cdr-exp (exp1)
 		 (inp-exp-simple? exp1))
 	(list-exp (exps)
-		  (all-simple? exp1))
+		  (all-simple? exps))
         (else #f))))
 
   (define all-simple?
@@ -225,6 +225,36 @@
               (car new-rands)
               (cadr new-rands)))))))
 
+  (define cps-of-null?-exp
+    (lambda (exp1 k-exp)
+      (cps-of-exps
+       (list exp1)
+       (lambda (new-rands)
+	 (make-send-to-cont
+	  k-exp
+	  (cps-null?-exp
+	   (car new-rands)))))))
+
+  (define cps-of-car-exp
+    (lambda (exp1 k-exp)
+      (cps-of-exps
+       (list exp1)
+       (lambda (new-rands)
+	 (make-send-to-cont
+	  k-exp
+	  (cps-car-exp
+	   (car new-rands)))))))
+
+  (define cps-of-cdr-exp
+    (lambda (exp1 k-exp)
+      (cps-of-exps
+       (list exp1)
+       (lambda (new-rands)
+	 (make-send-to-cont
+	  k-exp
+	  (cps-cdr-exp
+	   (car new-rands)))))))
+
   (define cps-of-cons-exp
     (lambda (exp1 exp2 k-exp)
       (cps-of-exps
@@ -235,6 +265,15 @@
 	  (cps-cons-exp
 	   (car new-exps)
 	   (cadr new-exps)))))))
+
+  (define cps-of-list-exp
+    (lambda (exps k-exp)
+      (cps-of-exps
+       exps
+       (lambda (new-rands)
+	 (make-send-to-cont
+	  k-exp
+	  (cps-list-exp new-rands))))))
 
   ;; cps-of-if-exp : InpExp * InpExp * InpExp * SimpleExp -> TfExp
   ;; Page: 223

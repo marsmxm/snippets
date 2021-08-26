@@ -52,9 +52,61 @@
 
         (cps-proc-exp (vars body)
           (proc-val
-            (procedure vars body env)))
+           (procedure vars body env)))
 
-        )))
+	(cps-emptylist-exp () (list-val (emptylist)))
+
+	(cps-cons-exp
+	 (exp1 exp2)
+	 (let ([head (value-of-simple-exp exp1 env)]
+	       [tail (expval->list
+		      (value-of-simple-exp exp2 env))])
+	   (list-val
+	    (conslist head tail))))
+
+	(cps-null?-exp
+	 (exp1)
+	 (let ([a-list (expval->list
+			(value-of-simple-exp exp1 env))])
+	   (bool-val
+	    (cases
+	     listval a-list
+	     (emptylist () #t)
+	     (else #f)))))
+
+	(cps-car-exp
+	 (exp1)
+	 (let ([a-list (expval->list
+			(value-of-simple-exp exp1 env))])
+	   (cases
+	    listval a-list
+	    (emptylist () (eopl:error 'car "Found emptylist"))
+	    (conslist
+	     (head tail)
+	     head))))
+
+	(cps-cdr-exp
+	 (exp1)
+	 (let ([a-list (expval->list
+			(value-of-simple-exp exp1 env))])
+	   (cases
+	    listval a-list
+	    (emptylist () (eopl:error 'cdr "Found emptylist"))
+	    (conslist
+	     (head tail)
+	     (list-val tail)))))
+	
+	(cps-list-exp
+	 (exps)
+	 (list-val
+	  (let loop ([exps exps])
+	    (if (null? exps)
+		(emptylist)
+		(conslist
+		 (value-of-simple-exp (car exps) env)
+		 (loop (cdr exps)))))))
+
+	)))
   
   ;; value-of/k : TfExp * Env * Cont -> FinalAnswer
   ;; Page: 209
