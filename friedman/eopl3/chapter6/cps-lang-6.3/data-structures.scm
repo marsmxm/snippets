@@ -9,11 +9,20 @@
 
   (define-datatype expval expval?
     (num-val
-      (value number?))
+     (value number?))
     (bool-val
-      (boolean boolean?))
+     (boolean boolean?))
     (proc-val 
-      (proc proc?)))
+     (proc proc?))
+    (list-val
+     (a-list listval?)))
+
+  (define-datatype
+    listval listval?
+    (emptylist)
+    (conslist
+     (head expval?)
+     (tail listval?)))
 
 ;;; extractors:
 
@@ -34,6 +43,13 @@
       (cases expval v
 	(proc-val (proc) proc)
 	(else (expval-extractor-error 'proc v)))))
+
+  (define expval->list
+    (lambda (v)
+      (cases
+       expval v
+       (list-val (a-list) a-list)
+       (else (expval-extractor-error 'list v)))))
 
   (define expval-extractor-error
     (lambda (variant value)

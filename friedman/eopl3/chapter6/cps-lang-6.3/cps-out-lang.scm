@@ -50,19 +50,19 @@
        ("cons" "(" simple-expression "," simple-expression ")")
        cps-cons-exp)
 
-      (expression
+      (simple-expression
        ("null?" "(" simple-expression ")")
        cps-null?-exp)
 
-      (expression
+      (simple-expression
        ("car" "(" simple-expression ")")
        cps-car-exp)
 
-      (expression
+      (simple-expression
        ("cdr" "(" simple-expression ")")
        cps-cdr-exp)
 
-      (expression
+      (simple-expression
        ("list" "(" (separated-list simple-expression ",") ")")
        cps-list-exp)
 

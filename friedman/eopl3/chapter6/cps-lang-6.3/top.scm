@@ -1,3 +1,4 @@
+;; -*- geiser-scheme-implementation: racket -*-
 (module top (lib "eopl.ss" "eopl")
   
   ;; top level module.  Loads all required pieces.
@@ -56,10 +57,21 @@
       (cond
         ((number? sloppy-val) (num-val sloppy-val))
         ((boolean? sloppy-val) (bool-val sloppy-val))
+        ((list? sloppy-val) (list->list-val sloppy-val))
         (else
           (eopl:error 'sloppy->expval 
             "Can't convert sloppy value to expval: ~s"
             sloppy-val)))))
+
+  (define list->list-val
+    (lambda (scm-list)
+      (list-val
+       (let loop ([es scm-list])
+         (if (null? es)
+             (emptylist)
+             (conslist
+              (sloppy->expval (car es))
+              (loop (cdr es))))))))
     
   ;; run-one : Symbol -> ExpVal
 
