@@ -389,5 +389,15 @@
         ((pred (car lst)) 0)
         ((list-index pred (cdr lst)) => (lambda (n) (+ n 1)))
         (else #f))))
+
+  ;; (define list-index-r
+  ;;   (lambda (pred lst)
+  ;;     (cond
+  ;;      ((null? lst) #f)
+  ;;      ((list-index pred (cdr lst)) => (lambda (n) (+ n 1)))
+  ;;      ((pred (car lst)) 0)
+  ;;      (else #f))))
+
+  
         
   )
