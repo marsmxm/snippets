@@ -108,5 +108,96 @@
 	       (cons (car xs) (remb (cdr xs))))))
      (size xs)
      (() (size-decrease xs)))
+    
+    ))
+
+
+(J-Bob/step (defun.remb)
+  '(equal (memb?
+	    (remb '()))
+	  'nil)
+  '(((1 1) (remb '()))
+    ((1 1 Q) (atom '()))
+    ((1 1) (if-true '() (if (equal (car '()) '?)
+			    (remb (cdr '()))
+			    (cons (car '()) (remb (cdr '()))))))
+    ((1) (memb? '()))
+    ((1 Q) (atom '()))
+    ((1) (if-true 'nil
+		  (if (equal (car '()) '?)
+		      't
+		      (memb? (cdr '())))))
+    (() (equal-same 'nil))
+    ))
+
+(J-Bob/prove (dethm.memb?/remb2)
+  '(((dethm memb?/remb (xs)
+       (equal (memb? (remb xs)) 'nil))
+     (list-induction xs)
+     ;; base
+     ((A 1 1) (remb xs))
+     ((A 1 1) (if-nest-A
+	       (atom xs)
+	       '()
+	       (if (equal (car xs) '?)
+		   (remb (cdr xs))
+		   (cons (car xs) (remb (cdr xs))))))
+     ((A 1) (memb? '()))
+     ((A 1 Q) (atom '()))
+     ((A 1) (if-true
+	     'nil
+	     (if (equal (car '()) '?)
+		 't
+		 (memb? (cdr '())))))
+     ((A) (equal-same 'nil))
+     ;; induction
+     ((E A 1 1) (remb xs))
+     ((E A 1 1) (if-nest-E
+		 (atom xs)
+		 '()
+		 (if (equal (car xs) '?)
+		     (remb (cdr xs))
+		     (cons (car xs) (remb (cdr xs))))))
+     ((E A 1) (if-same
+	       (equal (car xs) '?)
+	       (memb?
+		(if (equal (car xs) '?)
+		    (remb (cdr xs))
+		    (cons (car xs) (remb (cdr xs)))))))
+     ((E A 1 A 1) (if-nest-A
+		   (equal (car xs) '?)
+		   (remb (cdr xs))
+		   (cons (car xs) (remb (cdr xs)))))
+     ((E A 1 E 1) (if-nest-E
+		   (equal (car xs) '?)
+		   (remb (cdr xs))
+		   (cons (car xs) (remb (cdr xs)))))
+     ((E A 1 A) (equal-if
+		 (memb? (remb (cdr xs)))
+		 'nil))
+     ((E A 1 E) (memb? (cons (car xs) (remb (cdr xs)))))
+     ((E A 1 E Q) (atom/cons (car xs) (remb (cdr xs))))
+     ((E A 1 E) (if-false
+		 'nil
+		 (if (equal (car (cons (car xs) (remb (cdr xs)))) '?)
+		     't
+		     (memb? (cdr (cons (car xs) (remb (cdr xs))))))))
+     ((E A 1 E Q 1) (car/cons (car xs) (remb (cdr xs))))
+     ((E A 1 E E 1) (cdr/cons (car xs) (remb (cdr xs))))
+     ((E A 1 E) (if-nest-E
+		 (equal (car xs) '?)
+		 't
+		 (memb? (remb (cdr xs)))))
+     ((E A 1 E) (equal-if
+		 (memb? (remb (cdr xs)))
+		 'nil))
+     ((E A 1) (if-same (equal (car xs) '?) 'nil))
+     ((E A) (equal-same 'nil))
+     ((E) (if-same
+	   (equal (memb? (remb (cdr xs))) 'nil)
+	   't))
+     (() (if-same
+	  (atom xs)
+	  't)))
 
     ))
