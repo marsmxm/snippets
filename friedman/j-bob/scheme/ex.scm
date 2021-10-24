@@ -201,3 +201,39 @@
 	  't)))
 
     ))
+
+
+(J-Bob/prove (dethm.memb?/remb)
+  '(((defun ctx? (x)
+       (if (atom x)
+           (equal x '?)
+           (if (ctx? (car x))
+               't
+               (ctx? (cdr x)))))
+     (size x)
+     ((Q) (natp/size x))
+     (() (if-true
+          (if (atom x)
+              't
+              (if (< (size (car x)) (size x))
+                  (if (ctx? (car x))
+                      't
+                      (< (size (cdr x)) (size x)))
+                  'nil))
+          'nil))
+     ((E Q) (size/car x))
+     ((E A E) (size/cdr x))
+     ((E A) (if-same
+             (ctx? (car x))
+             't))
+     ((E) (if-true 't 'nil))
+     (() (if-same (atom x) 't)))
+
+    ((dethm ctx?/sub (x y)
+       (if (ctx? x)
+           (if (ctx? y)
+               (equal (ctx? (sub x y)) 't)
+               't)
+           't))
+     )
+    ))
