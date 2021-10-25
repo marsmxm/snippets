@@ -48,9 +48,9 @@
 
 (J-Bob/prove (prelude)
   '(((defun list? (x)
-	(if (atom x)
-	    (equal x '())
-	    (list? (cdr x))))
+       (if (atom x)
+	   (equal x '())
+	   (list? (cdr x))))
      (size x)
      ((Q) (natp/size x))
      (() (if-true
@@ -73,10 +73,10 @@
      nil
      ((2 Q) (natp/size x))
      ((2) (if-true
-	  (if (atom x)
-	      't
-	      (< (size (cdr x)) (size x)))
-	  'nil))
+	   (if (atom x)
+	       't
+	       (< (size (cdr x)) (size x)))
+	   'nil))
      ((2 E) (size/cdr x))
      ((2) (if-same (atom x) 't))
      (() (equal-same 't)))
@@ -114,7 +114,7 @@
 
 (J-Bob/step (defun.remb)
   '(equal (memb?
-	    (remb '()))
+	   (remb '()))
 	  'nil)
   '(((1 1) (remb '()))
     ((1 1 Q) (atom '()))
@@ -235,5 +235,59 @@
                (equal (ctx? (sub x y)) 't)
                't)
            't))
+     (star-induction y)
+     (() (if-same
+	  (ctx? x)
+	  (if (atom y)
+	      (if (ctx? x)
+		  (if (ctx? y) (equal (ctx? (sub x y)) 't) 't)
+		  't)
+	      (if (if (ctx? x)
+		      (if (ctx? (car y)) (equal (ctx? (sub x (car y))) 't) 't)
+		      't)
+		  (if (if (ctx? x)
+			  (if (ctx? (cdr y)) (equal (ctx? (sub x (cdr y))) 't) 't)
+			  't)
+		      (if (ctx? x)
+			  (if (ctx? y) (equal (ctx? (sub x y)) 't) 't)
+			  't)
+		      't)
+		  't))))
+     ((A A) (if-nest-A
+	     (ctx? x)
+	     (if (ctx? y) (equal (ctx? (sub x y)) 't) 't)
+	     't))
+     ((A E Q) (if-nest-A
+	       (ctx? x)
+	       (if (ctx? (car y)) (equal (ctx? (sub x (car y))) 't) 't)
+	       't))
+     ((A E A Q) (if-nest-A
+		 (ctx? x)
+		 (if (ctx? (cdr y)) (equal (ctx? (sub x (cdr y))) 't) 't)
+		 't))
+     ((A E A A) (if-nest-A
+		 (ctx? x)
+		 (if (ctx? y) (equal (ctx? (sub x y)) 't) 't)
+		 't))
+     ((E A) (if-nest-E
+	     (ctx? x)
+	     (if (ctx? y) (equal (ctx? (sub x y)) 't) 't)
+	     't))
+     ((E E Q) (if-nest-E
+	       (ctx? x)
+	       (if (ctx? (car y)) (equal (ctx? (sub x (car y))) 't) 't)
+	       't))
+     ((E E A Q) (if-nest-E
+		 (ctx? x)
+		 (if (ctx? (cdr y)) (equal (ctx? (sub x (cdr y))) 't) 't)
+		 't))
+     ((E E A A) (if-nest-E
+		 (ctx? x)
+		 (if (ctx? y) (equal (ctx? (sub x y)) 't) 't)
+		 't))
+     ((E E A) (if-true 't 't))
+     ((E E) (if-true 't 't))
+     ((E) (if-same (atom y) 't))
+     
      )
     ))
