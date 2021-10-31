@@ -617,7 +617,8 @@
        ((A E E) (if-same (ctx? (cdr y)) 't))
        ((A E) (if-same (ctx? (car y)) 't))
        ((A) (if-same (atom y) 't))
-       (() (if-same (ctx? x) 't))))))
+       (() (if-same (ctx? x) 't))
+       ))))
 
 ;; Chapter 8
 
