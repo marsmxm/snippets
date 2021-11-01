@@ -261,3 +261,13 @@
      ((A) (if-same (atom y) 't))
      (() (if-same (ctx? x) 't))
      )))
+
+
+(defun defun.add-atoms ()
+  (J-Bob/define (defun.set?)
+    '(((defun add-atoms (x ys)
+         (if (atom x)
+             (if (member? x ys) ys (cons x ys))
+             (add-atoms (car x) (add-atoms (cdr x) ys))))
+       (size x)
+       ))))
