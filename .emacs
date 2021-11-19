@@ -178,3 +178,9 @@
 (put 'J-Bob/step 'scheme-indent-function 1)
 (put 'J-Bob/prove 'scheme-indent-function 1)
 (put 'J-Bob/define 'scheme-indent-function 1)
+
+;; acl2
+(add-to-list 'load-path "/../acl2/emacs")
+(if (boundp '*acl2-sources-dir*)
+    (makunbound '*acl2-sources-dir*))
+;(require 'emacs-acl2)
