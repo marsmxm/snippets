@@ -1,3 +1,7 @@
+library("stringr")
+library("readr")
+
+
 complete <- function(directory, id = 1:332) {
     nobs = vector(mode = "integer", length = length(id))
     
