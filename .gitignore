@@ -23,3 +23,6 @@ ResNet50.h5
 *.ibc
 
 .Rproj.user
+.Rhistory
+.RData
+
