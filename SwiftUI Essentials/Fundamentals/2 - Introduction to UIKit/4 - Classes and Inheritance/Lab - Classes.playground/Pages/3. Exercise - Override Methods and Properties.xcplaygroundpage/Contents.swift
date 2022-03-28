@@ -35,9 +35,29 @@ class Fighter: Spaceship {
             print("You have no more fire power.")
         }
     }
+    
+
 }
 //:  Define a new class `ShieldedShip` that inherits from `Fighter`. Add a variable property `shieldStrength` that defaults to 25. Create a new instance of `ShieldedShip` called `defender`. Set `name` to "Defender" and `weapon` to "Cannon." Call `moveRight()` and print `position`, then call `fire()` and print `remainingFirePower`.
+class ShieldedShip: Fighter {
+    var shieldStrength = 25
+    
+    override func wasHit() {
+        if shieldStrength > 0 {
+            shieldStrength -= 5
+        } else {
+            super.wasHit()
+        }
+    }
+}
 
+let defender = ShieldedShip()
+defender.name = "Defender"
+defender.weapon = "Cannon"
+defender.moveRight()
+print(defender.position)
+defender.fire()
+print(defender.remainingFirePower)
 
 //:  Go back to your declaration of `ShieldedShip` and override `wasHit()`. In the body of the method, check to see if `shieldStrength` is greater than 0. If it is, decrement `shieldStrength` by 5. Otherwise, decrement `health` by 5. Call `wasHit()` on `defender` and print `shieldStrength` and `health`.
 
