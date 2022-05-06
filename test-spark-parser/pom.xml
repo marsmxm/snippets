@@ -48,18 +48,21 @@
       <version>${scala.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.binary.version}</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_2.12</artifactId>
       <version>3.2.1</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_2.12</artifactId>
+      <version>3.2.11</version>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 
