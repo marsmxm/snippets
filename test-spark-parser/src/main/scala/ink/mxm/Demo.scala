@@ -3,7 +3,7 @@ package ink.mxm
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.QueryPlanningTracker
 import org.apache.spark.sql.catalyst.expressions.NamedExpression
-import org.apache.spark.sql.catalyst.plans.logical.{Aggregate, LogicalPlan, Project, SubqueryAlias, UnresolvedWith}
+import org.apache.spark.sql.catalyst.plans.logical.{Aggregate, Filter, LogicalPlan, Project, SubqueryAlias, UnresolvedWith}
 
 object Demo {
   lazy val spark: SparkSession = {
@@ -21,8 +21,7 @@ object Demo {
   }
 
   def analyze(sql: String): Unit = {
-    val parser = spark.sessionState.sqlParser
-    val plan = parser.parsePlan(sql)
+    val plan = spark.sessionState.sqlParser.parsePlan(sql)
     val analyzedPlan = spark.sessionState.analyzer.executeAndCheck(plan, new QueryPlanningTracker)
     println(analyzedPlan)
     extract0(analyzedPlan)
@@ -36,10 +35,17 @@ object Demo {
         columns = projectList
         child match {
           case SubqueryAlias(identifier, child) =>
+            println(identifier)
+            println(child)
+          case Filter(condition, child) =>
+            println(condition)
             println(child)
         }
       case Aggregate(groupingExprs, aggregateExprs, child) =>
         columns = aggregateExprs
+        println(groupingExprs)
+        println(aggregateExprs)
+        println(child)
       case _ =>
         println("unknown")
     }
