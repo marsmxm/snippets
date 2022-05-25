@@ -1,4 +1,4 @@
-<TeXmacs|2.1.2>
+<TeXmacs|2.1.1>
 
 <style|generic>
 
@@ -15,7 +15,13 @@
   <strong|Solution>:
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|\<Eta\><around*|(|X|)>=-<big|sum><rsub|x<rsup|>>p<around*|(|x|)>>|<cell|>|<cell|>>>>
+    <tformat|<table|<row|<cell|H<around*|(|X|)>=>|<cell|-<big|sum><rsub|x<rsup|>>p<around*|(|x|)>*log
+    p<around*|(|x|)>>|<cell|>>|<row|<cell|=>|<cell|5*<frac|1|5>*log5>|<cell|>>|<row|<cell|=>|<cell|log5>|<cell|>>>>
+  </eqnarray*>
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|H<around*|(|Y|)>=>|<cell|-<big|sum><rsub|y>p<around*|(|y|)>*log
+    p<around*|(|y|)>>|<cell|>>|<row|<cell|=>|<cell|>|<cell|>>>>
   </eqnarray*>
 
   \;
