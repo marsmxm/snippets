@@ -10,7 +10,7 @@ class DemoTest extends AnyFunSuite {
             +- Relation [age#7L,name#8] json
    */
   test("people - project") {
-    val sql = "SELECT * FROM (SELECT age FROM people)"
+    val sql = "SELECT name, age + 1 FROM people where age > 30"
     Demo.analyze(sql)
   }
 

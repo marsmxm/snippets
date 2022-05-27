@@ -1,4 +1,4 @@
-<TeXmacs|2.1.1>
+<TeXmacs|2.1.2>
 
 <style|generic>
 
@@ -21,7 +21,7 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|H<around*|(|Y|)>=>|<cell|-<big|sum><rsub|y>p<around*|(|y|)>*log
-    p<around*|(|y|)>>|<cell|>>|<row|<cell|=>|<cell|>|<cell|>>>>
+    p<around*|(|y|)>>|<cell|>>|<row|<cell|=>||<cell|>>>>
   </eqnarray*>
 
   \;
