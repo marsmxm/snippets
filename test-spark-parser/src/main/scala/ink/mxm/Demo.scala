@@ -2,8 +2,10 @@ package ink.mxm
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.QueryPlanningTracker
-import org.apache.spark.sql.catalyst.expressions.NamedExpression
-import org.apache.spark.sql.catalyst.plans.logical.{Aggregate, Filter, LogicalPlan, Project, SubqueryAlias, UnresolvedWith}
+import org.apache.spark.sql.catalyst.expressions.{AttributeReference, BinaryExpression, Expression}
+import org.apache.spark.sql.catalyst.plans.logical._
+
+import scala.annotation.tailrec
 
 object Demo {
   lazy val spark: SparkSession = {
@@ -24,30 +26,63 @@ object Demo {
     val plan = spark.sessionState.sqlParser.parsePlan(sql)
     val analyzedPlan = spark.sessionState.analyzer.executeAndCheck(plan, new QueryPlanningTracker)
     println(analyzedPlan)
-    extract0(analyzedPlan)
+    println(s"columns: ${extract0(analyzedPlan)}")
   }
 
-  def extract0(plan: LogicalPlan): Unit = {
-    var columns: Seq[NamedExpression] = Nil
-
+  def extract0(plan: LogicalPlan): List[String] = {
     plan match {
       case Project(projectList, child) =>
-        columns = projectList
-        child match {
-          case SubqueryAlias(identifier, child) =>
-            println(identifier)
-            println(child)
-          case Filter(condition, child) =>
-            println(condition)
-            println(child)
-        }
+        extractChild(child, extractExpressions(projectList, Nil))
+
       case Aggregate(groupingExprs, aggregateExprs, child) =>
-        columns = aggregateExprs
         println(groupingExprs)
         println(aggregateExprs)
         println(child)
+        Nil
+
+      case otherPlan =>
+        println(s"unknown top level plan: $otherPlan")
+        Nil
+    }
+  }
+
+  @tailrec
+  def extractChild(child: LogicalPlan, columns: List[String]): List[String] = {
+    child match {
+      case s @ SubqueryAlias(_, child) =>
+        println(s"SubQuery: $s")
+        extractChild(child, columns)
+
+      case f @ Filter(condition, child) =>
+        println(s"Filter: $f")
+        val cols = extractExpression(condition, columns)
+        extractChild(child, cols)
+
+      case p @ Project(projectList, child) =>
+        println(s"Project: $p")
+        extractChild(child, columns ++ projectList.map(p => p.name))
+
+      case otherCase =>
+        println(s"Other child: $otherCase")
+        columns
+    }
+  }
+
+  def extractExpressions(exprs: Seq[Expression], columns: List[String]): List[String] = {
+    exprs.foldLeft(columns)((cols, expr) => extractExpression(expr, cols))
+  }
+
+  def extractExpression(expr: Expression, columns: List[String]): List[String] = {
+    expr match {
+      case BinaryExpression(left, right) =>
+        val cols = extractExpression(left, columns)
+        extractExpression(right, cols)
+
+      case a: AttributeReference =>
+        a.name :: columns
+
       case _ =>
-        println("unknown")
+        columns
     }
   }
 
