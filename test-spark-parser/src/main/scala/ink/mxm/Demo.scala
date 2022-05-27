@@ -2,7 +2,7 @@ package ink.mxm
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.QueryPlanningTracker
-import org.apache.spark.sql.catalyst.expressions.{AttributeReference, BinaryExpression, Expression}
+import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference, BinaryExpression, Expression}
 import org.apache.spark.sql.catalyst.plans.logical._
 
 import scala.annotation.tailrec
@@ -29,25 +29,22 @@ object Demo {
     println(s"columns: ${extract0(analyzedPlan)}")
   }
 
-  def extract0(plan: LogicalPlan): List[String] = {
+  def extract0(plan: LogicalPlan): Set[String] = {
     plan match {
       case Project(projectList, child) =>
-        extractChild(child, extractExpressions(projectList, Nil))
+        extractChild(child, extractExpressions(projectList, Set.empty))
 
       case Aggregate(groupingExprs, aggregateExprs, child) =>
-        println(groupingExprs)
-        println(aggregateExprs)
-        println(child)
-        Nil
+        extractChild(child, extractExpressions(groupingExprs ++ aggregateExprs, Set.empty))
 
       case otherPlan =>
         println(s"unknown top level plan: $otherPlan")
-        Nil
+        Set.empty
     }
   }
 
   @tailrec
-  def extractChild(child: LogicalPlan, columns: List[String]): List[String] = {
+  def extractChild(child: LogicalPlan, columns: Set[String]): Set[String] = {
     child match {
       case s @ SubqueryAlias(_, child) =>
         println(s"SubQuery: $s")
@@ -68,20 +65,27 @@ object Demo {
     }
   }
 
-  def extractExpressions(exprs: Seq[Expression], columns: List[String]): List[String] = {
+  def extractExpressions(exprs: Seq[Expression], columns: Set[String]): Set[String] = {
     exprs.foldLeft(columns)((cols, expr) => extractExpression(expr, cols))
   }
 
-  def extractExpression(expr: Expression, columns: List[String]): List[String] = {
+  def extractExpression(expr: Expression, columns: Set[String]): Set[String] = {
     expr match {
-      case BinaryExpression(left, right) =>
+      case b @ BinaryExpression(left, right) =>
+        println(s"Binary Expr: $b")
         val cols = extractExpression(left, columns)
         extractExpression(right, cols)
 
-      case a: AttributeReference =>
-        a.name :: columns
+      case attr: AttributeReference =>
+        println(s"Attribute Ref: $attr")
+        columns + attr.name
 
-      case _ =>
+      case a @ Alias(_, name) =>
+        println(s"Alias: $a")
+        columns + name
+
+      case o =>
+        println(s"Other Expr: $o")
         columns
     }
   }
