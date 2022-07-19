@@ -4,6 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.QueryPlanningTracker
 import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference, BinaryExpression, Expression}
 import org.apache.spark.sql.catalyst.plans.logical._
+import org.apache.spark.sql.execution.SparkSqlParser
 import org.apache.spark.sql.execution.command.DataWritingCommand
 
 import scala.annotation.tailrec
@@ -24,9 +25,12 @@ object Demo {
   }
 
   def analyze(sql: String): Unit = {
-    val plan = spark.sessionState.sqlParser.parsePlan(sql)
+    val parser = new SparkSqlParser
+    val plan = parser.parsePlan(sql)
     val analyzedPlan = spark.sessionState.analyzer.executeAndCheck(plan, new QueryPlanningTracker)
+    println(plan)
     println(analyzedPlan)
+    println(s"columns: ${extract0(plan)}")
     println(s"columns: ${extract0(analyzedPlan)}")
   }
 
