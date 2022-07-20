@@ -12,6 +12,7 @@ class DemoTest extends AnyFunSuite {
   test("people - project") {
     val sql = "SELECT name, age + 1 FROM people where age > 30"
     Demo.analyze(sql)
+//    println(Demo.analyze(sql) == Demo.analyze(sql))
   }
 
   /**
