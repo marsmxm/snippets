@@ -19,6 +19,6 @@ public class Test {
 
         ParseTree tree = parser.r();    // begin parsing at rule r
         System.out.println(tree.toStringTree(parser)); // print LISP-style tree
-
+        System.out.println(tokens);
     }
 }
