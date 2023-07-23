@@ -4,7 +4,7 @@
   (require "cps-in-lang.scm")
   (require "cps-out-lang.scm")
 
-  (provide cps-of-program)
+  (provide cps-of-program list-index-r)
 
   ;; cps-of-program : InpExp -> TfExp
   ;; Page: 224
@@ -70,7 +70,7 @@
     (lambda (exps builder)
       (let cps-of-rest ((exps exps))
         ;; cps-of-rest : Listof(InpExp) -> TfExp
-        (let ((pos (list-index
+        (let ((pos (list-index ;; Exercise 6.20 use list-index-r
                      (lambda (exp)
                        (not (inp-exp-simple? exp)))
                      exps)))
@@ -83,37 +83,38 @@
                   (cps-of-rest
                     (list-set exps pos (var-exp var)))))))))))
 
+
   ;; inp-exp-simple? : InpExp -> Bool
   ;; returns #t or #f, depending on whether exp would be a 
   ;; simple-exp if reparsed using the CPS-OUT language.
   (define inp-exp-simple?
     (lambda (exp)
       (cases expression exp
-        (const-exp (num) #t)
-        (var-exp (var) #t)
-        (diff-exp (exp1 exp2)
-          (and
-            (inp-exp-simple? exp1)
-            (inp-exp-simple? exp2)))
-        (zero?-exp (exp1)
-          (inp-exp-simple? exp1))
-        (proc-exp (ids exp) #t)
-        (sum-exp (exps)
-		 (all-simple? exps))
+             (const-exp (num) #t)
+             (var-exp (var) #t)
+             (diff-exp (exp1 exp2)
+                       (and
+                        (inp-exp-simple? exp1)
+                        (inp-exp-simple? exp2)))
+             (zero?-exp (exp1)
+                        (inp-exp-simple? exp1))
+             (proc-exp (ids exp) #t)
+             (sum-exp (exps)
+		      (all-simple? exps))
 
-	(cons-exp (exp1 exp2)
-		  (and
-		   (inp-exp-simple? exp1)
-		   (inp-exp-simple? exp2)))
-	(null?-exp (exp1)
-		   (inp-exp-simple? exp1))
-	(car-exp (exp1)
-		 (inp-exp-simple? exp1))
-	(cdr-exp (exp1)
-		 (inp-exp-simple? exp1))
-	(list-exp (exps)
-		  (all-simple? exps))
-        (else #f))))
+	     (cons-exp (exp1 exp2)
+		       (and
+		        (inp-exp-simple? exp1)
+		        (inp-exp-simple? exp2)))
+	     (null?-exp (exp1)
+		        (inp-exp-simple? exp1))
+	     (car-exp (exp1)
+		      (inp-exp-simple? exp1))
+	     (cdr-exp (exp1)
+		      (inp-exp-simple? exp1))
+	     (list-exp (exps)
+		       (all-simple? exps))
+             (else #f))))
 
   (define all-simple?
     (lambda (exps)
@@ -350,23 +351,29 @@
   ;; Page: 220
   (define cps-of-call-exp
     (lambda (rator rands k-exp)
-      (cps-of-exps (cons rator rands)
+      (cps-of-exps (cons rator rands) ;; Exercise 6.21 use snoc below
         (lambda (new-rands)
           (cps-call-exp
             (car new-rands)
             (append (cdr new-rands) (list k-exp)))))))
 
-  ;;;;;;;;;;;;;;;; utilities ;;;;;;;;;;;;;;;;
+  (define snoc
+    (lambda (x xs)
+      (if (null? xs)
+          '(x)
+          (cons (car xs) (snoc x (cdr xs))))))
+
+;;;;;;;;;;;;;;;; utilities ;;;;;;;;;;;;;;;;
 
   (define fresh-identifier
     (let ((sn 0))
       (lambda (identifier)  
         (set! sn (+ sn 1))
         (string->symbol
-          (string-append
-            (symbol->string identifier)
-            "%"             ; this can't appear in an input identifier
-            (number->string sn))))))
+         (string-append
+          (symbol->string identifier)
+          "%"               ; this can't appear in an input identifier
+          (number->string sn))))))
 
   ;; list-set : SchemeList * Int * SchemeVal -> SchemeList
   ;; returns a list lst1 that is just like lst, except that 
@@ -390,14 +397,13 @@
         ((list-index pred (cdr lst)) => (lambda (n) (+ n 1)))
         (else #f))))
 
-  ;; (define list-index-r
-  ;;   (lambda (pred lst)
-  ;;     (cond
-  ;;      ((null? lst) #f)
-  ;;      ((list-index pred (cdr lst)) => (lambda (n) (+ n 1)))
-  ;;      ((pred (car lst)) 0)
-  ;;      (else #f))))
+  (define list-index-r
+    (lambda (pred lst)
+      (cond
+       [(null? lst) #f]
+       [(list-index-r pred (cdr lst)) => (lambda (n) (+ n 1))]
+       [(pred (car lst)) 0]
+       [else #f])))
 
-  
         
   )
