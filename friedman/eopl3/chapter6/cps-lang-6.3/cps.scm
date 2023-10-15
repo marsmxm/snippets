@@ -286,6 +286,7 @@
             (cps-of-exp exp2 k-exp)
             (cps-of-exp exp3 k-exp))))))
 
+  ;; Exercise 6.23
   (define cps-of-if-exp
     (lambda (exp1 exp2 exp3 k-exp)
       (cps-of-exps (list exp1)
