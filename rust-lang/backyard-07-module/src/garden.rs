@@ -1,1 +1,1 @@
-mod vegetables;
+pub mod vegetables;
