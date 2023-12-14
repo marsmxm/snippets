@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/assignment.iml" filepath="$PROJECT_DIR$/.idea/modules/assignment.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/assignment-build.iml" filepath="$PROJECT_DIR$/.idea/modules/assignment-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/submission.iml" filepath="$PROJECT_DIR$/.idea/modules/submission.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/submission-build.iml" filepath="$PROJECT_DIR$/.idea/modules/submission-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/11-actorbintree-sources.iml" filepath="$PROJECT_DIR$/.idea/modules/11-actorbintree-sources.iml" group="actorbintree" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/actorbintree-build.iml" filepath="$PROJECT_DIR$/.idea/modules/actorbintree-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/assignment.iml" filepath="$PROJECT_DIR$/.idea/modules/assignment.iml" group="actorbintree" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/submission.iml" filepath="$PROJECT_DIR$/.idea/modules/submission.iml" group="actorbintree" />
     </modules>
   </component>
 </project>
