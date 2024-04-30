@@ -146,10 +146,38 @@ example : ¬p ∨ ¬q → ¬(p ∧ q) := fun (h : ¬p ∨ ¬q) =>
     (fun (nq : ¬q) =>
       (fun (hpq : p ∧ q) => absurd hpq.right nq))
 
-example : ¬(p ∧ ¬p) := sorry
-example : p ∧ ¬q → ¬(p → q) := sorry
-example : ¬p → (p → q) := sorry
-example : (¬p ∨ q) → (p → q) := sorry
+example : ¬(p ∧ ¬p) := fun (h : p ∧ ¬p) => absurd h.left h.right
+
+example : p ∧ ¬q → ¬(p → q) :=
+  fun (h : p ∧ ¬q) =>
+    fun (hpq : p → q) =>
+      absurd (hpq h.left) h.right
+
+example : ¬p → (p → q) :=
+  fun (np : ¬p) =>
+    fun (hp: p) =>
+      absurd hp np
+
+example : (¬p ∨ q) → (p → q) :=
+  fun (h : ¬p ∨ q) =>
+    fun (hp : p) =>
+      h.elim
+        (fun (np : ¬p) => absurd hp np)
+        (fun (hq : q) => hq)
+
 example : p ∨ False ↔ p := sorry
 example : p ∧ False ↔ False := sorry
 example : (p → q) → (¬q → ¬p) := sorry
+
+
+open Classical
+
+variable (p q r : Prop)
+
+example : (p → q ∨ r) → ((p → q) ∨ (p → r)) := sorry
+example : ¬(p ∧ q) → ¬p ∨ ¬q := sorry
+example : ¬(p → q) → p ∧ ¬q := sorry
+example : (p → q) → (¬p ∨ q) := sorry
+example : (¬q → ¬p) → (p → q) := sorry
+example : p ∨ ¬p := sorry
+example : (((p → q) → p) → p) := sorry
