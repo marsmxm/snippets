@@ -1,6 +1,7 @@
 variable (p q : Prop)
 
 #check p → q → p ∧ q
+#check False
 
 
 example (hp : p) (hq : q) : p ∧ q := And.intro hp hq
@@ -165,7 +166,13 @@ example : (¬p ∨ q) → (p → q) :=
         (fun (np : ¬p) => absurd hp np)
         (fun (hq : q) => hq)
 
-example : p ∨ False ↔ p := sorry
+example : p ∨ False ↔ p :=
+  Iff.intro
+    (fun (h : p ∨ False) => h.elim
+      (fun (hp : p) => hp)
+      (fun (n : False) => False.elim n))
+    (fun (hp : p) => Or.inl hp)
+
 example : p ∧ False ↔ False := sorry
 example : (p → q) → (¬q → ¬p) := sorry
 
