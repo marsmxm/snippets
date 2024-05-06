@@ -30,6 +30,7 @@ def b2 : Bool := false
 def α : Type := Nat
 def β : Type := Bool
 
+#check Prop
 #check Prod α β       -- Type
 #check α × β          -- Type
 
