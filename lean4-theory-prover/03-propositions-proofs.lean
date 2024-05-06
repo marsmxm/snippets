@@ -184,6 +184,7 @@ theorem thm1 : (p → q) → (¬q → ¬p) :=
       fun (hp : p) =>
         absurd (h hp) hnq
 
+
 example : ¬(p ↔ ¬p) :=
   fun (h : p ↔ ¬p) =>
     have hppn : p → p → False := h.mp
@@ -196,6 +197,14 @@ open Classical
 variable (p q r : Prop)
 
 #check em p
+
+theorem dnel {p : Prop} (hp : p) : ¬¬p :=
+  fun (hnp : ¬p) => absurd hp hnp
+
+theorem dner {p : Prop} (h : ¬¬p) : p :=
+  Or.elim (em p)
+    (fun hp : p => hp)
+    (fun hnp : ¬p => absurd hnp h)
 
 example : (p → q ∨ r) → ((p → q) ∨ (p → r)) :=
   fun (h : p → q ∨ r) => Or.elim (em p)
@@ -216,12 +225,35 @@ example : ¬(p → q) → p ∧ ¬q :=
     (fun (hp : p) => Or.elim (em q)
       (fun (hq : q) => absurd (fun (_ : p) => hq) h)
       (fun (hnq : ¬q) => ⟨hp, hnq⟩))
-    (fun (hnp : ¬p) => Or.elim (em q)
-      (fun (hq : q) => absurd (fun (_ : p) => hq) h)
-      (fun (hnq : ¬q) => absurd (thm1 ¬q ¬p) h))
+    (fun (hnp : ¬p) =>
+      have t0 : (¬¬p → ¬¬q) → p → q :=
+          fun (t0h : ¬¬p → ¬¬q) =>
+            fun (t0hp : p) => dner (t0h (dnel t0hp))
+      have t1 : ¬(¬¬p → ¬¬q) := fun (t1h : ¬¬p → ¬¬q) => absurd (t0 t1h) h
+      absurd (thm1 (¬q) (¬p) (fun (_ : ¬q) => hnp)) t1)
 
+example : (p → q) → (¬p ∨ q) :=
+  fun (h : p → q) => show ¬p ∨ q from Or.elim (em p)
+    (fun (hp : p) => Or.inr (h hp))
+    (fun (hnp : ¬p) => Or.inl hnp)
 
-example : (p → q) → (¬p ∨ q) := sorry
-example : (¬q → ¬p) → (p → q) := sorry
-example : p ∨ ¬p := sorry
-example : (((p → q) → p) → p) := sorry
+example : (¬q → ¬p) → (p → q) :=
+  fun (h : ¬q → ¬p) =>
+    have t0 : (¬¬p → ¬¬q) → p → q :=
+          fun (t0h : ¬¬p → ¬¬q) =>
+            fun (t0hp : p) => dner (t0h (dnel t0hp))
+    have t1 : ¬¬p → ¬¬q := thm1 (¬q) (¬p) h
+    t0 t1
+
+example : p ∨ ¬p := Or.elim (em p)
+  (fun (hp : p) => Or.inl hp)
+  (fun (hnp : ¬p) => Or.inr hnp)
+
+example : ((p → q) → p) → p :=
+  fun (h₀ : (p → q) → p) => Or.elim (em p)
+    (fun (hp : p) => hp)
+    (fun (hnp : ¬p) =>
+      have l₀ : p → q := fun (hp : p) => absurd hp hnp
+      have l₁ : ((p → q) → p) → False :=
+        fun (h₁ : (p → q) → p) => absurd (h₁ l₀) hnp
+      absurd h₀ l₁)
