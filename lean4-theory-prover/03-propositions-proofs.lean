@@ -173,17 +173,54 @@ example : p ∨ False ↔ p :=
       (fun (n : False) => False.elim n))
     (fun (hp : p) => Or.inl hp)
 
-example : p ∧ False ↔ False := sorry
-example : (p → q) → (¬q → ¬p) := sorry
+example : p ∧ False ↔ False :=
+  Iff.intro
+    (fun (h : p ∧ False) => h.right)
+    (fun (h : False) => h.elim)
+
+example : (p → q) → (¬q → ¬p) :=
+  fun (h : p → q) =>
+    fun (hnq : ¬q) =>
+      fun (hp : p) =>
+        absurd (h hp) hnq
+
+example : ¬(p ↔ ¬p) :=
+  fun (h : p ↔ ¬p) =>
+    have hppn : p → p → False := h.mp
+    have hpnp : (p → False) → p := h.mpr
+    sorry
 
 
 open Classical
 
 variable (p q r : Prop)
 
-example : (p → q ∨ r) → ((p → q) ∨ (p → r)) := sorry
-example : ¬(p ∧ q) → ¬p ∨ ¬q := sorry
-example : ¬(p → q) → p ∧ ¬q := sorry
+#check em p
+
+example : (p → q ∨ r) → ((p → q) ∨ (p → r)) :=
+  fun (h : p → q ∨ r) => Or.elim (em p)
+    (fun (hp : p) => Or.elim (h hp)
+      (fun (hq : q) => Or.inl (fun (_ : p) => hq))
+      (fun (hr : r) => Or.inr (fun (_ : p) => hr)))
+    (fun (hnp : ¬p) => Or.inl (fun (hp : p) => absurd hp hnp))
+
+example : ¬(p ∧ q) → ¬p ∨ ¬q :=
+  fun (h : p ∧ q → False) => Or.elim (em p)
+    (fun (hp : p) => Or.elim (em q)
+      (fun (hq : q) => absurd ⟨hp, hq⟩ h)
+      (fun (hnq : ¬q) => Or.inr hnq))
+    (fun (hnp : ¬p) => Or.inl hnp)
+
+example : ¬(p → q) → p ∧ ¬q :=
+  fun (h : ¬(p → q)) => Or.elim (em p)
+    (fun (hp : p) => Or.elim (em q)
+      (fun (hq : q) => absurd (fun (_ : p) => hq) h)
+      (fun (hnq : ¬q) => ⟨hp, hnq⟩))
+    (fun (hnp : ¬p) => Or.elim (em q)
+      (fun (hq : q) => absurd (fun (_ : p) => hq) h)
+      (fun (hnq : ¬q) => sorry))
+
+
 example : (p → q) → (¬p ∨ q) := sorry
 example : (¬q → ¬p) → (p → q) := sorry
 example : p ∨ ¬p := sorry
