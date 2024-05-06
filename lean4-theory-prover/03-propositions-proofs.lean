@@ -178,7 +178,7 @@ example : p ∧ False ↔ False :=
     (fun (h : p ∧ False) => h.right)
     (fun (h : False) => h.elim)
 
-example : (p → q) → (¬q → ¬p) :=
+theorem thm1 : (p → q) → (¬q → ¬p) :=
   fun (h : p → q) =>
     fun (hnq : ¬q) =>
       fun (hp : p) =>
@@ -218,7 +218,7 @@ example : ¬(p → q) → p ∧ ¬q :=
       (fun (hnq : ¬q) => ⟨hp, hnq⟩))
     (fun (hnp : ¬p) => Or.elim (em q)
       (fun (hq : q) => absurd (fun (_ : p) => hq) h)
-      (fun (hnq : ¬q) => sorry))
+      (fun (hnq : ¬q) => absurd (thm1 ¬q ¬p) h))
 
 
 example : (p → q) → (¬p ∨ q) := sorry
