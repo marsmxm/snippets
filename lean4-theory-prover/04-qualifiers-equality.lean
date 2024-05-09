@@ -49,6 +49,7 @@ example (h : ¬ ∀ x, ¬ p x) : ∃ x, p x :=
 /- ∃ examples -/
 variable (α : Type) (p q : α → Prop)
 variable (r : Prop)
+variable (a : α)
 
 example : (∃ x : α, r) → r :=
   fun (h : (∃ x : α, r)) =>
@@ -84,8 +85,24 @@ example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := Iff.intro
       match hqx with
       | ⟨w, hqw⟩ => ⟨w, Or.inr hqw⟩))
 
-example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := sorry
-example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) := sorry
+example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
+  Iff.intro
+    (fun (h : ∀ x, p x) =>
+     fun (h1 : ∃ x, ¬ p x) =>
+        match h1 with
+        | ⟨a, hnpa⟩ => absurd (h a) hnpa)
+    (fun (h : ¬ (∃ x, ¬ p x)) =>
+     fun (x : α) =>
+      byContradiction
+        (fun (hnpx : ¬ p x) => absurd ⟨x, hnpx⟩ h))
+
+example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
+  Iff.intro
+    (fun ⟨a, (hpa : p a)⟩ =>
+      fun (h : ∀ x, ¬ p x) => absurd hpa (h a))
+    (fun (h : ¬ (∀ x, ¬ p x)) =>
+      sorry)
+
 example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
 example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := sorry
 
