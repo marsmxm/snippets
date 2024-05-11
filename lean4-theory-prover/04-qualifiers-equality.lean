@@ -101,7 +101,12 @@ example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
     (fun ⟨a, (hpa : p a)⟩ =>
       fun (h : ∀ x, ¬ p x) => absurd hpa (h a))
     (fun (h : ¬ (∀ x, ¬ p x)) =>
-      sorry)
+      byCases
+        (fun (hpx : ∀ x, p x) => ⟨a, hpx a⟩)
+        (fun (hnpx : ¬ (∀ x, p x)) =>
+          byContradiction
+            (fun (hnex : ¬ (∃ x, p x)) =>
+              sorry)))
 
 example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
 example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := sorry
