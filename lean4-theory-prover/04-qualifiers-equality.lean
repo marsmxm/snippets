@@ -5,7 +5,6 @@ we obtain a proof ∀ x : α, p x. -/
 
 /- Given a proof ∀ x : α, p x and any term t : α, we obtain a proof of p t. -/
 
-
 variable (g : Nat → Nat → Nat)
 variable (hg : g 0 0 = 0)
 
@@ -85,7 +84,7 @@ example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := Iff.intro
       match hqx with
       | ⟨w, hqw⟩ => ⟨w, Or.inr hqw⟩))
 
-example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
+theorem thm1 : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
   Iff.intro
     (fun (h : ∀ x, p x) =>
      fun (h1 : ∃ x, ¬ p x) =>
@@ -96,21 +95,126 @@ example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
       byContradiction
         (fun (hnpx : ¬ p x) => absurd ⟨x, hnpx⟩ h))
 
+theorem thm2 : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
+  Iff.intro
+    (fun (h : ¬ ∃ x, p x) =>
+      fun (x : α) =>
+        fun (hp : p x) =>
+          absurd ⟨x, hp⟩ h)
+    (fun (h : ∀ x, ¬ p x) =>
+      byCases
+        (fun (hep : ∃ x, p x) =>
+          let ⟨a, (hpa : p a)⟩ := hep
+          absurd hpa (h a))
+        (fun (hnep : ¬ ∃ x, p x) => hnep))
+
 example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
   Iff.intro
     (fun ⟨a, (hpa : p a)⟩ =>
       fun (h : ∀ x, ¬ p x) => absurd hpa (h a))
     (fun (h : ¬ (∀ x, ¬ p x)) =>
+      byContradiction
+        (fun (hnep : ¬ (∃ x, p x)) =>
+          have hanp : ∀ x, ¬ p x := (thm2 α p).mp hnep
+          absurd hanp h))
+
+example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
+  Iff.intro
+    (fun (h : ¬ ∀ x, p x) =>
+      byContradiction
+        (fun (h1 : ¬ ∃ x, ¬ p x) =>
+          have h2 : ∀ x, p x := (thm1 α p).mpr h1
+          h h2))
+    (fun (h : ∃ x, ¬ p x) =>
+      fun (hap : ∀ x, p x) =>
+        let ⟨a, (hnp : ¬ p a)⟩ := h
+        absurd (hap a) hnp)
+
+example : (∀ x, p x → r) ↔ (∃ x, p x) → r :=
+  Iff.intro
+    (fun (h : ∀ x, p x → r) =>
+      fun (h1 : ∃ x, p x) =>
+        let ⟨a, (hep : p a)⟩ := h1
+        (h a) hep)
+    (fun (h : (∃ x, p x) → r) =>
+      fun x =>
+        fun h1 : p x =>
+          h ⟨x, h1⟩)
+
+example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r :=
+  Iff.intro
+    (fun (h : ∃ x, p x → r) =>
+      fun (h1 : ∀ x, p x) =>
+        let ⟨a, (ha : p a → r)⟩ := h
+        ha (h1 a))
+    (fun (h : (∀ x, p x) → r) =>
       byCases
-        (fun (hpx : ∀ x, p x) => ⟨a, hpx a⟩)
-        (fun (hnpx : ¬ (∀ x, p x)) =>
+        (fun (h1 : ∀ x, p x) => ⟨a, fun _ => h h1⟩)
+        (fun (h2 : ¬ (∀ x, p x)) =>
           byContradiction
-            (fun (hnex : ¬ (∃ x, p x)) =>
-              sorry)))
+            (fun h3 : ¬ (∃ x, p x → r) =>
+              have : ∀ x, ¬ (p x → r) := (thm2 α (fun y => p y → r)).mp h3
+              have : ∀ x, p x :=
+                fun x =>
+                  have h6 : ¬ (p x → r) := this x
+                  (not_imp.mp h6).left
+              h2 this)))
 
-example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
-example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := sorry
 
-example : (∀ x, p x → r) ↔ (∃ x, p x) → r := sorry
-example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := sorry
-example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := sorry
+example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) :=
+  Iff.intro
+    (fun (h : ∃ x, r → p x) =>
+      fun r' =>
+        let ⟨a, (hrp : r → p a)⟩ := h
+        ⟨a, hrp r'⟩)
+    (fun (h : r → ∃ x, p x) =>
+      byContradiction
+        (fun (hnerp : ¬(∃ x, r → p x)) =>
+          have hanrp : ∀ x, ¬(r → p x) := (thm2 α (fun y => r → p y)).mp hnerp
+          have hrp : r ∧ ¬ p a := not_imp.mp (hanrp a)
+          let ⟨w, (hpw : p w)⟩ := h hrp.left
+          have herp : ∃ x, r → p x := ⟨w, fun _ => hpw⟩
+          hnerp herp))
+
+
+example (n : Nat) : Nat := ‹Nat›
+
+/- 1. Prove these equivalences: -/
+variable (α : Type) (p q : α → Prop)
+
+example : (∀ x, p x ∧ q x) ↔ (∀ x, p x) ∧ (∀ x, q x) :=
+  Iff.intro
+    (fun (h : ∀ x, p x ∧ q x) =>
+      And.intro
+        (fun x => (h x).left)
+        (fun x => (h x).right))
+    (fun (h : (∀ x, p x) ∧ (∀ x, q x)) =>
+      fun x =>
+        ⟨h.left x, h.right x⟩)
+
+example : (∀ x, p x → q x) → (∀ x, p x) → (∀ x, q x) :=
+  fun (h : ∀ x, p x → q x) =>
+    fun (h1 : ∀ x, p x) =>
+      fun x => (h x) (h1 x)
+
+example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x :=
+  fun (h : (∀ x, p x) ∨ (∀ x, q x)) =>
+    fun x => Or.elim h
+      (fun (hp : ∀ x, p x) => Or.inl (hp x))
+      (fun (hq : ∀ x, q x) => Or.inr (hq x))
+
+
+/- 2. It is often possible to bring a component of a formula outside a universal quantifier,
+when it does not depend on the quantified variable.
+Try proving these (one direction of the second of these requires classical logic): -/
+variable (α : Type) (p q : α → Prop)
+variable (r : Prop)
+
+example : α → ((∀ x : α, r) ↔ r) :=
+  fun α =>
+    Iff.intro
+      (fun (h : ∀ (x : α), r) => sorry)
+      (fun (h : r) => sorry)
+
+example : (∀ x, p x ∨ r) ↔ (∀ x, p x) ∨ r := sorry
+example : (∀ x, r → p x) ↔ (r → ∀ x, p x) := sorry
