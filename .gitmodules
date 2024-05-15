@@ -4,12 +4,12 @@
 [submodule "progfun/src/parprog"]
 	path = progfun/src/parprog
 	url = https://github.com/axel22/parprog-snippets
-[submodule "tutorials/mirage"]
-	path = tutorials/mirage
-	url = git://github.com/mirage/mirage-skeleton.git
 [submodule "idris/TypeDD-Samples"]
 	path = idris/TypeDD-Samples
 	url = https://github.com/edwinb/TypeDD-Samples
 [submodule "mathematics_in_lean"]
 	path = mathematics_in_lean
+	url = git@github.com:marsmxm/mathematics_in_lean.git
+[submodule "matchematics_in_lean"]
+	path = matchematics_in_lean
 	url = git@github.com:marsmxm/mathematics_in_lean.git
