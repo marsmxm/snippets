@@ -118,7 +118,7 @@ example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
           have hanp : ∀ x, ¬ p x := (thm2 α p).mp hnep
           absurd hanp h))
 
-example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
+theorem thm3 : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
   Iff.intro
     (fun (h : ¬ ∀ x, p x) =>
       byContradiction
@@ -207,14 +207,82 @@ example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x :=
 /- 2. It is often possible to bring a component of a formula outside a universal quantifier,
 when it does not depend on the quantified variable.
 Try proving these (one direction of the second of these requires classical logic): -/
-variable (α : Type) (p q : α → Prop)
 variable (r : Prop)
 
 example : α → ((∀ x : α, r) ↔ r) :=
-  fun α =>
+  fun a =>
     Iff.intro
-      (fun (h : ∀ (x : α), r) => sorry)
-      (fun (h : r) => sorry)
+      (fun (h : ∀ x : α, r) => h a)
+      (fun (h : r) => fun _ => h)
 
-example : (∀ x, p x ∨ r) ↔ (∀ x, p x) ∨ r := sorry
-example : (∀ x, r → p x) ↔ (r → ∀ x, p x) := sorry
+example : (∀ x, p x ∨ r) ↔ (∀ x, p x) ∨ r :=
+  Iff.intro
+    (fun (h : ∀ x, p x ∨ r) =>
+      byContradiction
+        (fun (hnpr : ¬ ((∀ x, p x) ∨ r)) =>
+          have h1 : ¬(∀ x, p x) ∧ ¬r := not_or.mp hnpr
+          have : ∃ x, ¬ p x := (thm3 α p).mp h1.left
+          let ⟨a, (hnp : ¬ p a)⟩ := this
+          Or.elim (h a)
+            (fun (hp : p a) => hnp hp)
+            (fun (hr : r) => h1.right hr)))
+    (fun (h : (∀ x, p x) ∨ r) =>
+      fun x =>
+      Or.elim h
+        (fun (h1 : ∀ x, p x) => Or.inl (h1 x))
+        (fun (h1 : r) => Or.inr h1))
+
+example : (∀ x, r → p x) ↔ (r → ∀ x, p x) :=
+  Iff.intro
+    (fun (h : ∀ x, r → p x) =>
+      fun (hr : r) =>
+        fun x =>
+          (h x) hr)
+    (fun (h : r → ∀ x, p x) =>
+      fun x =>
+        fun (hr : r) =>
+          (h hr) x)
+
+/- 3. Consider the "barber paradox," that is, the claim that in a certain town
+there is a (male) barber that shaves all and only the men who do not shave themselves.
+Prove that this is a contradiction:-/
+variable (men : Type) (barber : men)
+variable (shaves : men → men → Prop)
+
+example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False :=
+  have h1 : shaves barber barber ↔ ¬ shaves barber barber := h barber
+  byCases
+    (fun (h2 : shaves barber barber) => (h1.mp h2) h2)
+    (fun (h2 : ¬ shaves barber barber) => h2 (h1.mpr h2))
+
+
+/- 4. Remember that, without any parameters, an expression of type Prop is just an assertion.
+Fill in the definitions of prime and Fermat_prime below, and construct each of
+the given assertions. For example, you can say that there are infinitely
+many primes by asserting that for every natural number n, there is a prime number
+greater than n. Goldbach's weak conjecture states that every odd number
+greater than 5 is the sum of three primes. Look up the definition of a Fermat prime
+or any of the other statements, if necessary.-/
+def even (n : Nat) : Prop :=
+  n / 2 = 0
+
+def prime (n : Nat) : Prop :=
+  n > 1 ∧ ∀ m : Nat, (m > 1 ∧ m < n) → m % n > 0
+
+def infinitely_many_primes : Prop :=
+  ∀ n : Nat, (∃ m : Nat, m > n ∧ prime m)
+
+def Fermat_prime (n : Nat) : Prop :=
+  (∃ k : Nat, k > 0 ∧ n = 2^k + 1) ∧ prime n
+
+def infinitely_many_Fermat_primes : Prop :=
+  ∀ n : Nat, (∃ m : Nat, m > n ∧ Fermat_prime m)
+
+def goldbach_conjecture : Prop :=
+  ∀ n : Nat, n > 2 ∧ even n → (∃ a b : Nat, prime a ∧ prime b ∧ n = a + b)
+
+def Goldbach's_weak_conjecture : Prop :=
+  ∀ n : Nat, n > 5 ∧ ¬ even n → (∃ a b c : Nat, prime a ∧ prime b ∧ prime c ∧ n = a + b + c)
+
+def Fermat's_last_theorem : Prop :=
+  ∀ n : Nat, n > 2 → (¬ ∃ a b c : Nat, a^n + b^n = c^n)
