@@ -10,3 +10,6 @@
 [submodule "mathematics_in_lean"]
 	path = mathematics_in_lean
 	url = git@github.com:marsmxm/mathematics_in_lean.git
+[submodule "matchematics_in_lean"]
+	path = matchematics_in_lean
+	url = git@github.com:marsmxm/mathematics_in_lean.git
