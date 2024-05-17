@@ -37,6 +37,10 @@ def β : Type := Bool
 #check Prod Nat Nat   -- Type
 #check Nat × Nat
 
+#check Sort 0
+#check Sort 1
+#check Sort 2
+
 #check Type
 #check Type 0
 #check Type 10
