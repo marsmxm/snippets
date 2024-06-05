@@ -88,12 +88,20 @@ theorem succ_add (n m : Nat) : succ n + m = succ (n + m) :=
 theorem add_comm (m n : Nat) : m + n = n + m :=
   Nat.recOn (motive := fun x => m + x = x + m) n
     (show m + zero = zero + m from by simp [add_zero, zero_add])
+
     (fun m ih => by simp [add_succ, succ_add, ih])
+
+example (m n k : Nat) (h : succ (succ m) = succ (succ n))
+        : n + k = m + k := by
+  injection h with h'
+  injection h' with h''
+  rw [h'']
 
 inductive List (α : Type u) where
 | nil  : List α
 | cons : α → List α → List α
 
+#check (List.nil : List Nat)
 #check List.recOn
 namespace List
 def append (as bs : List α) : List α :=
@@ -141,6 +149,42 @@ theorem length_append (as bs : List α) : length (append as bs) = length as + le
         _ = Nat.succ (length as' + length bs) := by rw [ih]
         _ = Nat.succ (length as') + length bs := by rw [succ_add])
 
+def reverse (as : List α) : List α :=
+  match as with
+  | nil => nil
+  | cons a as' => append (reverse as') (cons a nil)
+
+theorem length_reverse (as : List α) : length (reverse as) = length as :=
+  List.recOn (motive := fun xs => length (reverse xs) = length xs) as
+    rfl
+    (fun a as' (ih : length (reverse as') = length as') =>
+      calc length (reverse (cons a as'))
+        _ = length (append (reverse as') (cons a nil)) := rfl
+        _ = length (reverse as') + length (cons a nil) := by rw[length_append]
+        _ = length as' + length (cons a nil) := by simp [ih])
+
+theorem reverse_append (as bs : List α) : reverse (append as bs) = append (reverse bs) (reverse as) :=
+  List.recOn (motive := fun xs => reverse (append xs bs) = append (reverse bs) (reverse xs)) as
+    (calc reverse (append nil bs)
+      _ = reverse bs := by rw [nil_append]
+      _ = append (reverse bs) nil := by rw [append_nil])
+    (fun a as' (ih : reverse (append as' bs) = append (reverse bs) (reverse as')) =>
+      calc reverse (append (cons a as') bs)
+        _ = reverse (cons a (append as' bs)) := rfl
+        _ = append (reverse (append as' bs)) (cons a nil) := rfl
+        _ = append (append (reverse bs) (reverse as')) (cons a nil) := by rw [ih]
+        _ =
+      )
+
+
+theorem reverse_eq (as : List α) : reverse (reverse as) = as :=
+  List.recOn (motive := fun xs => reverse (reverse xs) = xs) as
+    rfl
+    (fun a as' (ih : reverse (reverse as') = as') =>
+      calc reverse (reverse (cons a as'))
+        _ = reverse (append (reverse as') (cons a nil)) := rfl
+        _ =
+        )
 end List
 end Hidden
 
@@ -168,3 +212,34 @@ def silly1 (x : Foo) : Nat := by
   cases x
   case bar1 a b => exact b
   case bar2 c d e => exact e
+
+namespace Hidden
+inductive Vector (α : Type u) : Nat → Type u where
+  | nil  : Vector α Nat.zero
+  | cons : α → {n : Nat} → Vector α n → Vector α (Nat.succ n)
+
+#check Vector
+
+inductive Eq {α : Sort u} (a : α) : α → Prop where
+  | refl : Eq a a
+
+#check Eq
+#check Eq 2
+#check (Eq.refl)
+#check (@Eq.refl Nat Nat.zero)
+
+theorem subst {α : Type u} {a b : α} {p : α → Prop} (h₁ : Eq a b) (h₂ : p a) : p b :=
+  Eq.rec (motive := fun x _ => p x) h₂ h₁
+
+theorem symm {α : Type u} {a b : α} (h : Eq a b) : Eq b a :=
+  Eq.rec (motive := fun x _ => Eq x a) Eq.refl h
+
+
+theorem trans {α : Type u} {a b c : α} (h₁ : Eq a b) (h₂ : Eq b c) : Eq a c :=
+  subst h₂ h₁
+
+theorem congr {α β : Type u} {a b : α} (f : α → β) (h : Eq a b) : Eq (f a) (f b) :=
+  Eq.rec (motive := fun x _ => Eq (f a) (f x)) Eq.refl h
+end Hidden
+
+#check List.reverse
