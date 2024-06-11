@@ -44,6 +44,7 @@
 
       ;; simple let
       (simple-let-1 "let x = 3 in x" 3)
+      (simple-let-2 "let x=3 y=4 in +(x,y)", 7)
 
       ;; make sure the body and rhs get evaluated
       (eval-let-body "let x = 3 in -(x,1)" 2)
