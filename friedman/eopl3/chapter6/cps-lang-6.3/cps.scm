@@ -324,12 +324,13 @@
   ;; application of a lambda expression.  Then
   ;; cps-of-exps will make the needed fresh variables
 
+  ;; Exercise 6.25
   (define cps-of-let-exp
-    (lambda (id rhs body k-exp)
+    (lambda (ids rhss body k-exp)
       (cps-of-exp
        (call-exp
-        (proc-exp (list id) body)
-        (list rhs))
+        (proc-exp ids body)
+        rhss)
        k-exp)))
 
 
