@@ -21,7 +21,7 @@
   (provide (all-defined-out))
   (provide (all-from-out "interp.scm"))
 
-  (define instrument-cps (make-parameter #f))  
+  (define instrument-cps (make-parameter #t))  
   
   ;;;;;;;;;;;;;;;; interface to test harness ;;;;;;;;;;;;;;;;
   
@@ -85,6 +85,15 @@
            => (lambda (test)
                 (run (cadr test))))
           (else (eopl:error 'run-one "no such test: ~s" test-name))))))
+
+  (define compile-one
+    (lambda (test-name)
+      (let [(the-test (assoc test-name test-list))]
+        (cond
+          [(assoc test-name test-list)
+           => (lambda (test)
+                (compile (cadr test)))]
+          [else (eopl:error 'compile-one "no such test: ~s" test-name)]))))
 
   ;; (stop-after-first-error #t)
   ;; (run-all)

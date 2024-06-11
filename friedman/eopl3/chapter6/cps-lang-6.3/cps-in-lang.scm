@@ -49,8 +49,9 @@
 
       (expression (identifier) var-exp)
 
+      ;; Exercise 6.25
       (expression
-       ("let" identifier "=" expression "in" expression)
+       ("let" (arbno identifier "=" expression) "in" expression)
        let-exp)   
 
       (expression
