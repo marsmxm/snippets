@@ -48,6 +48,8 @@
             (value-of exp1 env)
             (value-of exp2 env)))
 
+
+        ;; Exercise 7.5
         (let-exp (vars exps body)       
                  (let ((vals (map (lambda (exp1)
                                     (value-of exp1 env))
@@ -56,8 +58,8 @@
                              (extend-env* vars vals env))))
 
         (proc-exp (bvar ty body)
-	  (proc-val
-	    (procedure bvar body env)))
+	          (proc-val
+	           (procedure bvar body env)))
 
         (call-exp (rator rand)          
           (let ((proc (expval->proc (value-of rator env)))
