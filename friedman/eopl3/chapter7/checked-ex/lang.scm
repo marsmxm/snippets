@@ -36,16 +36,17 @@
 
       (expression (identifier) var-exp)
 
+      ;; Exercise 7.5
       (expression
        ("let" (arbno identifier "=" expression) "in" expression)
        let-exp)   
 
       (expression
-       ("proc" "(" identifier ":" type ")" expression)
+       ("proc" "(" (arbno identifier ":" type) ")" expression)
        proc-exp)
 
       (expression
-       ("(" expression expression ")")
+       ("(" expression (arbno expression) ")")
        call-exp)
 
       (expression
@@ -91,12 +92,9 @@
         (int-type () 'int)
         (bool-type () 'bool)
         (proc-type (arg-types result-type)
-                   (let [(external-arg-types (map (lambda (arg-type)
-                                                    (type-to-external-form arg-type))
-                                                  arg-types))]
-                     (list
-                      external-arg-types
-                      '->
-                      (type-to-external-form result-type)))))))
+          (list
+           (type-to-external-form (car arg-types))
+            '->
+            (type-to-external-form result-type))))))
 
   )
