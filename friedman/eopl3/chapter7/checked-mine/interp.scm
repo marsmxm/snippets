@@ -48,10 +48,12 @@
             (value-of exp1 env)
             (value-of exp2 env)))
 
-        (let-exp (var exp1 body)       
-          (let ((val (value-of exp1 env)))
-            (value-of body
-              (extend-env var val env))))
+        (let-exp (vars exps body)       
+                 (let ((vals (map (lambda (exp1)
+                                    (value-of exp1 env))
+                                  exps)))
+                   (value-of body
+                             (extend-env* vars vals env))))
 
         (proc-exp (bvar ty body)
 	  (proc-val
@@ -74,6 +76,18 @@
       (cases proc proc1
         (procedure (var body saved-env)
           (value-of body (extend-env var arg saved-env))))))
+
+  (define extend-env*
+    (lambda (vars vals env)
+      (if (null? vars)
+          env
+          (extend-env*
+           (cdr vars)
+           (cdr vals)
+           (extend-env
+            (car vars)
+            (car vals)
+            env)))))
   
   )
   
