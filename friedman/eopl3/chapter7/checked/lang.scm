@@ -37,7 +37,7 @@
       (expression (identifier) var-exp)
 
       (expression
-       ("let" identifier "=" expression "in" expression)
+       ("let" (arbno identifier "=" expression) "in" expression)
        let-exp)   
 
       (expression
@@ -63,7 +63,7 @@
        bool-type)
       
       (type
-       ("(" type "->" type ")")
+       ("(" (arbno type) "->" type ")")
        proc-type)
       
       ))
@@ -90,10 +90,13 @@
       (cases type ty
         (int-type () 'int)
         (bool-type () 'bool)
-        (proc-type (arg-type result-type)
-          (list
-            (type-to-external-form arg-type)
-            '->
-            (type-to-external-form result-type))))))
+        (proc-type (arg-types result-type)
+                   (let [(external-arg-types (map (lambda (arg-type)
+                                                    (type-to-external-form arg-type))
+                                                  arg-types))]
+                     (list
+                      external-arg-types
+                      '->
+                      (type-to-external-form result-type)))))))
 
   )
