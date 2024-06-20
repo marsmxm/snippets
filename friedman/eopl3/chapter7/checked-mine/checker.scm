@@ -16,11 +16,14 @@
   ;; Page: 243
   (define report-unequal-types
     (lambda (ty1 ty2 exp)
-      (eopl:error 'check-equal-type!  
-          "Types didn't match: ~s != ~a in~%~a"
-          (type-to-external-form ty1)
-          (type-to-external-form ty2)
-          exp)))
+      (begin
+        (display ty1)
+        (display ty2)
+        (eopl:error 'check-equal-type!  
+                    "Types didn't match: ~s != ~a in~%~a"
+                    (type-to-external-form ty1)
+                    (type-to-external-form ty2)
+                    exp))))
 
   ;;;;;;;;;;;;;;;; The Type Checker ;;;;;;;;;;;;;;;;
   
@@ -67,17 +70,20 @@
             ty2))
 
         ;; \commentbox{\letrule}
-        (let-exp (var exp1 body)
-          (let ((exp1-type (type-of exp1 tenv)))
-            (type-of body
-              (extend-tenv var exp1-type tenv))))
+        (let-exp
+         (vars exps body)
+         (let ((exp-types (map
+                           (lambda (exp) (type-of exp tenv))
+                           exps)))
+           (type-of body
+                    (extend-tenv* vars exp-types tenv))))
 
         ;; \commentbox{\procrulechurch}
         (proc-exp (var var-type body)
           (let ((result-type
                   (type-of body
                     (extend-tenv var var-type tenv))))
-            (proc-type var-type result-type)))
+            (proc-type (list var-type) result-type)))
 
         ;; \commentbox{\apprule}
         (call-exp (rator rand) 
@@ -124,16 +130,27 @@
     
   (define empty-tenv empty-tenv-record)
   (define extend-tenv extended-tenv-record)
+
+  (define extend-tenv*
+    (lambda (syms types tenv)
+      (if (null? syms)
+          tenv
+          (extend-tenv* (cdr syms)
+                        (cdr types)
+                        (extended-tenv-record
+                         (car syms)
+                         (car types)
+                         tenv)))))
     
   (define apply-tenv 
     (lambda (tenv sym)
       (cases type-environment tenv
-        (empty-tenv-record ()
-          (eopl:error 'apply-tenv "Unbound variable ~s" sym))
-        (extended-tenv-record (sym1 val1 old-env)
-          (if (eqv? sym sym1) 
-            val1
-            (apply-tenv old-env sym))))))
+             (empty-tenv-record ()
+                                (eopl:error 'apply-tenv "Unbound variable ~s" sym))
+             (extended-tenv-record (sym1 val1 old-env)
+                                   (if (eqv? sym sym1) 
+                                       val1
+                                       (apply-tenv old-env sym))))))
   
   (define init-tenv
     (lambda ()
