@@ -49,6 +49,9 @@
       (eval-let-body "let x = 3 in -(x,1)" 2)
       (eval-let-rhs "let x = -(4,1) in -(x,1)" 2)
 
+      ;; multiple declarations let
+      (multi-let-1 "let x = 3 y = 4 in -(y,3)" 1)
+
       ;; check nested let and shadowing
       (simple-nested-let "let x = 3 in let y = 4 in -(x,y)" -1)
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" 4)
@@ -150,11 +153,15 @@ in let times4 = (fix t4m)
       (check-shadowing-in-body "let x = 3 in let x = 4 in x" int)
       (check-shadowing-in-rhs "let x = 3 in let x = -(x,1) in x" int)
 
+      ;; multiple declarations let
+      (multi-let-1 "let x = 3 y = 4 in -(y,3)" int)
+
       ;; simple applications
       (apply-proc-in-rator-pos "(proc(x : int) -(x,1)  30)" int)
+      (multi-args-proc "(proc(x:int y:int) -(x,y) 4 3" int)
       (checker-doesnt-ignore-type-info-in-proc 
-        "(proc(x : (int -> int)) -(x,1)  30)"
-        error) 
+       "(proc(x : (int -> int)) -(x,1)  30)"
+       error) 
       (apply-simple-proc "let f = proc (x : int) -(x,1) in (f 30)" int)
       (let-to-proc-1 "(proc(f : (int -> int))(f 30)  proc(x : int)-(x,1))" int)
 

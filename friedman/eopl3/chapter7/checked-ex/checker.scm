@@ -18,7 +18,9 @@
     (lambda (ty1 ty2 exp)
       (begin
         (display ty1)
+        (newline)
         (display ty2)
+        (newline)
         (eopl:error 'check-equal-type!  
                     "Types didn't match: ~s != ~a in~%~a"
                     (type-to-external-form ty1)
@@ -70,29 +72,30 @@
             ty2))
 
         ;; \commentbox{\letrule}
+        ;; Exercise 7.5
         (let-exp
          (vars exps body)
          (let ((exp-types (map
-                           (lambda (exp) (type-of exp tenv))
+                           (lambda (exp1) (type-of exp1 tenv))
                            exps)))
            (type-of body
                     (extend-tenv* vars exp-types tenv))))
-
+        
         ;; \commentbox{\procrulechurch}
-        (proc-exp (var var-type body)
-          (let ((result-type
-                  (type-of body
-                    (extend-tenv var var-type tenv))))
-            (proc-type (list var-type) result-type)))
+        (proc-exp (vars var-types body)
+                  (let ((result-type
+                         (type-of body
+                                  (extend-tenv* vars var-types tenv))))
+                    (proc-type var-types result-type)))
 
         ;; \commentbox{\apprule}
         (call-exp (rator rand) 
           (let ((rator-type (type-of rator tenv))
                 (rand-type  (type-of rand tenv)))
             (cases type rator-type
-              (proc-type (arg-type result-type)
+              (proc-type (arg-types result-type)
                 (begin
-                  (check-equal-type! arg-type rand-type rand)
+                  (check-equal-type! (car arg-types) rand-type rand)
                   result-type))
               (else
                 (report-rator-not-a-proc-type rator-type rator)))))
@@ -102,8 +105,8 @@
                       letrec-body)
           (let ((tenv-for-letrec-body
                   (extend-tenv p-name
-                    (proc-type b-var-type p-result-type)
-                    tenv)))
+                               (proc-type (list b-var-type) p-result-type)
+                               tenv)))
             (let ((p-body-type 
                     (type-of p-body
                       (extend-tenv b-var b-var-type
@@ -145,12 +148,12 @@
   (define apply-tenv 
     (lambda (tenv sym)
       (cases type-environment tenv
-             (empty-tenv-record ()
-                                (eopl:error 'apply-tenv "Unbound variable ~s" sym))
-             (extended-tenv-record (sym1 val1 old-env)
-                                   (if (eqv? sym sym1) 
-                                       val1
-                                       (apply-tenv old-env sym))))))
+        (empty-tenv-record ()
+                           (eopl:error 'apply-tenv "Unbound variable ~s" sym))
+        (extended-tenv-record (sym1 val1 old-env)
+                              (if (eqv? sym sym1) 
+                                  val1
+                                  (apply-tenv old-env sym))))))
   
   (define init-tenv
     (lambda ()
