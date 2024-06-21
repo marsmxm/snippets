@@ -1,4 +1,4 @@
-// Generated from /Users/mxm/learn/snippets/antlr-code/src/main/java/ink/mxm/tour/LabeledExpr.g4 by ANTLR 4.12.0
+// Generated from /Users/lmc10102/learn/snippets/antlr-code/src/main/java/ink/mxm/tour/LabeledExpr.g4 by ANTLR 4.13.1
 package ink.mxm.tour;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -53,6 +53,18 @@ public interface LabeledExprListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBlank(LabeledExprParser.BlankContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code clear}
+	 * labeled alternative in {@link LabeledExprParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void enterClear(LabeledExprParser.ClearContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code clear}
+	 * labeled alternative in {@link LabeledExprParser#stat}.
+	 * @param ctx the parse tree
+	 */
+	void exitClear(LabeledExprParser.ClearContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code parens}
 	 * labeled alternative in {@link LabeledExprParser#expr}.
