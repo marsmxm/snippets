@@ -61,6 +61,7 @@
       (apply-proc-in-rator-pos "(proc(x : int) -(x,1)  30)" 29)
       (interp-ignores-type-info-in-proc "(proc(x : (int -> int)) -(x,1)  30)" 29)
       (apply-simple-proc "let f = proc (x : int) -(x,1) in (f 30)" 29)
+      (apply-multi-arg-prox "let f = proc (x:int y:int) -(x,y) in (f 30 25)" 5)
       (let-to-proc-1 "(proc(f : (int -> int))(f 30)  proc(x : int)-(x,1))" 29)
 
 
@@ -158,7 +159,7 @@ in let times4 = (fix t4m)
 
       ;; simple applications
       (apply-proc-in-rator-pos "(proc(x : int) -(x,1)  30)" int)
-      (multi-args-proc "(proc(x:int y:int) -(x,y) 4 3" int)
+      (multi-args-proc "(proc(x:int y:int) -(x,y) 4 3)" int)
       (checker-doesnt-ignore-type-info-in-proc 
        "(proc(x : (int -> int)) -(x,1)  30)"
        error) 
@@ -182,11 +183,23 @@ in let times4 = (fix t4m)
  in letrec int f(x : int) = if zero?(x) then -((f -(x,1)), m) else 0 in (f 4)"
         int)
 
+      (multi-letrec-1 "letrec int f(x:int y:int) = -(x,y) in (f 33 22)" int)
+
+      (multi-letrec-2
+       "letrec int f(x:int y:int)=if zero?(x) then 0 else -((f -(x,1) y), y) in (f 4 3)"
+       int)
+
+      (multi-letrec-3
+       "letrec int f(x:int)=-(x,2)
+               int g(x:int y:int)=-((f x), (f y)) in
+          (g 4 3)"
+       int)
+      
       (double-it "
 letrec int double (n : int) = if zero?(n) then 0 
                                   else -( (double -(n,1)), -2)
 in (double 3)"
-        int)
+                 int)
 
       ;; tests of expressions that produce procedures
 
