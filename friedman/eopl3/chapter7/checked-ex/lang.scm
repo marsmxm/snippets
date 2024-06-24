@@ -51,8 +51,8 @@
 
       (expression
         ("letrec"
-          type identifier "(" identifier ":" type ")" "=" expression
-           "in" expression)
+         (arbno type identifier "(" (arbno identifier ":" type) ")" "=" expression)
+         "in" expression)
         letrec-exp)
 
       (type

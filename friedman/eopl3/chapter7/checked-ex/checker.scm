@@ -12,6 +12,20 @@
       (when (not (equal? ty1 ty2))
         (report-unequal-types ty1 ty2 exp))))
 
+  (define check-equal-types!
+    (lambda (tys1 tys2 exp)
+      (if (eq? (length tys1)
+               (length tys2))
+          (when (not (null? tys1))
+            (begin
+              (check-equal-type! (car tys1) (car tys2) exp)
+              (check-equal-types! (cdr tys1) (cdr tys2) exp)))
+          (eopl:error 'check-equal-types!
+                      "types count didn't match in ~a:~%tys1:~a~%tys2:~a"
+                      exp
+                      tys1
+                      tys2))))
+
   ;; report-unequal-types : Type * Type * Exp -> Unspecified
   ;; Page: 243
   (define report-unequal-types
@@ -89,31 +103,49 @@
                     (proc-type var-types result-type)))
 
         ;; \commentbox{\apprule}
-        (call-exp (rator rand) 
+        (call-exp (rator rands) 
           (let ((rator-type (type-of rator tenv))
-                (rand-type  (type-of rand tenv)))
+                (rand-types  (map (lambda (rand)
+                                    (type-of rand tenv))
+                                  rands)))
             (cases type rator-type
               (proc-type (arg-types result-type)
                 (begin
-                  (check-equal-type! (car arg-types) rand-type rand)
+                  (check-equal-types! arg-types rand-types exp)
                   result-type))
               (else
                 (report-rator-not-a-proc-type rator-type rator)))))
 
         ;; \commentbox{\letrecrule}
-        (letrec-exp (p-result-type p-name b-var b-var-type p-body
+        (letrec-exp (p-result-types p-names b-vars-list b-var-types-list p-bodies
                       letrec-body)
           (let ((tenv-for-letrec-body
-                  (extend-tenv p-name
-                               (proc-type (list b-var-type) p-result-type)
-                               tenv)))
-            (let ((p-body-type 
-                    (type-of p-body
-                      (extend-tenv b-var b-var-type
-                        tenv-for-letrec-body)))) 
-              (check-equal-type!
-                p-body-type p-result-type p-body)
-              (type-of letrec-body tenv-for-letrec-body)))))))
+                  (extend-tenv* p-names
+                                (map (lambda (p-result-type b-var-types)
+                                       (proc-type b-var-types p-result-type))
+                                     p-result-types
+                                     b-var-types-list)
+                                tenv)))
+            (let check-p-body-types ([p-result-types p-result-types]
+                                     [b-vars-list b-vars-list]
+                                     [b-var-types-list b-var-types-list]
+                                     [p-bodies p-bodies])
+              (when (not (null? p-result-types))
+                (let ([p-body-type
+                       (type-of (car p-bodies)
+                                (extend-tenv* (car b-vars-list)
+                                              (car b-var-types-list)
+                                              tenv-for-letrec-body))])
+                  (check-equal-type!
+                   p-body-type (car p-result-types) (car p-bodies))
+                  (check-p-body-types (cdr p-result-types)
+                                      (cdr b-vars-list)
+                                      (cdr b-var-types-list)
+                                      (cdr p-bodies)))))
+            
+            (type-of letrec-body tenv-for-letrec-body)))
+
+        )))
     
   (define report-rator-not-a-proc-type
     (lambda (rator-type rator)
