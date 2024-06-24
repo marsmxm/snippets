@@ -45,9 +45,9 @@
 
   (define-datatype proc proc?
     (procedure
-      (bvar symbol?)
-      (body expression?)
-      (env environment?)))
+     (bvars (list-of symbol?))
+     (body expression?)
+     (env environment?)))
   
   (define-datatype environment environment?
     (empty-env)
@@ -57,8 +57,8 @@
       (saved-env environment?))
     (extend-env-rec
       (p-name symbol?)
-      (b-var symbol?)
+      (b-vars (list-of symbol?))
       (p-body expression?)
       (saved-env environment?)))
 
-)
+  )
