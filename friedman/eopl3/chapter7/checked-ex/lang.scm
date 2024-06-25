@@ -55,6 +55,10 @@
          "in" expression)
         letrec-exp)
 
+      (expression
+       ("pair" "(" expression "," expression ")")
+       pair-exp)
+
       (type
        ("int")
        int-type)
@@ -62,6 +66,10 @@
       (type
        ("bool")
        bool-type)
+
+      (type
+       (type "*" type)
+       pair-type)
       
       (type
        ("(" (arbno type) "->" type ")")
@@ -91,10 +99,23 @@
       (cases type ty
         (int-type () 'int)
         (bool-type () 'bool)
-        (proc-type (arg-types result-type)
-          (list
-           (type-to-external-form (car arg-types))
-            '->
-            (type-to-external-form result-type))))))
+        (pair-type
+         (ty1 ty2)
+         
+         (list
+          'p
+          (type-to-external-form ty1)
+          '*
+          (type-to-external-form ty2)))
+        (proc-type
+         (arg-types result-type)
+         (let ([arg-external-types
+                (map (lambda (arg-type)
+                       (type-to-external-form arg-type))
+                     arg-types)])
+           (append
+            arg-external-types
+            (list '-> (type-to-external-form result-type))))))))
+  
 
   )
