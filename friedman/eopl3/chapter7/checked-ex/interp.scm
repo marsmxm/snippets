@@ -68,9 +68,9 @@
                            rands)))
 	    (apply-procedure proc args)))
 
-        (letrec-exp (ty1 p-name b-var ty2 p-body letrec-body)
+        (letrec-exp (ty1 p-names b-vars-list ty2 p-bodies letrec-body)
           (value-of letrec-body
-                    (extend-env-rec p-name (list b-var) p-body env)))
+                    (extend-env-rec p-names b-vars-list p-bodies env)))
 
 	    )))
 
