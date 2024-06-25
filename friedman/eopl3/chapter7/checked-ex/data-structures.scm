@@ -56,9 +56,9 @@
       (bval expval?)
       (saved-env environment?))
     (extend-env-rec
-      (p-name symbol?)
-      (b-vars (list-of symbol?))
-      (p-body expression?)
-      (saved-env environment?)))
+     (p-names (list-of symbol?))
+     (b-vars-list (list-of (list-of symbol?)))
+     (p-bodies (list-of expression?))
+     (saved-env environment?)))
 
   )

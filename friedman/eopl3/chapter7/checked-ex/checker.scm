@@ -145,6 +145,13 @@
             
             (type-of letrec-body tenv-for-letrec-body)))
 
+        ;; Exercise 7.8
+        (pair-exp
+         (exp1 exp2)
+         (let ([type1 (type-of exp1 tenv)]
+               [type2 (type-of exp2 tenv)])
+           (pair-type type1 type2)))
+
         )))
     
   (define report-rator-not-a-proc-type
