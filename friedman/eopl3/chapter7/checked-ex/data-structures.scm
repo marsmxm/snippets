@@ -13,8 +13,11 @@
       (value number?))
     (bool-val
       (boolean boolean?))
+    (pair-val
+     (left expval?)
+     (right expval?))
     (proc-val 
-      (proc proc?)))
+     (proc proc?)))
 
 ;;; extractors:
 
