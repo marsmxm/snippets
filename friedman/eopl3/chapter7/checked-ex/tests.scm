@@ -288,8 +288,8 @@ in letrec
    in (fact 4)"
                          int)
 
-      (pair-1 "pair(3,2)" (p int * int))
-      (pair-2 "pair(zero?(1), zero?(2))" (p bool * bool))
+      (pair-1 "pair(3,2)" (int * int))
+      (pair-2 "pair(zero?(1), zero?(2))" (bool * bool))
 
 
       ))

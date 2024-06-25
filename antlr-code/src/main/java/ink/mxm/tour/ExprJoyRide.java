@@ -21,6 +21,9 @@ public class ExprJoyRide {
             ExprParser parser = new ExprParser(tokens);
             ParseTree tree = parser.prog(); // parse; start at prog <label id="code.tour.main.6"/>
             System.out.println(tree.toStringTree(parser)); // print tree as text <label id="code.tour.main.7"/>
+
+            EvalVisitor eval = new EvalVisitor();
+            eval.visit(tree);
         }
     }
 }
