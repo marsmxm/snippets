@@ -33,9 +33,19 @@
 	  (if (eqv? search-sym bvar)
 	    bval
 	    (apply-env saved-env search-sym)))
-        (extend-env-rec (p-name b-vars p-body saved-env)
-          (if (eqv? search-sym p-name)
-             (proc-val (procedure b-vars p-body env))          
-             (apply-env saved-env search-sym))))))
+        (extend-env-rec
+         (p-names b-vars-list p-bodies saved-env)
+         (let loop ([p-names p-names]
+                    [b-vars-list b-vars-list]
+                    [p-bodies p-bodies])
+           (cond
+            [(null? p-names) (apply-env saved-env search-sym)]
+            [(eqv? search-sym (car p-names))
+             (proc-val
+              (procedure
+               (car b-vars-list) (car p-bodies) env))]
+            [else (loop (cdr p-names)
+                        (cdr b-vars-list)
+                        (cdr p-bodies))]))))))
     
   )

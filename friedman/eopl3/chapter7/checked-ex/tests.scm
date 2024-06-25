@@ -88,14 +88,27 @@ in let times4 = (fix t4m)
         "let m = -5 
  in letrec int f(x : int) = if zero?(x) then 0 else -((f -(x,1)), m) in (f 4)"
         20)
+
+      (multi-letrec-1 "letrec int f(x:int y:int) = -(x,y) in (f 33 22)" 11)
+
+      (multi-letrec-2
+       "letrec int f(x:int y:int)=if zero?(x) then 0 else -((f -(x,1) y), y) in (f 4 3)"
+       -12)
+
+      (multi-letrec-3
+       "letrec int f(x:int)=-(x,2)
+               int g(x:int y:int)=-((f x), (f y)) in
+          (g 4 3)"
+       1)
+
       
-;      (fact-of-6  "letrec
-;  fact(x) = if zero?(x) then 1 else *(x, (fact sub1(x)))
-;in (fact 6)" 
-;                  720)
+                                        ;      (fact-of-6  "letrec
+                                        ;  fact(x) = if zero?(x) then 1 else *(x, (fact sub1(x)))
+                                        ;in (fact 6)" 
+                                        ;                  720)
       
       (HO-nested-letrecs
-"letrec int even(odd : (int -> int))  = proc(x : int) if zero?(x) then 1 else (odd -(x,1))
+       "letrec int even(odd : (int -> int))  = proc(x : int) if zero?(x) then 1 else (odd -(x,1))
    in letrec  int odd(x : int)  = if zero?(x) then 0 else ((even odd) -(x,1))
    in (odd 13)" 1)
 
@@ -215,9 +228,13 @@ in (double 3)"
         "let f = proc (x : int) -(x,1) in f"
         (int -> int))
 
+      (bind-a-proc-return-proc-multi
+        "let f = proc (x:int y:int) -(x,y) in f"
+        (int int -> int))
+
       (type-a-ho-proc-1
-        "proc(f : (int -> bool)) (f 3)"
-        ((int  -> bool) -> bool))
+       "proc(f : (int -> bool)) (f 3)"
+       ((int  -> bool) -> bool))
 
       (type-a-ho-proc-2
         "proc(f : (bool -> bool)) (f 3)"
@@ -263,13 +280,16 @@ in letrec
    in fact"
         (int -> int))
 
+
       (letrec-apply-fact "
 let times = proc (x : int) proc (y : int) -(x,y)    % not really times
 in letrec 
      int fact(x : int) = if zero?(x) then 1 else ((times x) (fact -(x,1)))
    in (fact 4)"
-        int)
+                         int)
 
+      (pair-1 "pair(3,2)" (p int * int))
+      (pair-2 "pair(zero?(1), zero?(2))" (p bool * bool))
 
 
       ))
