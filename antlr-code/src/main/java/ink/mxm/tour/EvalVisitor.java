@@ -22,6 +22,12 @@ public class EvalVisitor extends LabeledExprBaseVisitor<Integer> {
         return value;
     }
 
+    @Override
+    public Integer visitClear(LabeledExprParser.ClearContext ctx) {
+        memory.clear();
+        return 0;
+    }
+
     /** expr NEWLINE */
     @Override
     public Integer visitPrintExpr(LabeledExprParser.PrintExprContext ctx) {
