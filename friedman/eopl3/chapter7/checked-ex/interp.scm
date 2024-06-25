@@ -57,6 +57,12 @@
                    (value-of body
                              (extend-env* vars vals env))))
 
+        (pair-exp
+         (exp1 exp2)
+         (let ([val1 (value-of exp1 env)]
+               [val2 (value-of exp2 env)])
+           (pair-val val1 val2)))
+
         (proc-exp (bvar ty body)
 	          (proc-val
 	           (procedure bvar body env)))
