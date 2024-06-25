@@ -1,4 +1,4 @@
-// Generated from /Users/mxm/learn/snippets/antlr-code/src/main/java/ink/mxm/tour/LabeledExpr.g4 by ANTLR 4.12.0
+// Generated from /Users/lmc10102/learn/snippets/antlr-code/src/main/java/ink/mxm/tour/LabeledExpr.g4 by ANTLR 4.13.1
 package ink.mxm.tour;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -40,6 +40,13 @@ public class LabeledExprBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitBlank(LabeledExprParser.BlankContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitClear(LabeledExprParser.ClearContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
