@@ -30,14 +30,14 @@
  '(coq-prog-name "/usr/local/bin/coqtop")
  '(custom-enabled-themes '(spacemacs-light))
  '(custom-safe-themes
-   '("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "76c5b2592c62f6b48923c00f97f74bcb7ddb741618283bdb2be35f3c0e1030e3" "f3455b91943e9664af7998cc2c458cfc17e674b6443891f519266e5b3c51799d" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d431bff071bfc4c300767f2a0b29b23c7994573f7c6b5ef4c77ed680e6f44dd0" "afbb40954f67924d3153f27b6d3399df221b2050f2a72eb2cfa8d29ca783c5a8" default))
+   '("bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "76c5b2592c62f6b48923c00f97f74bcb7ddb741618283bdb2be35f3c0e1030e3" "f3455b91943e9664af7998cc2c458cfc17e674b6443891f519266e5b3c51799d" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d431bff071bfc4c300767f2a0b29b23c7994573f7c6b5ef4c77ed680e6f44dd0" "afbb40954f67924d3153f27b6d3399df221b2050f2a72eb2cfa8d29ca783c5a8" default))
  '(fci-rule-color "#383838")
  '(inhibit-startup-screen t)
  '(make-backup-files nil)
  '(nrepl-message-colors
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(package-selected-packages
-   '(spacemacs-theme geiser-chez geiser-racket neotree all-the-icons racket-mode exec-path-from-shell company-coq proof-general zenburn-theme solarized-theme sml-mode rebecca-theme paredit))
+   '(lsp-mode flycheck org-contrib org haskell-mode magit markdown-mode all-the-icons-completion ## spacemacs-theme geiser-chez geiser-racket neotree all-the-icons racket-mode exec-path-from-shell company-coq proof-general zenburn-theme solarized-theme sml-mode rebecca-theme paredit))
  '(proof-three-window-enable t)
  '(tool-bar-mode nil)
  '(vc-annotate-background "#2B2B2B")
@@ -69,8 +69,8 @@
  ;; If there is more than one, they won't work right.
  )
 
-(add-to-list 'default-frame-alist '(height . 48))
-(add-to-list 'default-frame-alist '(width . 100))
+(add-to-list 'default-frame-alist '(height . 60))
+(add-to-list 'default-frame-alist '(width . 120))
 
 ;(require 'desktop)
 ;(desktop-save-mode 1)
@@ -162,7 +162,13 @@
 (setq coq-compile-before-require t)
 
 ;; geiser
-(setq geiser-default-implementation 'chez)
+(setq geiser-default-implementation 'racket)
+
+;; j-bob indentations
+(put 'dethm 'scheme-indent-function 2)
+(put 'J-Bob/step 'scheme-indent-function 1)
+(put 'J-Bob/prove 'scheme-indent-function 1)
+(put 'J-Bob/define 'scheme-indent-function 1)
 
 ;; paredit
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
@@ -172,18 +178,52 @@
 (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
 (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-
-;; j-bob indentations
-(put 'dethm 'scheme-indent-function 2)
-(put 'J-Bob/step 'scheme-indent-function 1)
-(put 'J-Bob/prove 'scheme-indent-function 1)
-(put 'J-Bob/define 'scheme-indent-function 1)
+(add-hook 'racket-mode-hook           #'enable-paredit-mode)
 
 ;; acl2
-(add-to-list 'load-path "/../acl2/emacs")
+(add-to-list 'load-path "/Users/mxm/learn/acl2-devel/emacs")
 (if (boundp '*acl2-sources-dir*)
     (makunbound '*acl2-sources-dir*))
 (add-to-list 'auto-mode-alist '("\\.acl2\\'" .
                                 (lambda ()
                                   (lisp-mode)
                                   (load-library "emacs-acl2"))))
+
+;; Haskell
+(use-package eglot
+  :ensure t
+  :config
+  (add-hook 'haskell-mode-hook 'eglot-ensure)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  :config
+  (setq-default eglot-workspace-configuration
+                '((haskell
+                   (plugin
+                    (stan
+                     (globalOn . :json-false)))))) ;; disable stan
+  :custom
+  (eglot-autoshutdown t) ;; shutdown language server after closing last file
+  (eglot-confirm-server-initiated-edits nil) ;; allow edits without confirmation
+  )
+
+;; org
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
+
+;; lean4
+;; You need to modify the following line
+(setq load-path (cons "/Users/mxm/.emacs.d/lean4-mode" load-path))
+(setq lean4-mode-required-packages '(dash flycheck lsp-mode magit-section))
+
+(let ((need-to-refresh t))
+  (dolist (p lean4-mode-required-packages)
+    (when (not (package-installed-p p))
+      (when need-to-refresh
+        (package-refresh-contents)
+        (setq need-to-refresh nil))
+      (package-install p))))
+
+(require 'lean4-mode)
+(add-hook 'lean4-mode-hook 'global-display-line-numbers-mode)
+
