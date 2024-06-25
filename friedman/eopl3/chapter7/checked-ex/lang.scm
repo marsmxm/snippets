@@ -68,7 +68,7 @@
        bool-type)
 
       (type
-       (type "*" type)
+       ("(#" type "*" type ")")
        pair-type)
       
       (type
@@ -103,7 +103,6 @@
          (ty1 ty2)
          
          (list
-          'p
           (type-to-external-form ty1)
           '*
           (type-to-external-form ty2)))
