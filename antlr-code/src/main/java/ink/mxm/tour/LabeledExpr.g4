@@ -5,6 +5,7 @@ prog:   stat+ ;
 stat:   expr NEWLINE                # printExpr
     |   ID '=' expr NEWLINE         # assign
     |   NEWLINE                     # blank
+    |   CLEAR                       # clear
     ;
 
 expr:   expr op=('*'|'/') expr      # MulDiv
@@ -14,6 +15,7 @@ expr:   expr op=('*'|'/') expr      # MulDiv
     |   '(' expr ')'                # parens
     ;
 
+CLEAR : 'clear';
 MUL :   '*' ; // assigns token name to '*' used above in grammar
 DIV :   '/' ;
 ADD :   '+' ;
