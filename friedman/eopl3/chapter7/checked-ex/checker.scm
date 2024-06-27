@@ -152,6 +152,19 @@
                [type2 (type-of exp2 tenv)])
            (pair-type type1 type2)))
 
+        (unpair-exp
+         (var1 var2 epair ebody)
+         (let ([ptype (type-of epair tenv)])
+           (cases type ptype
+             (pair-type
+              (ty1 ty2)
+              (type-of ebody
+                       (extend-tenv* (list var1 var2)
+                                     (list ty1 ty2)
+                                     tenv)))
+             (else
+              (report-not-a-pair-type ptype epair)))))
+
         )))
     
   (define report-rator-not-a-proc-type
@@ -161,14 +174,21 @@
            rator 
            (type-to-external-form rator-type))))
 
-  ;;;;;;;;;;;;;;;; type environments ;;;;;;;;;;;;;;;;
+  (define report-not-a-pair-type
+    (lambda (ty1 exp1)
+      (eopl:error 'type-of-expression
+                  "Not a pair type:~%~s~%is type of ~s"
+                  exp1
+                  (type-to-external-form ty1))))
+
+;;;;;;;;;;;;;;;; type environments ;;;;;;;;;;;;;;;;
     
   (define-datatype type-environment type-environment?
     (empty-tenv-record)
     (extended-tenv-record
-      (sym symbol?)
-      (type type?)
-      (tenv type-environment?)))
+     (sym symbol?)
+     (type type?)
+     (tenv type-environment?)))
     
   (define empty-tenv empty-tenv-record)
   (define extend-tenv extended-tenv-record)
