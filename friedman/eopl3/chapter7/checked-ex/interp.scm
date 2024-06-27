@@ -63,6 +63,14 @@
                [val2 (value-of exp2 env)])
            (pair-val val1 val2)))
 
+        (unpair-exp
+         (var1 var2 epair ebody)
+         (let ([vpair (expval->pair (value-of epair env))])
+           (value-of ebody
+                     (extend-env* (list var1 var2)
+                                  (list (car vpair) (cdr vpair))
+                                  env))))
+
         (proc-exp (bvar ty body)
 	          (proc-val
 	           (procedure bvar body env)))
