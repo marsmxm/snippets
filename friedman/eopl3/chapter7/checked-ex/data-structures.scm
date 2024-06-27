@@ -33,6 +33,12 @@
 	(bool-val (bool) bool)
 	(else (expval-extractor-error 'bool v)))))
 
+  (define expval->pair
+    (lambda (v)
+      (cases expval v
+        (pair-val (left right) (cons left right))
+        (else (expval-extractor-error 'pair v)))))
+
   (define expval->proc
     (lambda (v)
       (cases expval v
