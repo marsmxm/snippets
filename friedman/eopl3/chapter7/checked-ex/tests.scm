@@ -112,6 +112,12 @@ in let times4 = (fix t4m)
    in letrec  int odd(x : int)  = if zero?(x) then 0 else ((even odd) -(x,1))
    in (odd 13)" 1)
 
+      (pair-1 "pair(3,2)" (3 . 2))
+      (pair-2 "pair(zero?(1), zero?(0))" (#f . #t))
+      (unpair-1 "letp (x, y) = pair(3,2) in -(x,y)" 1)
+      (unpair-2 "letp (x, f) = pair(3, proc (x:int) -(x,1)) in (f x)" 2)
+
+
       ))
 
   (define tests-for-check
@@ -290,7 +296,8 @@ in letrec
 
       (pair-1 "pair(3,2)" (int * int))
       (pair-2 "pair(zero?(1), zero?(2))" (bool * bool))
-
+      (unpair-1 "letp (x, y) = pair(3,2) in -(x,y)" int)
+      (unpair-2 "letp (x, f) = pair(3, proc (x:int) -(x,1)) in (f x)" int)
 
       ))
   )
