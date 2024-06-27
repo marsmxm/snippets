@@ -39,7 +39,12 @@
       ;; Exercise 7.5
       (expression
        ("let" (arbno identifier "=" expression) "in" expression)
-       let-exp)   
+       let-exp)
+
+      ;; Exercise 7.8 - unpair
+      (expression
+       ("letp" "(" identifier "," identifier ")" "=" expression "in" expression)
+       unpair-exp)
 
       (expression
        ("proc" "(" (arbno identifier ":" type) ")" expression)
