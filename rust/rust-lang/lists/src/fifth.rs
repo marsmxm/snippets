@@ -15,7 +15,7 @@ impl<'a, T> List<'a, T> {
         List { head: None, tail: None }
     }
 
-    pub fn push(&mut self, elem: T) {
+    pub fn push(&'a mut self, elem: T) {
         let new_tail = Box::new(Node {
             elem,
             // When you push onto the tail, your next is always None
