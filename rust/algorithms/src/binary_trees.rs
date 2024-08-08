@@ -123,23 +123,25 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
     }
 
     pub fn search(&self, k: T) -> Option<&Node<T>> {
-        fn search_link<'a, T: Display + PartialOrd>(link: Link<T>, k: T) -> Option<&'a Node<T>> {
-            if let Some(node) = link {
-                unsafe {
-                    if k == (*node.as_ptr()).key {
-                        return Some(node.as_ref());
-                    } else if k < (*node.as_ptr()).key {
-                        return search_link((*node.as_ptr()).left, k);
-                    } else {
-                        return search_link((*node.as_ptr()).right, k);
-                    }
-                }
-            } else {
-                return None;
-            }
+        unsafe {
+            self.search_link(self.root, k).map(|node| node.as_ref())
         }
+    }
 
-        search_link(self.root, k)
+    fn search_link(&self, link: Link<T>, k: T) -> Link<T> {
+        if let Some(node) = link {
+            unsafe {
+                if k == (*node.as_ptr()).key {
+                    return link;
+                } else if k < (*node.as_ptr()).key {
+                    return self.search_link((*node.as_ptr()).left, k);
+                } else {
+                    return self.search_link((*node.as_ptr()).right, k);
+                }
+            }
+        } else {
+            return None;
+        }
     }
 
     pub fn search_iter(&self, k: T) -> Option<&Node<T>> {
@@ -160,8 +162,12 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
     }
 
     pub fn minimum(&self) -> Option<&Node<T>> {
+        return self.minimum_from(self.root);
+    }
+
+    fn minimum_from(&self, link: Link<T>) -> Option<&Node<T>> {
         unsafe {
-            let mut cursor = self.root;
+            let mut cursor = link;
             let mut parent = None;
 
             while let Some(node) = cursor {
@@ -173,9 +179,13 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
         }
     }
 
-    pub fn maximum(&self) -> Option<&Node<T>>  {
+    pub fn maximum(&self) -> Option<&Node<T>> {
+        return self.maximum_from(self.root);
+    }
+
+    pub fn maximum_from(&self, link: Link<T>) -> Option<&Node<T>>  {
         unsafe {
-            let mut cursor = self.root;
+            let mut cursor = link;
             let mut parent = None;
 
             while let Some(node) = cursor {
@@ -184,6 +194,60 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
             }
 
             return parent.map(|node| node.as_ref());
+        }
+    }
+
+    pub fn successor(&self, key: T) -> Option<&Node<T>> {
+        unsafe {
+            if let Some(node) = self.search_link(self.root, key) {
+                if (*node.as_ptr()).right.is_some() {
+                    return self.minimum_from((*node.as_ptr()).right);
+                } else {
+                    let mut current = node;
+                    let mut parent = (*node.as_ptr()).parent;
+
+                    while let Some(parent_node) = parent {
+                        if let Some(left_of_parent) = (*parent_node.as_ptr()).left {
+                            if left_of_parent == current {
+                                return Some(parent_node.as_ref());
+                            }
+                        }
+                        current = parent_node;
+                        parent = (*parent_node.as_ptr()).parent;
+                    }
+
+                    return None;
+                }
+            } else {
+                return None;
+            }
+        }
+    }
+
+    pub fn predecessor(&self, key: T) -> Option<&Node<T>> {
+        unsafe {
+            if let Some(node) = self.search_link(self.root, key) {
+                if (*node.as_ptr()).left.is_some() {
+                    return self.maximum_from((*node.as_ptr()).left);
+                } else {
+                    let mut current = node;
+                    let mut parent = (*node.as_ptr()).parent;
+
+                    while let Some(parent_node) = parent {
+                        if let Some(right_of_parent) = (*parent_node.as_ptr()).right {
+                            if right_of_parent == current {
+                                return Some(parent_node.as_ref());
+                            }
+                        }
+                        current = parent_node;
+                        parent = (*parent_node.as_ptr()).parent;
+                    }
+
+                    return None;
+                }
+            } else {
+                return None;
+            }
         }
     }
 }
@@ -197,6 +261,7 @@ mod test {
         let mut tree = BinaryTree::empty();
 
         tree.insert(2);
+        tree.insert(6);
         tree.insert(6);
         tree.insert(4);
         tree.insert(1);
@@ -254,5 +319,47 @@ mod test {
 
         let op = tree.maximum();
         assert_eq!(6, op.unwrap().key);
+    }
+
+    #[test]
+    fn test_successor() {
+        let mut tree = BinaryTree::empty();
+
+        tree.insert(5);
+        tree.insert(2);
+        tree.insert(2);
+        tree.insert(6);
+        tree.insert(3);
+        tree.insert(4);
+        tree.insert(1);
+        tree.insert(7);
+
+        tree.print();
+
+        assert_eq!(2, tree.successor(1).unwrap().key);
+        assert_eq!(2, tree.successor(2).unwrap().key);
+        assert_eq!(7, tree.successor(6).unwrap().key);
+        assert!(tree.successor(7).is_none());
+    }
+
+    #[test]
+    fn test_predecessor() {
+        let mut tree = BinaryTree::empty();
+
+        tree.insert(5);
+        tree.insert(2);
+        tree.insert(2);
+        tree.insert(6);
+        tree.insert(3);
+        tree.insert(4);
+        tree.insert(1);
+        tree.insert(7);
+
+        tree.print();
+
+        assert_eq!(6, tree.predecessor(7).unwrap().key);
+        assert_eq!(1, tree.predecessor(2).unwrap().key);
+        assert_eq!(5, tree.predecessor(6).unwrap().key);
+        assert!(tree.predecessor(1).is_none());
     }
 }
