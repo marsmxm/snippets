@@ -122,6 +122,36 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
         link_walk(self.root);
     }
 
+    // pub fn delete(&mut self, key: T) -> u32 {
+    //
+    // }
+    //
+    // fn delete_link(&mut self, link: Link<T>) {
+    //
+    // }
+
+    fn transplant(&mut self, old: NonNull<Node<T>>, new: Link<T>) -> Box<Node<T>> {
+        unsafe {
+            let boxed_old = Box::from_raw(old.as_ptr());
+
+            if let Some(old_parent) = boxed_old.parent {
+                if (*old_parent.as_ptr()).left == Some(old) {
+                    (*old_parent.as_ptr()).left = new;
+                } else {
+                    (*old_parent.as_ptr()).right = new;
+                }
+            } else {
+                self.root = new;
+            }
+
+            if let Some(new_node) = new {
+                (*new_node.as_ptr()).parent = boxed_old.parent;
+            }
+
+            boxed_old
+        }
+    }
+
     pub fn search(&self, k: T) -> Option<&Node<T>> {
         unsafe {
             self.search_link(self.root, k).map(|node| node.as_ref())
@@ -131,12 +161,12 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
     fn search_link(&self, link: Link<T>, k: T) -> Link<T> {
         if let Some(node) = link {
             unsafe {
-                if k == (*node.as_ptr()).key {
-                    return link;
+                return if k == (*node.as_ptr()).key {
+                    link
                 } else if k < (*node.as_ptr()).key {
-                    return self.search_link((*node.as_ptr()).left, k);
+                    self.search_link((*node.as_ptr()).left, k)
                 } else {
-                    return self.search_link((*node.as_ptr()).right, k);
+                    self.search_link((*node.as_ptr()).right, k)
                 }
             }
         } else {
