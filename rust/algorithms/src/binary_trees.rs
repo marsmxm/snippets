@@ -132,15 +132,15 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
         if let Some(node) = link {
             unsafe {
                 if k == (*node.as_ptr()).key {
-                    return link;
+                    link
                 } else if k < (*node.as_ptr()).key {
-                    return self.search_link((*node.as_ptr()).left, k);
+                    self.search_link((*node.as_ptr()).left, k)
                 } else {
-                    return self.search_link((*node.as_ptr()).right, k);
+                    self.search_link((*node.as_ptr()).right, k)
                 }
             }
         } else {
-            return None;
+            None
         }
     }
 
@@ -162,10 +162,12 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
     }
 
     pub fn minimum(&self) -> Option<&Node<T>> {
-        return self.minimum_from(self.root);
+        unsafe {
+            self.minimum_from(self.root).map(|node| node.as_ref())
+        }
     }
 
-    fn minimum_from(&self, link: Link<T>) -> Option<&Node<T>> {
+    fn minimum_from(&self, link: Link<T>) -> Link<T> {
         unsafe {
             let mut cursor = link;
             let mut parent = None;
@@ -175,12 +177,12 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
                 cursor = (*node.as_ptr()).left;
             }
 
-            return parent.map(|node| node.as_ref());
+            parent
         }
     }
 
     pub fn maximum(&self) -> Option<&Node<T>> {
-        return self.maximum_from(self.root);
+        self.maximum_from(self.root)
     }
 
     pub fn maximum_from(&self, link: Link<T>) -> Option<&Node<T>>  {
@@ -193,7 +195,7 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
                 cursor = (*node.as_ptr()).right;
             }
 
-            return parent.map(|node| node.as_ref());
+            parent.map(|node| node.as_ref())
         }
     }
 
@@ -201,7 +203,8 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
         unsafe {
             if let Some(node) = self.search_link(self.root, key) {
                 if (*node.as_ptr()).right.is_some() {
-                    return self.minimum_from((*node.as_ptr()).right);
+                    self.minimum_from((*node.as_ptr()).right)
+                        .map(|node| node.as_ref())
                 } else {
                     let mut current = node;
                     let mut parent = (*node.as_ptr()).parent;
@@ -216,10 +219,10 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
                         parent = (*parent_node.as_ptr()).parent;
                     }
 
-                    return None;
+                    None
                 }
             } else {
-                return None;
+                None
             }
         }
     }
@@ -228,7 +231,7 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
         unsafe {
             if let Some(node) = self.search_link(self.root, key) {
                 if (*node.as_ptr()).left.is_some() {
-                    return self.maximum_from((*node.as_ptr()).left);
+                    self.maximum_from((*node.as_ptr()).left)
                 } else {
                     let mut current = node;
                     let mut parent = (*node.as_ptr()).parent;
@@ -243,11 +246,67 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
                         parent = (*parent_node.as_ptr()).parent;
                     }
 
-                    return None;
+                    None
                 }
             } else {
-                return None;
+                None
             }
+        }
+    }
+
+    pub fn delete(&mut self, key: T) -> Vec<Box<Node<T>>> {
+
+    }
+
+    fn delete_link(&mut self, link: NonNull<Node<T>>) -> Box<Node<T>> {
+        unsafe {
+            if (*link.as_ptr()).left.is_none() {
+                self.transplant(link, (*link.as_ptr()).right)
+            } else if (*link.as_ptr()).right.is_none() {
+                self.transplant(link, (*link.as_ptr()).left)
+            } else {
+                let mut succ = self.minimum_from((*link.as_ptr()).right).unwrap();
+
+                if Some(succ) != (*link.as_ptr()).right {
+                    let boxed_succ =
+                        self.transplant(succ, (*succ.as_ptr()).right);
+                    succ =  NonNull::new_unchecked(Box::into_raw(boxed_succ));
+
+                    (*succ.as_ptr()).right = (*link.as_ptr()).right;
+                    if let Some(succ_right) = (*succ.as_ptr()).right {
+                        (*succ_right.as_ptr()).parent = Some(succ);
+                    }
+                }
+
+                (*succ.as_pt()).left = (*link.as_ptr()).left;
+                if let Some(succ_left) = (*succ.as_ptr()).left {
+                    (*succ_left.as_ptr()).parent = Some(succ);
+                }
+
+                self.transplant(link, succ)
+            }
+        }
+    }
+
+    fn transplant(&mut self, old: NonNull<Node<T>>, new: Link<T>) -> Box<Node<T>> {
+        unsafe {
+            let mut boxed_old = Box::from_raw(old.as_ptr());
+
+            if let Some(parent_node) = boxed_old.parent {
+                if Some(old) == (*parent_node.as_ptr()).left {
+                    (*parent_node.as_ptr()).left = new;
+                } else {
+                    (*parent_node.as_ptr()).right = new;
+                }
+            } else {
+                self.root = new;
+            }
+
+            if let Some(new_node) = new {
+                (*new_node.as_ptr()).parent = boxed_old.parent.take();
+            }
+
+            boxed_old
         }
     }
 }
