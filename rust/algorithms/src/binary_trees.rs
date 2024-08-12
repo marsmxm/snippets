@@ -35,8 +35,10 @@ impl<T: Display> Node<T> {
         let mut children = Vec::new();
 
         unsafe {
-            let left_tree = self.left.as_ref().map(|node| (*node.as_ptr()).to_ascii_tree());
-            let right_tree = self.right.as_ref().map(|node| (*node.as_ptr()).to_ascii_tree());
+            let left_tree = self.left.as_ref()
+                .map(|node| (*node.as_ptr()).to_ascii_tree());
+            let right_tree = self.right.as_ref()
+                .map(|node| (*node.as_ptr()).to_ascii_tree());
             
             if left_tree.is_some() {
                 children.push(left_tree.unwrap());
@@ -68,7 +70,8 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
     pub fn print(&self) {
         let none_node = Tree::Leaf(vec![String::from("none")]);
         unsafe {
-            let ascii_tree = self.root.as_ref().map_or(none_node, |node| (*node.as_ptr()).to_ascii_tree());
+            let ascii_tree = self.root.as_ref()
+                .map_or(none_node, |node| (*node.as_ptr()).to_ascii_tree());
             let mut output = String::new();
             write_tree(&mut output, &ascii_tree);
             println!("{}", output);
@@ -253,10 +256,10 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
             }
         }
     }
-
-    pub fn delete(&mut self, key: T) -> Vec<Box<Node<T>>> {
-
-    }
+    //
+    // pub fn delete(&mut self, key: T) -> Vec<Box<Node<T>>> {
+    //
+    // }
 
     fn delete_link(&mut self, link: NonNull<Node<T>>) -> Box<Node<T>> {
         unsafe {
@@ -407,6 +410,26 @@ mod test {
 
         tree.insert(5);
         tree.insert(2);
+        tree.insert(2);
+        tree.insert(6);
+        tree.insert(3);
+        tree.insert(4);
+        tree.insert(1);
+        tree.insert(7);
+
+        tree.print();
+
+        assert_eq!(6, tree.predecessor(7).unwrap().key);
+        assert_eq!(1, tree.predecessor(2).unwrap().key);
+        assert_eq!(5, tree.predecessor(6).unwrap().key);
+        assert!(tree.predecessor(1).is_none());
+    }
+
+    #[test]
+    fn test_transplant() {
+        let mut tree = BinaryTree::empty();
+
+        tree.insert(5);
         tree.insert(2);
         tree.insert(6);
         tree.insert(3);
