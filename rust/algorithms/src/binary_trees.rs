@@ -73,7 +73,7 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
             let ascii_tree = self.root.as_ref()
                 .map_or(none_node, |node| (*node.as_ptr()).to_ascii_tree());
             let mut output = String::new();
-            write_tree(&mut output, &ascii_tree);
+            let _ = write_tree(&mut output, &ascii_tree);
             println!("{}", output);
         }
         
@@ -127,19 +127,19 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
 
     pub fn search(&self, k: T) -> Option<&Node<T>> {
         unsafe {
-            self.search_link(self.root, k).map(|node| node.as_ref())
+            self.search_link(self.root, &k).map(|node| node.as_ref())
         }
     }
 
-    fn search_link(&self, link: Link<T>, k: T) -> Link<T> {
+    fn search_link(&self, link: Link<T>, key: &T) -> Link<T> {
         if let Some(node) = link {
             unsafe {
-                if k == (*node.as_ptr()).key {
+                if *key == (*node.as_ptr()).key {
                     link
-                } else if k < (*node.as_ptr()).key {
-                    self.search_link((*node.as_ptr()).left, k)
+                } else if *key < (*node.as_ptr()).key {
+                    self.search_link((*node.as_ptr()).left, key)
                 } else {
-                    self.search_link((*node.as_ptr()).right, k)
+                    self.search_link((*node.as_ptr()).right, key)
                 }
             }
         } else {
@@ -204,7 +204,7 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
 
     pub fn successor(&self, key: T) -> Option<&Node<T>> {
         unsafe {
-            if let Some(node) = self.search_link(self.root, key) {
+            if let Some(node) = self.search_link(self.root, &key) {
                 if (*node.as_ptr()).right.is_some() {
                     self.minimum_from((*node.as_ptr()).right)
                         .map(|node| node.as_ref())
@@ -232,7 +232,7 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
 
     pub fn predecessor(&self, key: T) -> Option<&Node<T>> {
         unsafe {
-            if let Some(node) = self.search_link(self.root, key) {
+            if let Some(node) = self.search_link(self.root, &key) {
                 if (*node.as_ptr()).left.is_some() {
                     self.maximum_from((*node.as_ptr()).left)
                 } else {
@@ -256,10 +256,16 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
             }
         }
     }
-    //
-    // pub fn delete(&mut self, key: T) -> Vec<Box<Node<T>>> {
-    //
-    // }
+    
+    pub fn delete(&mut self, key: T) -> Vec<Box<Node<T>>> {
+        let mut result = Vec::new();
+
+        while let Some(target_link) = self.search_link(self.root, &key) {
+            result.push(self.delete_link(target_link));
+        }
+
+        result
+    }
 
     fn delete_link(&mut self, link: NonNull<Node<T>>) -> Box<Node<T>> {
         unsafe {
@@ -281,12 +287,12 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
                     }
                 }
 
-                (*succ.as_pt()).left = (*link.as_ptr()).left;
+                (*succ.as_ptr()).left = (*link.as_ptr()).left;
                 if let Some(succ_left) = (*succ.as_ptr()).left {
                     (*succ_left.as_ptr()).parent = Some(succ);
                 }
 
-                self.transplant(link, succ)
+                self.transplant(link, Some(succ))
             }
         }
     }
@@ -313,6 +319,24 @@ impl<T: Display + PartialOrd> BinaryTree<T> {
         }
     }
 }
+
+impl<T> Drop for BinaryTree<T> {
+    fn drop(&mut self) {
+        fn drop_link<T>(link: Link<T>) {
+            if let Some(node) = link {
+                unsafe {
+                    drop_link((*node.as_ptr()).left);
+                    drop_link((*node.as_ptr()).right);
+                    let _boxed_node = Box::from_raw(node.as_ptr());
+                }
+
+            }
+        }
+
+        drop_link(self.root);
+    }
+}
+
 
 #[cfg(test)]
 mod test {
@@ -426,9 +450,9 @@ mod test {
     }
 
     #[test]
-    fn test_transplant() {
+    fn test_delete_link() {
         let mut tree = BinaryTree::empty();
-
+    
         tree.insert(5);
         tree.insert(2);
         tree.insert(6);
@@ -436,12 +460,48 @@ mod test {
         tree.insert(4);
         tree.insert(1);
         tree.insert(7);
+    
+        tree.print();
+    
+        let link2 = tree.search_link(tree.root, &2).unwrap();
+        let box2 = tree.delete_link(link2);
 
         tree.print();
+        assert_eq!(2, box2.key);
 
-        assert_eq!(6, tree.predecessor(7).unwrap().key);
-        assert_eq!(1, tree.predecessor(2).unwrap().key);
-        assert_eq!(5, tree.predecessor(6).unwrap().key);
-        assert!(tree.predecessor(1).is_none());
+        let link7 = tree.search_link(tree.root, &7).unwrap();
+        let box7 = tree.delete_link(link7);
+
+        tree.print();
+        assert_eq!(7, box7.key);
+
+        let link5 = tree.search_link(tree.root, &5).unwrap();
+        let box5 = tree.delete_link(link5);
+
+        tree.print();
+        assert_eq!(5, box5.key);
+    }
+
+    #[test]
+    fn test_delete() {
+        let mut tree = BinaryTree::empty();
+    
+        tree.insert(5);
+        tree.insert(2);
+        tree.insert(6);
+        tree.insert(3);
+        tree.insert(4);
+        tree.insert(1);
+        tree.insert(7);
+        tree.insert(2);
+    
+        tree.print();
+    
+        let mut v = tree.delete(2);
+
+        tree.print();
+        assert_eq!(2, v.len());
+        assert_eq!(2, v.pop().unwrap().key);
+        assert_eq!(2, v.pop().unwrap().key);
     }
 }
