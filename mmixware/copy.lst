@@ -1,0 +1,106 @@
+                   * SAMPLE PROGRAM: COPY A GIVEN FILE TO STANDARD OUTPUT
+                   
+($255)             t        IS   $255
+($000)             argc     IS   $0
+($001)             argv     IS   $1
+($002)             s        IS   $2
+(0000000000000005) Buf_Size IS   5                 ridiculously small for testing
+                            LOC  Data_Segment
+(2000000000000000) Buffer   LOC  @+Buf_Size
+($254=#20000000             GREG @
+         00000005)
+2000000000000008:  Arg0     OCTA 0,TextRead
+ ...008: 00000000
+ ...00c: 00000000
+ ...010: 00000000
+ ...014: 00000000
+ ...018: 20000000  Arg1     OCTA Buffer,Buf_Size
+ ...01c: 00000000
+ ...020: 00000000
+ ...024: 00000005
+                         
+                            LOC  #200              main(argc,argv) {
+0000000000000200:  Main     CMP  t,argc,2          if (argc==2) goto openit
+ ...200: 31ff0002
+ ...204: 52ffxxxx           PBZ  t,OpenIt
+ ...208: f4ffxxxx           GETA t,1F              fputs("Usage: ",stderr)
+ ...20c: 00000702           TRAP 0,Fputs,StdErr
+ ...210: 8fff0100           LDOU t,argv,0          fputs(argv[0],stderr)
+ ...214: 00000702           TRAP 0,Fputs,StdErr
+ ...218: f4ffxxxx           GETA t,2F              fputs(" filename\n",stderr)
+ ...21c: 00000702  Quit     TRAP 0,Fputs,StdErr    
+ ...220: 35ff0001           NEG  t,0,1             quit: exit(-1)
+ ...224: 00000000           TRAP 0,Halt,0
+ ...228: 55736167  1H       BYTE "Usage: ",0
+ ...22c: 653a2000
+                            LOC  (@+3)&-4          align to tetrabyte
+ ...230: 2066696c  2H       BYTE " filename",#a,0
+ ...234: 656e616d
+ ...238: 650a00  
+                   
+ ...23c: 8f020108  OpenIt   LDOU s,argv,8          openit: s=argv[1]
+ ...240: af02fe03           STOU s,Arg0
+ ...244: 23fffe03           LDA  t,Arg0            fopen(argv[1],"r",file[3])
+ ...248: 00000103           TRAP 0,Fopen,3
+ ...24c: 58ffxxxx           PBNN t,CopyIt          if (no error) goto copyit
+ ...250: f4ffxxxx           GETA t,1F              fputs("Can't open file ",stderr)
+ ...254: 00000702           TRAP 0,Fputs,StdErr
+ ...258: c1ff0200           SET  t,s               fputs(argv[1],stderr)
+ ...25c: 00000702           TRAP 0,Fputs,StdErr
+ ...260: f4ffxxxx           GETA t,2F              fputs("!\n",stderr)
+ ...264: f1ffffee           JMP  Quit              goto quit
+ ...268: 43616e27  1H       BYTE "Can't open file ",0
+ ...26c: 74206f70
+ ...270: 656e2066
+ ...274: 696c6520
+ ...278: 00      
+                            LOC  (@+3)&-4          align to tetrabyte
+ ...27c: 210a00    2H       BYTE "!",#a,0
+                   
+ ...280: 23fffe13  CopyIt   LDA  t,Arg1            copyit:
+ ...284: 00000303           TRAP 0,Fread,3         items=fread(buffer,1,buf_size,file[3])
+ ...288: 40ffxxxx           BN   t,EndIt           if (items < buf_size) goto endit
+ ...28c: 23fffe13           LDA  t,Arg1            items=fwrite(buffer,1,buf_size,stdout)
+ ...290: 00000601           TRAP 0,Fwrite,StdOut
+ ...294: 59fffffb           PBNN t,CopyIt          if (items >= buf_size) goto copyit
+ ...298: f4ffxxxx  Trouble  GETA t,1F              trouble: fputs("Trouble w...!",stderr)
+ ...29c: f1ffffe0           JMP  Quit              goto quit
+ ...2a0: 54726f75  1H       BYTE "Trouble writing StdOut!",#a,0
+ ...2a4: 626c6520
+ ...2a8: 77726974
+ ...2ac: 696e6720
+ ...2b0: 5374644f
+ ...2b4: 7574210a
+ ...2b8: 00      
+                   
+ ...2bc: e7ff0005  EndIt    INCL t,Buf_Size
+ ...2c0: 40ffxxxx           BN   t,ReadErr         if (ferror(file[3])) goto readerr
+ ...2c4: adfffe1b           STO  t,Arg1+8
+ ...2c8: 23fffe13           LDA  t,Arg1            n=fwrite(buffer,1,items,stdout)
+ ...2cc: 00000601           TRAP 0,Fwrite,StdOut
+ ...2d0: 41fffff2           BN   t,Trouble         if (n < items) goto trouble
+ ...2d4: 00000000           TRAP 0,Halt,0          exit(0)
+ ...2d8: f4ffxxxx  ReadErr  GETA t,1F              readerr: fputs("Trouble r...!",stderr)
+ ...2dc: f1ffffd0           JMP  Quit              goto quit }
+ ...2e0: 54726f75  1H       BYTE "Trouble reading!",#a,0
+ ...2e4: 626c6520
+ ...2e8: 72656164
+ ...2ec: 696e6721
+ ...2f0: 0a00    
+
+Symbol table:
+ Arg0 = #2000000000000008 (8)
+ Arg1 = #2000000000000018 (9)
+ Buf_Size = #0000000000000005 (6)
+ Buffer = #2000000000000000 (7)
+ CopyIt = #0000000000000280 (12)
+ EndIt = #00000000000002bc (13)
+ Main = #0000000000000200 (1)
+ OpenIt = #000000000000023c (10)
+ Quit = #000000000000021c (11)
+ ReadErr = #00000000000002d8 (15)
+ Trouble = #0000000000000298 (14)
+ argc = $000 (3)
+ argv = $001 (4)
+ s = $002 (5)
+ t = $255 (2)
