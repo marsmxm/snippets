@@ -101,6 +101,15 @@
                 (apply-one-subst oldrhs tvar ty))))
           subst))))
 
+  (define extend-subst-1
+    (lambda (subst tvar ty)
+      (cons
+       (cons tvar ty)
+       subst)))
+
+  (define apply-subst-to-type-1
+    )
+
   )
 
 
