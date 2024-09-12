@@ -8,12 +8,11 @@ jj     GREG
 kk     GREG
 pk     GREG
 mm     IS   kk
-
        LOC  Data_Segment
-PRIME1 WYDE 2
-       LOC  PRIME1+2*L
+PRIME1 WYDE 2                      % #2000000000000000
+       LOC  PRIME1+2*L             % #20000000000003E8
 ptop   GREG @
-j0     GREG PRIME1+2-@
+j0     GREG PRIME1+2-@             % -2*(L-1) 
 BUF    OCTA
 
        LOC  #100

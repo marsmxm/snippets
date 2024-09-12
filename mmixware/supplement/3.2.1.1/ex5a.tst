@@ -1,0 +1,65 @@
+[[SET Driver
+
+	LOC	Data_Segment
+	GREG	@
+
+xx	OCTA	[[x]]
+yy	OCTA	[[y]]
+mm	OCTA	[[m]]
+
+	LOC	#100
+x	IS	$0
+y	IS	$1
+m	IS	$2
+d	IS	$3
+t	IS	$5
+
+Main	LDOU	x,xx
+	LDOU	y,yy
+	LDOU	m,mm
+
+[[INCLUDE ex5a.mms]]
+
+
+[[INCLUDE expect.mms "d" :d [[result]]]]
+
+	SET	$255,0
+	TRAP	0,Halt,0
+
+
+[[INCLUDE print.mms]]
+
+
+]]
+
+
+[[TEST 1]]
+[[SET x 5]]
+[[SET y 2]]
+[[SET m 7]]
+[[SET result [[x]]-[[y]]]]
+
+
+[[Driver]]
+
+[[END 1]]
+
+[[TEST 2]]
+[[SET x 2]]
+[[SET y 5]]
+[[SET m 7]]
+[[SET result [[x]]-[[y]]+[[m]]]]
+
+[[Driver]]
+
+[[END 2]]
+
+[[TEST 3]]
+[[SET x 1]]
+[[SET y #8000000000000002]]
+[[SET m #F000000000000000]]
+[[SET result [[x]]-[[y]]+[[m]]]]
+
+[[Driver]]
+
+[[END 3]]
