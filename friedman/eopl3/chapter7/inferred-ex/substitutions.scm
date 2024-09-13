@@ -101,6 +101,8 @@
                 (apply-one-subst oldrhs tvar ty))))
           subst))))
 
+  ;; Exercise 7.17
+  ;; t(σ[tv = t′]) = (tσ)[tv = t′]
   (define extend-subst-1
     (lambda (subst tvar ty)
       (cons
@@ -108,7 +110,22 @@
        subst)))
 
   (define apply-subst-to-type-1
-    )
+    (lambda (ty subst)
+      (cases type ty
+        (int-type () (int-type))
+        (bool-type () (bool-type))
+        (proc-type (t1 t2)
+                   (proc-type
+                    (apply-subst-to-type t1 subst)
+                    (apply-subst-to-type t2 subst)))
+        (tvar-type (sn)
+                   (let loop ([cur-subst (reverse subst)])
+                     (cond
+                      [(null? cur-subst) ty]
+                      [(eq? ty (car (car cur-subst)))
+                       (apply-subst-to-type-1 (cdr (car cur-subst))
+                                              (cdr cur-subst))]
+                      [else (loop (cdr cur-subst))]))))))
 
   )
 
