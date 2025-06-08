@@ -7,12 +7,6 @@
 [submodule "idris/TypeDD-Samples"]
 	path = idris/TypeDD-Samples
 	url = https://github.com/edwinb/TypeDD-Samples
-[submodule "mathematics_in_lean"]
-	path = mathematics_in_lean
-	url = git@github.com:marsmxm/mathematics_in_lean.git
-[submodule "matchematics_in_lean"]
-	path = matchematics_in_lean
-	url = git@github.com:marsmxm/mathematics_in_lean.git
 [submodule "LangChain/tutorials/all-mpnet-base-v2"]
 	path = LangChain/tutorials/all-mpnet-base-v2
 	url = https://huggingface.co/sentence-transformers/all-mpnet-base-v2
