@@ -26,3 +26,9 @@ ResNet50.h5
 .Rhistory
 .RData
 
+/build
+/lake-packages
+.lake
+/.cache
+
+
