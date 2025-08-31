@@ -183,6 +183,7 @@ def softmax(x, axis=1):
         raise ValueError('Cannot apply softmax to a tensor that is 1D')
         
 
+# attention_map = plot_attention_map(model, human_vocab, inv_machine_vocab, "Tuesday 09 Oct 1993", num = 7, n_s = 64)
 def plot_attention_map(modelx, input_vocabulary, inv_output_vocabulary, text, n_s = 128, num = 7):
     """
     Plot the attention map.
